@@ -1,5 +1,5 @@
-import { Injectable } from '@angular/core';
-import {UserService} from './user';
+import {Injectable} from '@angular/core';
+import {UserService} from './user.service';
 import {IProdukt} from '../models/interfaces/IProdukt';
 import {ProduktService} from './produkt.service';
 
@@ -27,7 +27,7 @@ export class FavoritService {
 
   public async addToFavorit(produktId: string) {
     this.userService.getCurrentUser().then(user => {
-      if(!user.favorisierteProduktIds.includes(produktId)) {
+      if (!user.favorisierteProduktIds.includes(produktId)) {
         user.favorisierteProduktIds.push(produktId);
         this.userService.updateUser(user);
       }
@@ -36,7 +36,7 @@ export class FavoritService {
 
   public async removeFromFavorit(produktId: string) {
     this.userService.getCurrentUser().then(user => {
-      if(user.favorisierteProduktIds.includes(produktId)) {
+      if (user.favorisierteProduktIds.includes(produktId)) {
         const index = user.favorisierteProduktIds.indexOf(produktId);
         user.favorisierteProduktIds.splice(index, 1);
         this.userService.updateUser(user);

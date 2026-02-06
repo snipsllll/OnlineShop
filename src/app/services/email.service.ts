@@ -1,7 +1,7 @@
 import {Injectable, OnInit} from '@angular/core';
 import emailjs from 'emailjs-com';
 import {IEmailWrapper} from '../models/interfaces/IEmailWrapper';
-import {UserService} from './user';
+import {UserService} from './user.service';
 
 @Injectable({
   providedIn: 'root',

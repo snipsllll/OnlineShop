@@ -1,8 +1,7 @@
-// src/app/user.service.ts
 import {Injectable} from '@angular/core';
 import {deleteDoc, doc, Firestore, getDoc, setDoc, updateDoc} from 'firebase/firestore';
 import {auth, db} from '../../environments/environment';
-import {IUser, IFIreUser} from '../models/interfaces/IUser';
+import {IFIreUser, IUser} from '../models/interfaces/IUser';
 
 @Injectable({
   providedIn: 'root'
@@ -34,9 +33,7 @@ export class UserService {
   }
 
   async getCurrentUser(): Promise<IUser> {
-    const firebaseAuth = auth;
-
-    const currentUserAuth = firebaseAuth.currentUser;
+    const currentUserAuth = auth.currentUser;
 
     if (!currentUserAuth) {
       console.log("No user currently logged in.");
@@ -53,7 +50,6 @@ export class UserService {
         return this.getIUserFromFireUser({id: userDocSnap.id, ...userDocSnap.data() as IFIreUser});
       } else {
         console.log(`No Firestore profile found for logged-in user with UID: ${uid}`);
-        throw new Error("No user currently logged in.")
       }
     } catch (error: any) {
       console.error(`Error fetching Firestore profile for logged-in user ${uid}:`, error);

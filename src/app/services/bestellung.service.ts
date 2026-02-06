@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {addDoc, collection, deleteDoc, doc, Firestore, getDoc, getDocs, updateDoc} from 'firebase/firestore';
 import {db} from '../../environments/environment';
 import {IBestellung} from '../models/interfaces/IBestellung';
@@ -9,17 +9,18 @@ import {IBestellung} from '../models/interfaces/IBestellung';
 export class BestellungService {
   private ordersCollection = collection(db as Firestore, 'orders');
 
-  constructor() {}
+  constructor() {
+  }
 
   async getBestellungen(): Promise<IBestellung[]> {
     const querySnapshot = await getDocs(this.ordersCollection);
-    return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as IBestellung));
+    return querySnapshot.docs.map(doc => ({id: doc.id, ...doc.data()} as IBestellung));
   }
 
   async getBestellung(id: string): Promise<IBestellung | undefined> {
     const bestellungDocRef = doc(db as Firestore, 'orders', id);
     const bestellungDocSnap = await getDoc(bestellungDocRef);
-    return bestellungDocSnap.exists() ? { id: bestellungDocSnap.id, ...bestellungDocSnap.data() } as IBestellung : undefined;
+    return bestellungDocSnap.exists() ? {id: bestellungDocSnap.id, ...bestellungDocSnap.data()} as IBestellung : undefined;
   }
 
   async addBestellung(bestellung: IBestellung): Promise<string> {

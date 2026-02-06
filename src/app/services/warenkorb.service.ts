@@ -1,16 +1,13 @@
-import { Injectable } from '@angular/core';
-import {UserService} from './user';
-import {ProduktService} from './produkt.service';
+import {Injectable} from '@angular/core';
+import {UserService} from './user.service';
 import {IWarenkorb} from '../models/interfaces/IWarenkorb';
-import {collection, Firestore} from 'firebase/firestore';
-import {db} from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class WarenkorbService {
 
-  constructor(private userService: UserService, private produktService: ProduktService) {
+  constructor(private userService: UserService) {
 
   }
 
@@ -22,7 +19,7 @@ export class WarenkorbService {
 
   public async addToWarenkorb(produktId: string, anzahl: number) {
     this.getWahrenkorb().then(wk => {
-      if(!wk.produkteMitAnzahl.find(p => p.produktId === produktId)) {
+      if (!wk.produkteMitAnzahl.find(p => p.produktId === produktId)) {
         wk.produkteMitAnzahl.push({produktId: produktId, anzahl: anzahl})
         this.updateWarenkorb(wk);
       }

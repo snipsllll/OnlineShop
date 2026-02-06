@@ -1,16 +1,7 @@
 // src/app/services/produkt.service.ts
-import { Injectable } from '@angular/core';
-import {
-  collection,
-  getDocs,
-  doc,
-  getDoc,
-  updateDoc,
-  deleteDoc,
-  Firestore,
-  addDoc
-} from 'firebase/firestore';
-import { db } from '../../environments/environment';
+import {Injectable} from '@angular/core';
+import {addDoc, collection, deleteDoc, doc, Firestore, getDoc, getDocs, updateDoc} from 'firebase/firestore';
+import {db} from '../../environments/environment';
 import {IProdukt} from '../models/interfaces/IProdukt';
 
 @Injectable({
@@ -19,17 +10,18 @@ import {IProdukt} from '../models/interfaces/IProdukt';
 export class ProduktService {
   private productsCollection = collection(db as Firestore, 'products');
 
-  constructor() {}
+  constructor() {
+  }
 
   async getProdukte(): Promise<IProdukt[]> {
     const querySnapshot = await getDocs(this.productsCollection);
-    return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as IProdukt));
+    return querySnapshot.docs.map(doc => ({id: doc.id, ...doc.data()} as IProdukt));
   }
 
   async getProdukt(id: string): Promise<IProdukt | undefined> {
     const produktDocRef = doc(db as Firestore, 'products', id);
     const produktDocSnap = await getDoc(produktDocRef);
-    return produktDocSnap.exists() ? { id: produktDocSnap.id, ...produktDocSnap.data() } as IProdukt : undefined;
+    return produktDocSnap.exists() ? {id: produktDocSnap.id, ...produktDocSnap.data()} as IProdukt : undefined;
   }
 
   async addProdukt(produkt: IProdukt): Promise<string> {
