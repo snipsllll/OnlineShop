@@ -50,6 +50,7 @@ export class UserService {
         return this.getIUserFromFireUser({id: userDocSnap.id, ...userDocSnap.data() as IFIreUser});
       } else {
         console.log(`No Firestore profile found for logged-in user with UID: ${uid}`);
+        throw new Error("No user currently logged in.")
       }
     } catch (error: any) {
       console.error(`Error fetching Firestore profile for logged-in user ${uid}:`, error);
