@@ -1,4 +1,4 @@
-export enum ViewUrls {
+export enum MyRoutes {
   ABOUT_US = "about-us",
   ACCOUNT_SETTINGS = "account-settings",
   ADMIN_BESTELLUNG_DETAILS = "admin-bestellung-details",

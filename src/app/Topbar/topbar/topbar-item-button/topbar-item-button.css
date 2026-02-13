@@ -1,0 +1,11 @@
+.topbar-item-button {
+  cursor: pointer;
+  border: 1px solid black;
+  padding: 0 10px;
+  height: 100%;
+  display: flex;
+}
+
+.topbar-item-button:hover {
+  font-weight: bold;
+}

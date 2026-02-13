@@ -1,0 +1,21 @@
+:host {
+  height: 100%;
+}
+
+.topbar {
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  border: 3px solid black;
+  width: calc(100vw - 6px);
+  height: 40px;
+  padding: 5px 0;
+}
+
+.topbar-item {
+  display: flex;
+  align-items: center;
+  height: 100%;
+  justify-content: center;
+  margin-right: 5px;
+}

@@ -14,23 +14,23 @@ import {AdminProductsOverview} from './views/admin-products-overview/admin-produ
 import {ProductsOverview} from './views/products-overview/products-overview';
 import {Warenkorb} from './views/warenkorb/warenkorb';
 import {RouteParams} from './models/enums/RouteParams';
-import {ViewUrls} from './models/enums/ViewUrls';
+import {MyRoutes} from './models/enums/MyRoutes';
 
 export const routes: Routes = [
   {path: '', redirectTo: 'home', pathMatch: 'full'},
-  {path: `${ViewUrls.PRODUKTE_OVERVIEW}`, redirectTo: 'home', pathMatch: 'full'},
-  {path: `${ViewUrls.ABOUT_US}`, component: AboutUs},
-  {path: `${ViewUrls.ACCOUNT_SETTINGS}`, component: AccountSettings},
-  {path: `${ViewUrls.ADMIN_BESTELLUNG_DETAILS}/:${RouteParams.BESTELLUNGS_ID}`, component: AdminBestellungDetails},
-  {path: `${ViewUrls.ADMIN_BESTELLUNGEN_OVERVIEW}`, component: AdminBestellungenOverview},
-  {path: `${ViewUrls.ADMIN_PRODUCT_DETAILS}/:${RouteParams.PRODUCT_ID}`, component: AdminProductDetails},
-  {path: `${ViewUrls.ADMIN_PRODUCTS_OVERVIEW}`, component: AdminProductsOverview},
-  {path: `${ViewUrls.BESTELLUNG_DETAILS}/:${RouteParams.BESTELLUNGS_ID}`, component: BestellungDetails},
-  {path: `${ViewUrls.BESTELLUNGEN_OVERVIEW}`, component: BestellungenOverview},
-  {path: `${ViewUrls.CHECKOUT}`, component: Checkout},
-  {path: `${ViewUrls.FAVORITEN_LISTE}`, component: FavoritenListe},
-  {path: `${ViewUrls.PAYMENT_APPROVAL}`, component: PaymentApproval},
-  {path: `${ViewUrls.PRODUKT_DETAILS}/:${RouteParams.PRODUCT_ID}`, component: ProductDetails},
+  {path: `${MyRoutes.PRODUKTE_OVERVIEW}`, redirectTo: 'home', pathMatch: 'full'},
+  {path: `${MyRoutes.ABOUT_US}`, component: AboutUs},
+  {path: `${MyRoutes.ACCOUNT_SETTINGS}`, component: AccountSettings},
+  {path: `${MyRoutes.ADMIN_BESTELLUNG_DETAILS}/:${RouteParams.BESTELLUNGS_ID}`, component: AdminBestellungDetails},
+  {path: `${MyRoutes.ADMIN_BESTELLUNGEN_OVERVIEW}`, component: AdminBestellungenOverview},
+  {path: `${MyRoutes.ADMIN_PRODUCT_DETAILS}/:${RouteParams.PRODUCT_ID}`, component: AdminProductDetails},
+  {path: `${MyRoutes.ADMIN_PRODUCTS_OVERVIEW}`, component: AdminProductsOverview},
+  {path: `${MyRoutes.BESTELLUNG_DETAILS}/:${RouteParams.BESTELLUNGS_ID}`, component: BestellungDetails},
+  {path: `${MyRoutes.BESTELLUNGEN_OVERVIEW}`, component: BestellungenOverview},
+  {path: `${MyRoutes.CHECKOUT}`, component: Checkout},
+  {path: `${MyRoutes.FAVORITEN_LISTE}`, component: FavoritenListe},
+  {path: `${MyRoutes.PAYMENT_APPROVAL}`, component: PaymentApproval},
+  {path: `${MyRoutes.PRODUKT_DETAILS}/:${RouteParams.PRODUCT_ID}`, component: ProductDetails},
   {path: 'home', component: ProductsOverview},
-  {path: `${ViewUrls.WARENKORB}`, component: Warenkorb}
+  {path: `${MyRoutes.WARENKORB}`, component: Warenkorb}
 ];
