@@ -1,0 +1,7 @@
+:host { display: block; }
+
+.app-content {
+  margin-top: var(--topbar-height);
+  min-height: calc(100vh - var(--topbar-height));
+  background: var(--bg);
+}

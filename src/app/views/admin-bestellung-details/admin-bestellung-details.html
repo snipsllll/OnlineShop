@@ -1,1 +1,203 @@
-<p>admin-bestellung-details works!</p>
+<div class="page-container">
+  <!-- Back button -->
+  <button class="back-btn" (click)="goBack()">
+    <span class="material-symbols-outlined">arrow_back</span>
+    Zurück zur Übersicht
+  </button>
+
+  @if (loading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Bestellung wird geladen...</p>
+    </div>
+  } @else if (!bestellung()) {
+    <div class="not-found-state">
+      <span class="material-symbols-outlined not-found-icon">search_off</span>
+      <h2>Bestellung nicht gefunden</h2>
+      <p>Diese Bestellung existiert nicht oder wurde gelöscht.</p>
+      <button class="btn-primary" (click)="goBack()">Zur Übersicht</button>
+    </div>
+  } @else {
+    <!-- Page heading -->
+    <div class="page-header">
+      <div class="header-left">
+        <h1 class="page-title">
+          <span class="material-symbols-outlined title-icon">receipt</span>
+          Bestellung Details
+        </h1>
+        <div class="order-meta">
+          <span class="order-id" [title]="bestellung()!.id">
+            ID: {{ bestellung()!.id }}
+          </span>
+          <span class="meta-sep">&bull;</span>
+          <span class="order-date">
+            <span class="material-symbols-outlined meta-icon">calendar_today</span>
+            {{ formatDate(bestellung()!.bestelldatum) }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Two-column layout -->
+    <div class="details-layout">
+      <!-- LEFT: Order info + items table -->
+      <div class="info-column">
+
+        <!-- Order items card -->
+        <div class="card items-card">
+          <h2 class="section-title">
+            <span class="material-symbols-outlined">inventory_2</span>
+            Bestellte Artikel
+          </h2>
+          <div class="table-scroll">
+            <table class="items-table">
+              <thead>
+                <tr>
+                  <th>Artikel</th>
+                  <th class="col-qty">Menge</th>
+                  <th class="col-price">Einzelpreis</th>
+                  <th class="col-total">Gesamt</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (pos of bestellung()!.produkte; track pos.id) {
+                  <tr>
+                    <td class="col-name">
+                      <div class="item-name">{{ pos.bezeichnung }}</div>
+                      <div class="item-id">#{{ pos.id }}</div>
+                    </td>
+                    <td class="col-qty">
+                      <span class="qty-badge">{{ pos.anzahl }}</span>
+                    </td>
+                    <td class="col-price">{{ formatPrice(pos.preis) }}</td>
+                    <td class="col-total">{{ formatPrice(pos.preis * pos.anzahl) }}</td>
+                  </tr>
+                }
+              </tbody>
+              <tfoot>
+                <tr class="total-row">
+                  <td colspan="3" class="total-label">Gesamtbetrag</td>
+                  <td class="total-value">{{ formatPrice(total) }}</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        </div>
+
+        <!-- Shipping address card -->
+        <div class="card address-card">
+          <h2 class="section-title">
+            <span class="material-symbols-outlined">location_on</span>
+            Lieferadresse
+          </h2>
+          <div class="address-block">
+            <div class="address-line">
+              <span class="material-symbols-outlined address-icon">home</span>
+              <span>{{ bestellung()!.lieferadresse.strasse }} {{ bestellung()!.lieferadresse.hausnummer }}</span>
+            </div>
+            <div class="address-line">
+              <span class="material-symbols-outlined address-icon">location_city</span>
+              <span>{{ bestellung()!.lieferadresse.plz }} {{ bestellung()!.lieferadresse.ort }}</span>
+            </div>
+            <div class="address-line">
+              <span class="material-symbols-outlined address-icon">public</span>
+              <span>{{ bestellung()!.lieferadresse.land }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: Status management -->
+      <div class="status-column">
+        <div class="card status-card">
+          <h2 class="section-title">
+            <span class="material-symbols-outlined">tune</span>
+            Status verwalten
+          </h2>
+
+          <!-- Current status badges -->
+          <div class="current-status">
+            <div class="status-row">
+              <span class="status-key">Bestellstatus:</span>
+              @if (bestellung()!.bestellungsZustand === BestellungsZustand.ANGEKOMMEN) {
+                <span class="badge badge--success">Angekommen</span>
+              } @else if (bestellung()!.bestellungsZustand === BestellungsZustand.VERSANDT) {
+                <span class="badge badge--neutral">Versandt</span>
+              } @else if (bestellung()!.bestellungsZustand === BestellungsZustand.IN_BEARBEITUNG) {
+                <span class="badge badge--warning">In Bearbeitung</span>
+              } @else {
+                <span class="badge badge--neutral">Eingegangen</span>
+              }
+            </div>
+            <div class="status-row">
+              <span class="status-key">Zahlungsstatus:</span>
+              @if (bestellung()!.zahlungsZustand === ZahlungsZustand.BEZAHLT) {
+                <span class="badge badge--success">Bezahlt</span>
+              } @else {
+                <span class="badge badge--error">Ausstehend</span>
+              }
+            </div>
+          </div>
+
+          <div class="divider"></div>
+
+          <!-- Status edit form -->
+          <div class="form-group">
+            <label class="form-label" for="bestellStatus">Bestellstatus ändern</label>
+            <select id="bestellStatus" class="form-input select-input" [(ngModel)]="selectedZustand">
+              @for (opt of zustandOptions; track opt.value) {
+                <option [ngValue]="opt.value">{{ opt.label }}</option>
+              }
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="zahlungsStatus">Zahlungsstatus ändern</label>
+            <select id="zahlungsStatus" class="form-input select-input" [(ngModel)]="selectedZahlungsZustand">
+              @for (opt of zahlungsOptions; track opt.value) {
+                <option [ngValue]="opt.value">{{ opt.label }}</option>
+              }
+            </select>
+          </div>
+
+          <button
+            class="btn-primary save-btn"
+            (click)="saveStatus()"
+            [disabled]="saving()"
+          >
+            @if (saving()) {
+              <div class="spinner spinner-sm"></div>
+              Wird gespeichert...
+            } @else {
+              <span class="material-symbols-outlined btn-icon">save</span>
+              Status speichern
+            }
+          </button>
+        </div>
+
+        <!-- Order summary card -->
+        <div class="card summary-card">
+          <h2 class="section-title">
+            <span class="material-symbols-outlined">summarize</span>
+            Zusammenfassung
+          </h2>
+          <div class="summary-rows">
+            <div class="summary-row">
+              <span class="summary-key">Artikel:</span>
+              <span class="summary-value">{{ bestellung()!.produkte.length }}</span>
+            </div>
+            <div class="summary-row">
+              <span class="summary-key">Bestelldatum:</span>
+              <span class="summary-value">{{ formatDate(bestellung()!.bestelldatum) }}</span>
+            </div>
+            <div class="summary-divider"></div>
+            <div class="summary-row summary-total">
+              <span class="summary-key">Gesamtbetrag:</span>
+              <span class="summary-value total-amount">{{ formatPrice(total) }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>

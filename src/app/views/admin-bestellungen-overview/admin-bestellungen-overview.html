@@ -1,1 +1,88 @@
-<p>admin-bestellungen-overview works!</p>
+<div class="page-container">
+  <!-- Page header -->
+  <div class="page-header">
+    <div class="header-left">
+      <h1 class="page-title">
+        <span class="material-symbols-outlined title-icon">receipt_long</span>
+        Admin: Bestellungen
+      </h1>
+      <p class="page-subtitle">Übersicht und Verwaltung aller Bestellungen</p>
+    </div>
+  </div>
+
+  <!-- Stats row -->
+  @if (!loading()) {
+    <div class="stats-row">
+      <div class="stat-card">
+        <span class="material-symbols-outlined stat-icon stat-icon--total">shopping_bag</span>
+        <div class="stat-info">
+          <span class="stat-value">{{ bestellungen().length }}</span>
+          <span class="stat-label">Gesamt</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <span class="material-symbols-outlined stat-icon stat-icon--new">fiber_new</span>
+        <div class="stat-info">
+          <span class="stat-value">{{ countByZustand(BestellungsZustand.EINGEGANGEN) }}</span>
+          <span class="stat-label">Eingegangen</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <span class="material-symbols-outlined stat-icon stat-icon--processing">pending</span>
+        <div class="stat-info">
+          <span class="stat-value">{{ countByZustand(BestellungsZustand.IN_BEARBEITUNG) }}</span>
+          <span class="stat-label">In Bearbeitung</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <span class="material-symbols-outlined stat-icon stat-icon--shipped">local_shipping</span>
+        <div class="stat-info">
+          <span class="stat-value">{{ countByZustand(BestellungsZustand.VERSANDT) }}</span>
+          <span class="stat-label">Versandt</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <span class="material-symbols-outlined stat-icon stat-icon--done">check_circle</span>
+        <div class="stat-info">
+          <span class="stat-value">{{ countByZustand(BestellungsZustand.ANGEKOMMEN) }}</span>
+          <span class="stat-label">Angekommen</span>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Toolbar -->
+  <div class="toolbar-row">
+    <div class="filter-wrapper">
+      <span class="material-symbols-outlined filter-icon">filter_list</span>
+      <select class="filter-select" [(ngModel)]="filterZustand">
+        <option value="all">Alle Bestellungen</option>
+        <option [value]="BestellungsZustand.EINGEGANGEN">Eingegangen</option>
+        <option [value]="BestellungsZustand.IN_BEARBEITUNG">In Bearbeitung</option>
+        <option [value]="BestellungsZustand.VERSANDT">Versandt</option>
+        <option [value]="BestellungsZustand.ANGEKOMMEN">Angekommen</option>
+      </select>
+    </div>
+    @if (!loading()) {
+      <div class="result-count">
+        {{ filteredBestellungen.length }} Bestellung{{ filteredBestellungen.length !== 1 ? 'en' : '' }}
+      </div>
+    }
+  </div>
+
+  <!-- Content -->
+  @if (loading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Bestellungen werden geladen...</p>
+    </div>
+  } @else {
+    <div class="card table-card">
+      <app-admin-bestellungen-table
+        [bestellungen]="filteredBestellungen"
+        (detailsClicked)="onDetails($event)"
+        (deleteClicked)="onDelete($event)"
+      />
+    </div>
+  }
+</div>

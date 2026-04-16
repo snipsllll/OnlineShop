@@ -1,1 +1,76 @@
-<p>login works!</p>
+<div class="overlay" (click)="onOverlayClick($event)">
+  <div class="modal login-modal">
+    <div class="modal__header">
+      <div class="login-modal__header-content">
+        <div class="login-modal__icon">
+          <span class="material-symbols-outlined">lock</span>
+        </div>
+        <h2 class="modal__title">Anmelden</h2>
+      </div>
+      <button class="modal__close" (click)="dialogService.closeLogin()" title="Schließen">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <div class="modal__body">
+      @if (error) {
+        <div class="login-error">
+          <span class="material-symbols-outlined">error</span>
+          {{ error }}
+        </div>
+      }
+
+      <div class="form-group">
+        <label class="form-label" for="login-email">E-Mail-Adresse</label>
+        <input
+          id="login-email"
+          class="form-input"
+          [class.is-error]="error"
+          type="email"
+          [(ngModel)]="email"
+          placeholder="name@beispiel.de"
+          autocomplete="email"
+          (keyup.enter)="submit()"
+        >
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="login-password">Passwort</label>
+        <div class="login-modal__password-wrap">
+          <input
+            id="login-password"
+            class="form-input"
+            [class.is-error]="error"
+            [type]="showPassword ? 'text' : 'password'"
+            [(ngModel)]="password"
+            placeholder="Ihr Passwort"
+            autocomplete="current-password"
+            (keyup.enter)="submit()"
+          >
+          <button class="login-modal__pwd-toggle" type="button" (click)="showPassword = !showPassword" tabindex="-1">
+            <span class="material-symbols-outlined">{{ showPassword ? 'visibility_off' : 'visibility' }}</span>
+          </button>
+        </div>
+      </div>
+
+      <button
+        class="btn-primary login-modal__submit"
+        (click)="submit()"
+        [disabled]="loading"
+      >
+        @if (loading) {
+          <div class="spinner spinner--sm"></div>
+          Anmelden...
+        } @else {
+          <span class="material-symbols-outlined">login</span>
+          Anmelden
+        }
+      </button>
+
+      <div class="login-modal__footer">
+        <span class="login-modal__footer-text">Noch kein Konto?</span>
+        <button class="login-modal__switch-btn" (click)="switchToRegister()">Jetzt registrieren</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,2 +1,17 @@
 <app-topbar></app-topbar>
-<router-outlet></router-outlet>
+<main class="app-content">
+  <router-outlet></router-outlet>
+</main>
+
+@if (dialogService.loginOpen()) {
+  <app-login></app-login>
+}
+@if (dialogService.registerOpen()) {
+  <app-register></app-register>
+}
+@if (dialogService.confirmOpen()) {
+  <app-confirm></app-confirm>
+}
+@if (dialogService.messageOpen()) {
+  <app-message></app-message>
+}

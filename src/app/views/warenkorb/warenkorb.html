@@ -1,1 +1,140 @@
-<p>warenkorb works!</p>
+<div class="page-container warenkorb-page">
+
+  @if (loading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Warenkorb wird geladen...</p>
+    </div>
+  } @else {
+    <div class="page-header">
+      <h1 class="page-title">
+        <span class="material-symbols-outlined">shopping_cart</span>
+        Warenkorb
+      </h1>
+      @if (cartItems().length > 0) {
+        <span class="item-count badge badge--neutral">{{ cartItems().length }} {{ cartItems().length === 1 ? 'Artikel' : 'Artikel' }}</span>
+      }
+    </div>
+
+    @if (cartItems().length === 0) {
+      <div class="empty-state">
+        <span class="material-symbols-outlined empty-icon">shopping_cart</span>
+        <h2>Dein Warenkorb ist leer</h2>
+        <p>Entdecke unsere Produkte und füge sie deinem Warenkorb hinzu.</p>
+        <button class="btn-primary" (click)="goShopping()">
+          <span class="material-symbols-outlined">storefront</span>
+          Jetzt einkaufen
+        </button>
+      </div>
+    } @else {
+      <div class="cart-layout">
+        <!-- Cart Items -->
+        <div class="cart-items-section">
+          <div class="cart-items-list">
+            @for (item of cartItems(); track item.produkt.id) {
+              <div class="cart-item card">
+                <!-- Product Image -->
+                <div class="item-image">
+                  @if (item.produkt.imgRefs && item.produkt.imgRefs.length > 0) {
+                    <img [src]="item.produkt.imgRefs[0].path" [alt]="item.produkt.bezeichnung" />
+                  } @else {
+                    <div class="image-placeholder">
+                      <span class="material-symbols-outlined">image</span>
+                    </div>
+                  }
+                </div>
+
+                <!-- Product Info -->
+                <div class="item-info">
+                  <h3 class="item-name">{{ item.produkt.bezeichnung }}</h3>
+                  <p class="item-unit-price">{{ formatPrice(item.produkt.preis) }} / Stück</p>
+                  @if (!item.produkt.verfuegbar) {
+                    <span class="badge badge--error">Nicht verfügbar</span>
+                  }
+                </div>
+
+                <!-- Quantity Controls -->
+                <div class="item-quantity">
+                  <button class="qty-btn" (click)="updateAnzahl(item.produkt.id, item.anzahl - 1)" [disabled]="item.anzahl <= 1">
+                    <span class="material-symbols-outlined">remove</span>
+                  </button>
+                  <span class="qty-value">{{ item.anzahl }}</span>
+                  <button class="qty-btn" (click)="updateAnzahl(item.produkt.id, item.anzahl + 1)">
+                    <span class="material-symbols-outlined">add</span>
+                  </button>
+                </div>
+
+                <!-- Line Total -->
+                <div class="item-total">
+                  <span class="item-total-label">Gesamt</span>
+                  <span class="item-total-price">{{ formatPrice(item.produkt.preis * item.anzahl) }}</span>
+                </div>
+
+                <!-- Remove Button -->
+                <button class="remove-btn" (click)="removeItem(item.produkt.id)" title="Entfernen">
+                  <span class="material-symbols-outlined">delete</span>
+                </button>
+              </div>
+            }
+          </div>
+
+          <button class="continue-shopping-link" (click)="goShopping()">
+            <span class="material-symbols-outlined">arrow_back</span>
+            Weiter einkaufen
+          </button>
+        </div>
+
+        <!-- Order Summary -->
+        <aside class="order-summary card">
+          <h2 class="summary-title">Bestellübersicht</h2>
+
+          <div class="summary-items">
+            @for (item of cartItems(); track item.produkt.id) {
+              <div class="summary-line">
+                <span class="summary-item-name">{{ item.produkt.bezeichnung }} <span class="summary-qty">× {{ item.anzahl }}</span></span>
+                <span class="summary-item-price">{{ formatPrice(item.produkt.preis * item.anzahl) }}</span>
+              </div>
+            }
+          </div>
+
+          <div class="summary-divider"></div>
+
+          <div class="summary-row">
+            <span>Zwischensumme</span>
+            <span>{{ gesamtpreisFormatted }}</span>
+          </div>
+          <div class="summary-row shipping-row">
+            <span>Versand</span>
+            <span class="free-shipping">
+              <span class="material-symbols-outlined">local_shipping</span>
+              Kostenlos
+            </span>
+          </div>
+
+          <div class="summary-divider"></div>
+
+          <div class="summary-total">
+            <span>Gesamtbetrag</span>
+            <span class="total-price">{{ gesamtpreisFormatted }}</span>
+          </div>
+
+          <p class="vat-note">Inkl. gesetzlicher MwSt.</p>
+
+          <button class="btn-primary checkout-btn" (click)="goToCheckout()">
+            <span class="material-symbols-outlined">lock</span>
+            Zur Kasse
+          </button>
+
+          <div class="payment-icons">
+            <span class="payment-label">Sichere Zahlung mit</span>
+            <div class="payment-methods">
+              <span class="payment-badge">PayPal</span>
+              <span class="payment-badge">Visa</span>
+              <span class="payment-badge">Mastercard</span>
+            </div>
+          </div>
+        </aside>
+      </div>
+    }
+  }
+</div>

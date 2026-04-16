@@ -1,1 +1,30 @@
-<p>confirm works!</p>
+<div class="overlay" (click)="onOverlayClick($event)">
+  <div class="modal confirm-modal">
+    <div class="modal__header">
+      <div class="confirm-modal__header-content">
+        <div class="confirm-modal__icon">
+          <span class="material-symbols-outlined">help</span>
+        </div>
+        <h2 class="modal__title">{{ dialogService.confirmTitle() }}</h2>
+      </div>
+      <button class="modal__close" (click)="cancel()" title="Abbrechen">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <div class="modal__body">
+      <p class="confirm-modal__message">{{ dialogService.confirmMessage() }}</p>
+    </div>
+
+    <div class="modal__footer">
+      <button class="btn-ghost" (click)="cancel()">
+        <span class="material-symbols-outlined">close</span>
+        Abbrechen
+      </button>
+      <button class="btn-primary" (click)="confirm()">
+        <span class="material-symbols-outlined">check</span>
+        Bestätigen
+      </button>
+    </div>
+  </div>
+</div>

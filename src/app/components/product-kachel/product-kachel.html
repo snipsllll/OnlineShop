@@ -1,1 +1,37 @@
-<p>product-kachel works!</p>
+<div class="kachel" (click)="goToDetails()">
+  <div class="kachel__img-wrap">
+    @if (firstImagePath) {
+      <img class="kachel__img" [src]="firstImagePath" [alt]="produkt.bezeichnung">
+    } @else {
+      <div class="kachel__img-placeholder">
+        <span class="material-symbols-outlined">image</span>
+      </div>
+    }
+    <button class="kachel__fav-btn" (click)="toggleFavorit($event)" [class.kachel__fav-btn--active]="isFavorit" title="Favorit">
+      <span class="material-symbols-outlined">{{ isFavorit ? 'favorite' : 'favorite_border' }}</span>
+    </button>
+    @if (!produkt.verfuegbar) {
+      <div class="kachel__unavailable-badge">Nicht verfügbar</div>
+    }
+  </div>
+
+  <div class="kachel__body">
+    <h3 class="kachel__name">{{ produkt.bezeichnung }}</h3>
+    <p class="kachel__desc">{{ produkt.beschreibung }}</p>
+    <div class="kachel__stock">
+      @if (produkt.lagerbestand > 5) {
+        <span class="badge badge--success">Auf Lager ({{ produkt.lagerbestand }})</span>
+      } @else if (produkt.lagerbestand > 0) {
+        <span class="badge badge--warning">Nur noch {{ produkt.lagerbestand }} verfügbar</span>
+      } @else {
+        <span class="badge badge--error">Ausverkauft</span>
+      }
+    </div>
+    <div class="kachel__footer">
+      <span class="kachel__price">{{ priceFormatted }}</span>
+      <button class="kachel__cart-btn" (click)="addToCart($event)" [disabled]="!produkt.verfuegbar || addingToCart">
+        <span class="material-symbols-outlined">{{ addingToCart ? 'hourglass_empty' : 'add_shopping_cart' }}</span>
+      </button>
+    </div>
+  </div>
+</div>

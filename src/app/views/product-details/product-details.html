@@ -1,1 +1,154 @@
-<p>product-details works!</p>
+<div class="page-container">
+  <!-- Back Button -->
+  <button class="details__back-btn btn-ghost" (click)="goBack()">
+    <span class="material-symbols-outlined">arrow_back</span>
+    Zurück zur Übersicht
+  </button>
+
+  <!-- Loading -->
+  @if (loading()) {
+    <div class="loading-state">
+      <div class="spinner spinner--lg"></div>
+      <span>Produkt wird geladen...</span>
+    </div>
+  }
+
+  <!-- Not Found -->
+  @if (!loading() && !produkt()) {
+    <div class="empty-state">
+      <span class="material-symbols-outlined">sentiment_dissatisfied</span>
+      <p class="empty-state__title">Produkt nicht gefunden</p>
+      <p class="empty-state__text">Das gesuchte Produkt existiert nicht oder wurde entfernt.</p>
+      <button class="btn-primary" (click)="goBack()">Zur Übersicht</button>
+    </div>
+  }
+
+  <!-- Product Content -->
+  @if (!loading() && produkt()) {
+    <div class="details__layout">
+
+      <!-- Left: Images -->
+      <div class="details__images">
+        <div class="details__main-img-wrap">
+          @if (sortedImages.length > 0) {
+            <img
+              class="details__main-img"
+              [src]="sortedImages[selectedImageIndex].path"
+              [alt]="produkt()!.bezeichnung"
+            >
+          } @else {
+            <div class="details__img-placeholder">
+              <span class="material-symbols-outlined">image</span>
+              <span>Kein Bild vorhanden</span>
+            </div>
+          }
+          @if (!produkt()!.verfuegbar) {
+            <div class="details__unavailable-overlay">Nicht verfügbar</div>
+          }
+        </div>
+
+        @if (sortedImages.length > 1) {
+          <div class="details__thumbnails">
+            @for (img of sortedImages; track img.position; let i = $index) {
+              <button
+                class="details__thumb-btn"
+                [class.details__thumb-btn--active]="selectedImageIndex === i"
+                (click)="selectImage(i)"
+              >
+                <img [src]="img.path" [alt]="'Bild ' + (i + 1)">
+              </button>
+            }
+          </div>
+        }
+      </div>
+
+      <!-- Right: Info -->
+      <div class="details__info">
+        <div class="details__info-top">
+          <h1 class="details__name">{{ produkt()!.bezeichnung }}</h1>
+
+          <div class="details__stock-row">
+            @if (produkt()!.lagerbestand > 5) {
+              <span class="badge badge--success">
+                <span class="material-symbols-outlined" style="font-size:13px">check_circle</span>
+                Auf Lager ({{ produkt()!.lagerbestand }})
+              </span>
+            } @else if (produkt()!.lagerbestand > 0) {
+              <span class="badge badge--warning">
+                <span class="material-symbols-outlined" style="font-size:13px">warning</span>
+                Nur noch {{ produkt()!.lagerbestand }} verfügbar
+              </span>
+            } @else {
+              <span class="badge badge--error">
+                <span class="material-symbols-outlined" style="font-size:13px">cancel</span>
+                Ausverkauft
+              </span>
+            }
+          </div>
+
+          <div class="details__price">{{ priceFormatted }}</div>
+
+          <div class="details__divider"></div>
+
+          <div class="details__desc-section">
+            <h3 class="details__desc-title">Produktbeschreibung</h3>
+            <p class="details__desc">{{ produkt()!.beschreibung }}</p>
+          </div>
+        </div>
+
+        <div class="details__actions">
+          <!-- Quantity -->
+          @if (produkt()!.verfuegbar && produkt()!.lagerbestand > 0) {
+            <div class="details__quantity-row">
+              <span class="details__quantity-label">Menge</span>
+              <div class="details__quantity-ctrl">
+                <button class="details__qty-btn" (click)="decrementAnzahl()" [disabled]="anzahl <= 1">
+                  <span class="material-symbols-outlined">remove</span>
+                </button>
+                <span class="details__qty-value">{{ anzahl }}</span>
+                <button class="details__qty-btn" (click)="incrementAnzahl()" [disabled]="anzahl >= produkt()!.lagerbestand">
+                  <span class="material-symbols-outlined">add</span>
+                </button>
+              </div>
+            </div>
+          }
+
+          <!-- Cart Button -->
+          <button
+            class="details__cart-btn btn-primary"
+            (click)="addToCart()"
+            [disabled]="!produkt()!.verfuegbar || produkt()!.lagerbestand === 0 || addingToCart"
+          >
+            @if (addingToCart) {
+              <div class="spinner spinner--sm"></div>
+              Wird hinzugefügt...
+            } @else if (addedToCart) {
+              <span class="material-symbols-outlined">check</span>
+              Hinzugefügt!
+            } @else {
+              <span class="material-symbols-outlined">shopping_cart</span>
+              In den Warenkorb
+            }
+          </button>
+
+          <!-- Favorite + Cart Link Row -->
+          <div class="details__secondary-actions">
+            <button
+              class="details__fav-btn"
+              [class.details__fav-btn--active]="isFavorit()"
+              (click)="toggleFavorit()"
+            >
+              <span class="material-symbols-outlined">{{ isFavorit() ? 'favorite' : 'favorite_border' }}</span>
+              {{ isFavorit() ? 'Aus Favoriten entfernen' : 'Zu Favoriten hinzufügen' }}
+            </button>
+
+            <button class="btn-ghost details__view-cart-btn" (click)="goToCart()">
+              <span class="material-symbols-outlined">shopping_cart</span>
+              Warenkorb ansehen
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>

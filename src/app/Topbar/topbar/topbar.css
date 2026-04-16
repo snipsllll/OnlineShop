@@ -1,21 +1,158 @@
-:host {
-  height: 100%;
-}
-
 .topbar {
-  display: flex;
-  justify-content: end;
-  align-items: center;
-  border: 3px solid black;
-  width: calc(100vw - 6px);
-  height: 40px;
-  padding: 5px 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--topbar-height);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+  z-index: 100;
+  border-bottom: 1px solid var(--border);
 }
 
-.topbar-item {
+.topbar__inner {
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 100%;
   display: flex;
   align-items: center;
-  height: 100%;
+  gap: 16px;
+}
+
+.topbar__left {
+  flex-shrink: 0;
+}
+
+.topbar__logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: var(--radius-md);
+  transition: background var(--transition);
+  color: var(--primary);
+}
+.topbar__logo:hover {
+  background: var(--primary-light);
+}
+.topbar__logo .material-symbols-outlined {
+  font-size: 28px;
+}
+.topbar__logo-text {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -0.3px;
+}
+
+.topbar__center {
+  flex: 1;
+  max-width: 480px;
+}
+
+.topbar__search {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.topbar__search-icon {
+  position: absolute;
+  left: 12px;
+  color: var(--text-muted);
+  font-size: 20px;
+  pointer-events: none;
+}
+.topbar__search-input {
+  width: 100%;
+  padding: 10px 16px 10px 40px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  background: var(--bg);
+  font-size: 14px;
+  color: var(--text);
+  outline: none;
+  transition: border-color var(--transition), box-shadow var(--transition);
+  font-family: inherit;
+}
+.topbar__search-input::placeholder {
+  color: var(--text-muted);
+}
+.topbar__search-input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+  background: white;
+}
+
+.topbar__right {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+}
+
+.topbar__icon-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
   justify-content: center;
-  margin-right: 5px;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: none;
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: background var(--transition), color var(--transition);
+}
+.topbar__icon-btn:hover {
+  background: var(--bg);
+  color: var(--text);
+}
+.topbar__icon-btn .material-symbols-outlined {
+  font-size: 22px;
+}
+
+.topbar__cart-btn {
+  position: relative;
+}
+
+.topbar__cart-badge {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  background: var(--error);
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  min-width: 16px;
+  height: 16px;
+  border-radius: var(--radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 3px;
+  line-height: 1;
+}
+
+.topbar__btn-login {
+  padding: 8px 18px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-left: 8px;
+  transition: background var(--transition), box-shadow var(--transition);
+  font-family: inherit;
+}
+.topbar__btn-login:hover {
+  background: var(--primary-dark);
+  box-shadow: 0 2px 8px rgba(59,130,246,0.3);
 }

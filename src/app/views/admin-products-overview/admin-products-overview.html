@@ -1,1 +1,134 @@
-<p>admin-products-overview works!</p>
+<div class="page-container">
+  <div class="page-header">
+    <div class="header-left">
+      <h1 class="page-title">
+        <span class="material-symbols-outlined title-icon">inventory_2</span>
+        Admin: Produkte
+      </h1>
+      <p class="page-subtitle">Verwalte alle Produkte im Shop</p>
+    </div>
+    <div class="header-right">
+      <button class="btn-primary" (click)="addProdukt()">
+        <span class="material-symbols-outlined btn-icon">add</span>
+        Neues Produkt
+      </button>
+    </div>
+  </div>
+
+  <div class="toolbar-row">
+    <div class="search-wrapper">
+      <span class="material-symbols-outlined search-icon">search</span>
+      <input
+        class="search-input"
+        type="text"
+        placeholder="Nach Name oder ID suchen..."
+        [(ngModel)]="searchText"
+      />
+      @if (searchText) {
+        <button class="search-clear" (click)="searchText = ''">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      }
+    </div>
+    <div class="result-count">
+      @if (!loading()) {
+        <span>{{ filteredProdukte.length }} Produkt{{ filteredProdukte.length !== 1 ? 'e' : '' }}</span>
+      }
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Produkte werden geladen...</p>
+    </div>
+  } @else {
+    <div class="card table-card">
+      @if (filteredProdukte.length === 0) {
+        <div class="empty-state">
+          <span class="material-symbols-outlined empty-icon">search_off</span>
+          <p class="empty-title">Keine Produkte gefunden</p>
+          <p class="empty-subtitle">
+            @if (searchText) {
+              Keine Produkte für "{{ searchText }}" gefunden. Versuche einen anderen Suchbegriff.
+            } @else {
+              Noch keine Produkte vorhanden. Füge dein erstes Produkt hinzu.
+            }
+          </p>
+          @if (!searchText) {
+            <button class="btn-primary" (click)="addProdukt()">
+              <span class="material-symbols-outlined btn-icon">add</span>
+              Neues Produkt
+            </button>
+          }
+        </div>
+      } @else {
+        <div class="table-scroll">
+          <table class="products-table">
+            <thead>
+              <tr>
+                <th class="col-image">Bild</th>
+                <th class="col-name">Name</th>
+                <th class="col-price">Preis</th>
+                <th class="col-stock">Lagerbestand</th>
+                <th class="col-status">Verfügbar</th>
+                <th class="col-actions">Aktionen</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (produkt of filteredProdukte; track produkt.id) {
+                <tr class="table-row">
+                  <td class="col-image">
+                    <div class="img-cell">
+                      @if (produkt.imgRefs && produkt.imgRefs.length > 0) {
+                        <div class="img-indicator has-images" [title]="produkt.imgRefs.length + ' Bild(er)'">
+                          <span class="material-symbols-outlined">image</span>
+                          <span class="img-count">{{ produkt.imgRefs.length }}</span>
+                        </div>
+                      } @else {
+                        <div class="img-indicator no-images" title="Kein Bild">
+                          <span class="material-symbols-outlined">hide_image</span>
+                        </div>
+                      }
+                    </div>
+                  </td>
+                  <td class="col-name">
+                    <div class="product-name">{{ produkt.bezeichnung }}</div>
+                    <div class="product-id" [title]="produkt.id">#{{ produkt.id.slice(0, 8) }}&hellip;</div>
+                  </td>
+                  <td class="col-price">
+                    <span class="price-value">{{ formatPrice(produkt.preis) }}</span>
+                  </td>
+                  <td class="col-stock">
+                    <span class="stock-badge" [class.stock-low]="produkt.lagerbestand <= 5" [class.stock-ok]="produkt.lagerbestand > 5">
+                      {{ produkt.lagerbestand }}
+                    </span>
+                  </td>
+                  <td class="col-status">
+                    @if (produkt.verfuegbar) {
+                      <span class="badge badge--success">Verfügbar</span>
+                    } @else {
+                      <span class="badge badge--error">Nicht verfügbar</span>
+                    }
+                  </td>
+                  <td class="col-actions">
+                    <div class="action-buttons">
+                      <button class="btn-secondary btn-sm" (click)="editProdukt(produkt.id)">
+                        <span class="material-symbols-outlined btn-icon">edit</span>
+                        Bearbeiten
+                      </button>
+                      <button class="btn-danger btn-sm" (click)="deleteProdukt(produkt.id)">
+                        <span class="material-symbols-outlined btn-icon">delete</span>
+                        Löschen
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </div>
+  }
+</div>

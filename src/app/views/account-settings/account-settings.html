@@ -1,1 +1,220 @@
-<p>account-settings works!</p>
+<div class="page-container account-page">
+
+  @if (loading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Konto wird geladen...</p>
+    </div>
+  } @else if (!user()) {
+    <!-- Not Logged In -->
+    <div class="not-logged-in card">
+      <span class="material-symbols-outlined not-logged-icon">account_circle</span>
+      <h2>Nicht angemeldet</h2>
+      <p>Bitte melde dich an, um deine Kontoeinstellungen zu sehen.</p>
+      <div class="auth-buttons">
+        <button class="btn-primary" (click)="dialogService.openLogin()">
+          <span class="material-symbols-outlined">login</span>
+          Anmelden
+        </button>
+        <button class="btn-secondary" (click)="dialogService.openRegister()">
+          <span class="material-symbols-outlined">person_add</span>
+          Registrieren
+        </button>
+      </div>
+    </div>
+  } @else {
+    <!-- User Header -->
+    <div class="user-header card">
+      <div class="avatar">
+        <span class="material-symbols-outlined avatar-icon">account_circle</span>
+      </div>
+      <div class="user-info">
+        <h2 class="user-name">
+          @if (vorname || nachname) {
+            {{ vorname }} {{ nachname }}
+          } @else {
+            Mein Konto
+          }
+        </h2>
+        <span class="user-email">{{ user()!.email }}</span>
+      </div>
+      <button class="btn-danger logout-btn" (click)="logout()">
+        <span class="material-symbols-outlined">logout</span>
+        Abmelden
+      </button>
+    </div>
+
+    <div class="settings-layout">
+      <!-- Settings Form -->
+      <div class="settings-main">
+
+        <!-- Personal Data -->
+        <div class="card settings-card">
+          <h3 class="card-title">
+            <span class="material-symbols-outlined">person</span>
+            Persönliche Daten
+          </h3>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="vorname">Vorname</label>
+              <input
+                id="vorname"
+                class="form-input"
+                type="text"
+                [(ngModel)]="vorname"
+                placeholder="Max"
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="nachname">Nachname</label>
+              <input
+                id="nachname"
+                class="form-input"
+                type="text"
+                [(ngModel)]="nachname"
+                placeholder="Mustermann"
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="email">E-Mail</label>
+            <input
+              id="email"
+              class="form-input form-input--readonly"
+              type="email"
+              [value]="user()!.email"
+              readonly
+            />
+            <span class="field-hint">E-Mail-Adresse kann nicht geändert werden.</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="telefon">Telefonnummer</label>
+            <input
+              id="telefon"
+              class="form-input"
+              type="tel"
+              [(ngModel)]="telefonnummer"
+              placeholder="+49 123 456789"
+            />
+          </div>
+        </div>
+
+        <!-- Address Data -->
+        <div class="card settings-card">
+          <h3 class="card-title">
+            <span class="material-symbols-outlined">home</span>
+            Lieferadresse
+          </h3>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="strasse">Straße</label>
+              <input
+                id="strasse"
+                class="form-input"
+                type="text"
+                [(ngModel)]="strasse"
+                placeholder="Musterstraße"
+              />
+            </div>
+            <div class="form-group form-group--narrow">
+              <label class="form-label" for="hausnummer">Nr.</label>
+              <input
+                id="hausnummer"
+                class="form-input"
+                type="text"
+                [(ngModel)]="hausnummer"
+                placeholder="12a"
+              />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group form-group--narrow">
+              <label class="form-label" for="plz">PLZ</label>
+              <input
+                id="plz"
+                class="form-input"
+                type="text"
+                [(ngModel)]="plz"
+                placeholder="12345"
+              />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="ort">Ort</label>
+              <input
+                id="ort"
+                class="form-input"
+                type="text"
+                [(ngModel)]="ort"
+                placeholder="Berlin"
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="land">Land</label>
+            <select id="land" class="form-input" [(ngModel)]="land">
+              <option value="Deutschland">Deutschland</option>
+              <option value="Österreich">Österreich</option>
+              <option value="Schweiz">Schweiz</option>
+              <option value="Frankreich">Frankreich</option>
+              <option value="Niederlande">Niederlande</option>
+              <option value="Belgien">Belgien</option>
+              <option value="Polen">Polen</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Save Button & Feedback -->
+        <div class="save-section">
+          @if (saveSuccess()) {
+            <div class="success-toast">
+              <span class="material-symbols-outlined">check_circle</span>
+              Änderungen erfolgreich gespeichert!
+            </div>
+          }
+          <button class="btn-primary save-btn" (click)="save()" [disabled]="saving()">
+            @if (saving()) {
+              <div class="spinner spinner--sm"></div>
+              Wird gespeichert...
+            } @else {
+              <span class="material-symbols-outlined">save</span>
+              Änderungen speichern
+            }
+          </button>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <aside class="settings-sidebar">
+        <div class="card sidebar-card">
+          <h3 class="card-title">
+            <span class="material-symbols-outlined">list_alt</span>
+            Bestellungen
+          </h3>
+          <p class="sidebar-text">Verwalte deine Bestellungen und verfolge den aktuellen Lieferstatus.</p>
+          <button class="btn-secondary sidebar-btn" (click)="goToOrders()">
+            <span class="material-symbols-outlined">shopping_bag</span>
+            Meine Bestellungen
+          </button>
+        </div>
+
+        <div class="card sidebar-card sidebar-card--danger">
+          <h3 class="card-title card-title--danger">
+            <span class="material-symbols-outlined">logout</span>
+            Abmelden
+          </h3>
+          <p class="sidebar-text">Möchtest du dich aus deinem Konto abmelden?</p>
+          <button class="btn-danger sidebar-btn" (click)="logout()">
+            <span class="material-symbols-outlined">logout</span>
+            Abmelden
+          </button>
+        </div>
+      </aside>
+    </div>
+  }
+</div>

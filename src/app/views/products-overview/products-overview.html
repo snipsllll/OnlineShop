@@ -1,1 +1,67 @@
-<p>products-overview works!</p>
+<div class="page-container">
+  <!-- Page Header -->
+  <div class="overview__header">
+    <div class="overview__header-text">
+      <h1 class="overview__title">Unsere Produkte</h1>
+      <p class="overview__subtitle">Entdecken Sie unsere vielfältige Produktauswahl</p>
+    </div>
+    @if (!loading()) {
+      <span class="overview__count">{{ filteredProdukte.length }} Produkte</span>
+    }
+  </div>
+
+  <!-- Filter Bar -->
+  <div class="overview__filterbar">
+    <div class="filterbar__search">
+      <span class="material-symbols-outlined filterbar__search-icon">search</span>
+      <input
+        class="form-input filterbar__search-input"
+        type="text"
+        [(ngModel)]="searchText"
+        placeholder="Produkte suchen..."
+      >
+    </div>
+
+    <div class="filterbar__controls">
+      <select class="form-input filterbar__sort" [(ngModel)]="sortBy">
+        <option value="name">Name (A–Z)</option>
+        <option value="preis-asc">Preis aufsteigend</option>
+        <option value="preis-desc">Preis absteigend</option>
+      </select>
+
+      <label class="filterbar__toggle">
+        <input type="checkbox" [(ngModel)]="showOnlyAvailable" class="filterbar__checkbox">
+        <span class="filterbar__toggle-label">Nur verfügbare</span>
+      </label>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  @if (loading()) {
+    <div class="loading-state">
+      <div class="spinner spinner--lg"></div>
+      <span>Produkte werden geladen...</span>
+    </div>
+  }
+
+  <!-- Product Grid -->
+  @if (!loading()) {
+    @if (filteredProdukte.length > 0) {
+      <div class="overview__grid">
+        @for (produkt of filteredProdukte; track produkt.id) {
+          <app-product-kachel
+            [produkt]="produkt"
+            [isFavorit]="isFavorit(produkt.id)"
+            (favoritToggled)="onFavoritToggled($event)"
+          ></app-product-kachel>
+        }
+      </div>
+    } @else {
+      <div class="empty-state">
+        <span class="material-symbols-outlined">search_off</span>
+        <p class="empty-state__title">Keine Produkte gefunden</p>
+        <p class="empty-state__text">Versuchen Sie einen anderen Suchbegriff oder entfernen Sie die Filter.</p>
+      </div>
+    }
+  }
+</div>

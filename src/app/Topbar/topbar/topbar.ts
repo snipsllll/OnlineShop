@@ -1,21 +1,36 @@
-import {Component, inject, WritableSignal} from '@angular/core';
-import {TopbarItemButton} from './topbar-item-button/topbar-item-button';
-import {TopbarItemText} from './topbar-item-text/topbar-item-text';
-import {ITopbarItem} from '../ITopbarItem';
-import {TopbarService} from '../topbar.service';
-import {TopbarItemType} from '../TopbarItemType';
+import {Component, inject, OnInit, signal} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {FormsModule} from '@angular/forms';
+import {RoutingService} from '../../services/routing.service';
+import {DialogService} from '../../services/dialog.service';
+import {WarenkorbService} from '../../services/warenkorb.service';
+import {MyRoutes} from '../../models/enums/MyRoutes';
 
 @Component({
   selector: 'app-topbar',
-  imports: [
-    TopbarItemButton,
-    TopbarItemText
-  ],
+  standalone: true,
+  imports: [CommonModule, FormsModule],
   templateUrl: './topbar.html',
   styleUrl: './topbar.css',
 })
-export class Topbar {
-  private topbarService = inject(TopbarService);
-  protected topbarItemsSignal: WritableSignal<ITopbarItem[]> = this.topbarService.getTopbarItemsSignal();
-  protected readonly TopbarItemType = TopbarItemType;
+export class Topbar implements OnInit {
+  private routingService = inject(RoutingService);
+  protected dialogService = inject(DialogService);
+  private warenkorbService = inject(WarenkorbService);
+
+  protected cartCount = signal(0);
+  protected searchQuery = '';
+
+  ngOnInit() {
+    this.warenkorbService.getWahrenkorb().then(wk => {
+      this.cartCount.set(wk?.produkteMitAnzahl?.length ?? 0);
+    }).catch(() => {});
+  }
+
+  goHome() { this.routingService.route(MyRoutes.PRODUKTE_OVERVIEW); }
+  goFavorites() { this.routingService.route(MyRoutes.FAVORITEN_LISTE); }
+  goCart() { this.routingService.route(MyRoutes.WARENKORB); }
+  goAccount() { this.routingService.route(MyRoutes.ACCOUNT_SETTINGS); }
+  goOrders() { this.routingService.route(MyRoutes.BESTELLUNGEN_OVERVIEW); }
+  openLogin() { this.dialogService.openLogin(); }
 }

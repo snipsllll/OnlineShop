@@ -1,22 +1,33 @@
-<div class="topbar">
-  @let topbarItems = topbarItemsSignal();
-  @for (topbarItem of topbarItems; track $index) {
-    <div class="topbar-item">
-      @switch (topbarItem.type) {
-        @case (TopbarItemType.BUTTON_ICON) {
-          <app-topbar-item-button [item]="topbarItem"></app-topbar-item-button>
-        }
-        @case (TopbarItemType.BUTTON_TEXT) {
-          <app-topbar-item-button [item]="topbarItem"></app-topbar-item-button>
-        }
-        @case (TopbarItemType.TEXT) {
-          <app-topbar-item-text [item]="topbarItem"></app-topbar-item-text>
-        }
-        @default {
-          |---|
-        }
-      }
+<header class="topbar">
+  <div class="topbar__inner">
+    <div class="topbar__left">
+      <button class="topbar__logo" (click)="goHome()">
+        <span class="material-symbols-outlined">shopping_bag</span>
+        <span class="topbar__logo-text">OnlineShop</span>
+      </button>
     </div>
-  }
-</div>
 
+    <div class="topbar__center">
+      <div class="topbar__search">
+        <span class="material-symbols-outlined topbar__search-icon">search</span>
+        <input class="topbar__search-input" type="text" [(ngModel)]="searchQuery" placeholder="Produkte suchen...">
+      </div>
+    </div>
+
+    <div class="topbar__right">
+      <button class="topbar__icon-btn" (click)="goFavorites()" title="Favoriten">
+        <span class="material-symbols-outlined">favorite</span>
+      </button>
+      <button class="topbar__icon-btn topbar__cart-btn" (click)="goCart()" title="Warenkorb">
+        <span class="material-symbols-outlined">shopping_cart</span>
+        @if (cartCount() > 0) {
+          <span class="topbar__cart-badge">{{ cartCount() }}</span>
+        }
+      </button>
+      <button class="topbar__icon-btn" (click)="goAccount()" title="Konto">
+        <span class="material-symbols-outlined">person</span>
+      </button>
+      <button class="topbar__btn-login" (click)="openLogin()">Anmelden</button>
+    </div>
+  </div>
+</header>

@@ -1,1 +1,211 @@
-<p>bestellung-details works!</p>
+<div class="page-container details-page">
+
+  <!-- Back Button -->
+  <button class="back-btn" (click)="goBack()">
+    <span class="material-symbols-outlined">arrow_back</span>
+    Zurück zu Bestellungen
+  </button>
+
+  @if (loading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Bestellung wird geladen...</p>
+    </div>
+  } @else if (!bestellung()) {
+    <div class="not-found card">
+      <span class="material-symbols-outlined">search_off</span>
+      <h2>Bestellung nicht gefunden</h2>
+      <p>Diese Bestellung existiert nicht oder du hast keinen Zugriff.</p>
+      <button class="btn-primary" (click)="goBack()">Zu meinen Bestellungen</button>
+    </div>
+  } @else {
+    <!-- Page Title -->
+    <div class="detail-header">
+      <div class="header-title">
+        <h1 class="page-title">Bestellung Details</h1>
+        <span class="order-id-display">#{{ bestellung()!.id.slice(0, 8).toUpperCase() }}</span>
+      </div>
+      <div class="header-badges">
+        <span class="badge" [class]="getZustandClass(bestellung()!.bestellungsZustand)">
+          {{ getZustandLabel(bestellung()!.bestellungsZustand) }}
+        </span>
+        @if (bestellung()!.zahlungsZustand === ZahlungsZustand.BEZAHLT) {
+          <span class="badge badge--success">
+            <span class="material-symbols-outlined">check_circle</span>
+            Bezahlt
+          </span>
+        } @else {
+          <span class="badge badge--warning">
+            <span class="material-symbols-outlined">pending</span>
+            Zahlung ausstehend
+          </span>
+        }
+      </div>
+    </div>
+
+    <!-- Order Meta -->
+    <div class="order-meta card">
+      <div class="meta-item">
+        <span class="meta-label">Bestelldatum</span>
+        <span class="meta-value">{{ formatDate(bestellung()!.bestelldatum) }}</span>
+      </div>
+      <div class="meta-divider"></div>
+      <div class="meta-item">
+        <span class="meta-label">Bestellnummer</span>
+        <span class="meta-value mono">{{ bestellung()!.id }}</span>
+      </div>
+      <div class="meta-divider"></div>
+      <div class="meta-item">
+        <span class="meta-label">Artikel gesamt</span>
+        <span class="meta-value">{{ bestellung()!.produkte.length }}</span>
+      </div>
+    </div>
+
+    <!-- Progress Tracker -->
+    <div class="card progress-card">
+      <h2 class="section-title">
+        <span class="material-symbols-outlined">local_shipping</span>
+        Bestellstatus
+      </h2>
+      <div class="progress-tracker">
+        <div class="progress-step" [class.step--done]="bestellung()!.bestellungsZustand >= BestellungsZustand.EINGEGANGEN" [class.step--active]="bestellung()!.bestellungsZustand === BestellungsZustand.EINGEGANGEN">
+          <div class="step-icon">
+            <span class="material-symbols-outlined">inbox</span>
+          </div>
+          <div class="step-info">
+            <span class="step-name">Eingegangen</span>
+            <span class="step-desc">Bestellung erhalten</span>
+          </div>
+        </div>
+        <div class="progress-line" [class.line--done]="bestellung()!.bestellungsZustand >= BestellungsZustand.IN_BEARBEITUNG"></div>
+        <div class="progress-step" [class.step--done]="bestellung()!.bestellungsZustand >= BestellungsZustand.IN_BEARBEITUNG" [class.step--active]="bestellung()!.bestellungsZustand === BestellungsZustand.IN_BEARBEITUNG">
+          <div class="step-icon">
+            <span class="material-symbols-outlined">inventory</span>
+          </div>
+          <div class="step-info">
+            <span class="step-name">In Bearbeitung</span>
+            <span class="step-desc">Wird verpackt</span>
+          </div>
+        </div>
+        <div class="progress-line" [class.line--done]="bestellung()!.bestellungsZustand >= BestellungsZustand.VERSANDT"></div>
+        <div class="progress-step" [class.step--done]="bestellung()!.bestellungsZustand >= BestellungsZustand.VERSANDT" [class.step--active]="bestellung()!.bestellungsZustand === BestellungsZustand.VERSANDT">
+          <div class="step-icon">
+            <span class="material-symbols-outlined">local_shipping</span>
+          </div>
+          <div class="step-info">
+            <span class="step-name">Versandt</span>
+            <span class="step-desc">Unterwegs zu dir</span>
+          </div>
+        </div>
+        <div class="progress-line" [class.line--done]="bestellung()!.bestellungsZustand >= BestellungsZustand.ANGEKOMMEN"></div>
+        <div class="progress-step" [class.step--done]="bestellung()!.bestellungsZustand >= BestellungsZustand.ANGEKOMMEN" [class.step--active]="bestellung()!.bestellungsZustand === BestellungsZustand.ANGEKOMMEN">
+          <div class="step-icon">
+            <span class="material-symbols-outlined">home</span>
+          </div>
+          <div class="step-info">
+            <span class="step-name">Angekommen</span>
+            <span class="step-desc">Erfolgreich geliefert</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="details-layout">
+      <!-- Items Table -->
+      <div class="items-section card">
+        <h2 class="section-title">
+          <span class="material-symbols-outlined">shopping_basket</span>
+          Bestellte Artikel
+        </h2>
+
+        <div class="items-table">
+          <div class="table-header">
+            <span class="col-product">Produkt</span>
+            <span class="col-qty">Menge</span>
+            <span class="col-price">Einzelpreis</span>
+            <span class="col-total">Gesamt</span>
+          </div>
+          @for (pos of bestellung()!.produkte; track pos.id) {
+            <div class="table-row">
+              <span class="col-product product-name">{{ pos.bezeichnung }}</span>
+              <span class="col-qty">
+                <span class="qty-chip">{{ pos.anzahl }}</span>
+              </span>
+              <span class="col-price price-unit">{{ formatPrice(pos.preis) }}</span>
+              <span class="col-total price-total">{{ formatPrice(pos.preis * pos.anzahl) }}</span>
+            </div>
+          }
+        </div>
+
+        <!-- Total -->
+        <div class="order-total-section">
+          <div class="total-row">
+            <span>Zwischensumme</span>
+            <span>{{ formatPrice(total) }}</span>
+          </div>
+          <div class="total-row">
+            <span>Versand</span>
+            <span class="free-text">Kostenlos</span>
+          </div>
+          <div class="total-divider"></div>
+          <div class="total-row total-row--final">
+            <span>Gesamtbetrag</span>
+            <span class="grand-total">{{ formatPrice(total) }}</span>
+          </div>
+          <p class="vat-note">Inkl. gesetzlicher MwSt.</p>
+        </div>
+      </div>
+
+      <!-- Shipping Address -->
+      <div class="sidebar-section">
+        <div class="card address-card">
+          <h2 class="section-title">
+            <span class="material-symbols-outlined">location_on</span>
+            Lieferadresse
+          </h2>
+          <address class="address-block">
+            <div class="address-line">
+              <span class="material-symbols-outlined">home</span>
+              {{ bestellung()!.lieferadresse.strasse }} {{ bestellung()!.lieferadresse.hausnummer }}
+            </div>
+            <div class="address-line">
+              <span class="material-symbols-outlined">location_city</span>
+              {{ bestellung()!.lieferadresse.plz }} {{ bestellung()!.lieferadresse.ort }}
+            </div>
+            <div class="address-line">
+              <span class="material-symbols-outlined">flag</span>
+              {{ bestellung()!.lieferadresse.land }}
+            </div>
+          </address>
+        </div>
+
+        <!-- Payment Info -->
+        <div class="card payment-card">
+          <h2 class="section-title">
+            <span class="material-symbols-outlined">payments</span>
+            Zahlung
+          </h2>
+          <div class="payment-status">
+            @if (bestellung()!.zahlungsZustand === ZahlungsZustand.BEZAHLT) {
+              <div class="payment-ok">
+                <span class="material-symbols-outlined">check_circle</span>
+                <div>
+                  <p class="payment-title">Zahlung erhalten</p>
+                  <p class="payment-sub">Zahlung über PayPal bestätigt</p>
+                </div>
+              </div>
+            } @else {
+              <div class="payment-pending">
+                <span class="material-symbols-outlined">schedule</span>
+                <div>
+                  <p class="payment-title">Zahlung ausstehend</p>
+                  <p class="payment-sub">Bitte bezahle über PayPal</p>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>

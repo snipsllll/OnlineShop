@@ -1,11 +1,101 @@
-import { Component } from '@angular/core';
+import {Component, inject, OnInit, signal} from '@angular/core';
+import {CommonModule} from '@angular/common';
+import {FormsModule} from '@angular/forms';
+import {ActivatedRoute} from '@angular/router';
+import {IProdukt} from '../../models/interfaces/IProdukt';
+import {ProduktService} from '../../services/produkt.service';
+import {WarenkorbService} from '../../services/warenkorb.service';
+import {FavoritService} from '../../services/favorit.service';
+import {RoutingService} from '../../services/routing.service';
+import {MyRoutes} from '../../models/enums/MyRoutes';
+import {RouteParams} from '../../models/enums/RouteParams';
 
 @Component({
   selector: 'app-product-details',
-  imports: [],
+  standalone: true,
+  imports: [CommonModule, FormsModule],
   templateUrl: './product-details.html',
   styleUrl: './product-details.css',
 })
-export class ProductDetails {
+export class ProductDetails implements OnInit {
+  private route = inject(ActivatedRoute);
+  private produktService = inject(ProduktService);
+  private warenkorbService = inject(WarenkorbService);
+  private favoritService = inject(FavoritService);
+  private routingService = inject(RoutingService);
 
+  protected produkt = signal<IProdukt | null>(null);
+  protected loading = signal(true);
+  protected isFavorit = signal(false);
+  protected anzahl = 1;
+  protected addingToCart = false;
+  protected addedToCart = false;
+  protected selectedImageIndex = 0;
+
+  async ngOnInit() {
+    const id = this.route.snapshot.paramMap.get(RouteParams.PRODUCT_ID);
+    if (!id) return;
+    this.loading.set(true);
+    try {
+      const [produkt, favIds] = await Promise.all([
+        this.produktService.getProdukt(id),
+        this.favoritService.getFavoritenIds().catch(() => [] as string[])
+      ]);
+      this.produkt.set(produkt ?? null);
+      this.isFavorit.set(favIds.includes(id));
+    } finally {
+      this.loading.set(false);
+    }
+  }
+
+  async addToCart() {
+    const p = this.produkt();
+    if (!p) return;
+    this.addingToCart = true;
+    try {
+      await this.warenkorbService.addToWarenkorb(p.id, this.anzahl);
+      this.addedToCart = true;
+      setTimeout(() => { this.addedToCart = false; }, 2000);
+    } finally {
+      this.addingToCart = false;
+    }
+  }
+
+  async toggleFavorit() {
+    const p = this.produkt();
+    if (!p) return;
+    if (this.isFavorit()) {
+      await this.favoritService.removeFromFavorit(p.id);
+      this.isFavorit.set(false);
+    } else {
+      await this.favoritService.addToFavorit(p.id);
+      this.isFavorit.set(true);
+    }
+  }
+
+  incrementAnzahl() {
+    const p = this.produkt();
+    if (p && this.anzahl < p.lagerbestand) this.anzahl++;
+  }
+
+  decrementAnzahl() {
+    if (this.anzahl > 1) this.anzahl--;
+  }
+
+  selectImage(index: number) {
+    this.selectedImageIndex = index;
+  }
+
+  goBack() { this.routingService.route(MyRoutes.PRODUKTE_OVERVIEW); }
+  goToCart() { this.routingService.route(MyRoutes.WARENKORB); }
+
+  get sortedImages() {
+    return this.produkt()?.imgRefs?.slice().sort((a, b) => a.position - b.position) ?? [];
+  }
+
+  get priceFormatted(): string {
+    const p = this.produkt();
+    if (!p) return '';
+    return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(p.preis);
+  }
 }

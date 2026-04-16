@@ -1,1 +1,44 @@
-<p>favoriten-liste works!</p>
+<div class="page-container favoriten-page">
+
+  <div class="page-header">
+    <div class="header-left">
+      <h1 class="page-title">
+        <span class="material-symbols-outlined">favorite</span>
+        Meine Favoriten
+      </h1>
+      @if (!loading() && favoriten().length > 0) {
+        <span class="badge badge--neutral">{{ favoriten().length }} {{ favoriten().length === 1 ? 'Produkt' : 'Produkte' }}</span>
+      }
+    </div>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Favoriten werden geladen...</p>
+    </div>
+  } @else if (favoriten().length === 0) {
+    <div class="empty-state">
+      <div class="empty-icon-wrapper">
+        <span class="material-symbols-outlined empty-icon">favorite_border</span>
+      </div>
+      <h2>Noch keine Favoriten</h2>
+      <p>Füge Produkte zu deinen Favoriten hinzu, um sie hier zu sehen.</p>
+      <button class="btn-primary" (click)="goShopping()">
+        <span class="material-symbols-outlined">storefront</span>
+        Produkte entdecken
+      </button>
+    </div>
+  } @else {
+    <div class="products-grid">
+      @for (produkt of favoriten(); track produkt.id) {
+        <app-product-kachel
+          [produkt]="produkt"
+          [isFavorit]="favoritenIds().includes(produkt.id)"
+          (favoritToggled)="onFavoritToggled($event)"
+        />
+      }
+    </div>
+  }
+
+</div>
