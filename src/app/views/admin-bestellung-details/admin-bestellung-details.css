@@ -409,4 +409,24 @@
     font-size: 0.7rem;
     word-break: break-all;
   }
+
+  /* Touch-friendly save button */
+  .save-btn {
+    width: 100%;
+    justify-content: center;
+    min-height: 44px;
+  }
+
+  /* Card padding reduction */
+  .items-card,
+  .address-card,
+  .status-card,
+  .summary-card {
+    padding: 16px;
+  }
+
+  /* Status dropdowns full-width */
+  .status-select {
+    width: 100%;
+  }
 }

@@ -1,4 +1,4 @@
-import {Component, inject} from '@angular/core';
+import {Component, inject, signal} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {Router} from '@angular/router';
 import {RoutingService} from '../../services/routing.service';
@@ -21,7 +21,11 @@ export class AdminNav {
   protected perms = inject(PermissionService);
 
   protected readonly Rolle = Rolle;
+  protected menuOpen = signal(false);
+
   protected isOwner() { return this.authService.currentRolle() === Rolle.OWNER; }
+  toggleMenu() { this.menuOpen.update(v => !v); }
+  closeMenu() { this.menuOpen.set(false); }
 
   isActive(section: 'dashboard' | 'products' | 'orders' | 'users' | 'settings' | 'owner-settings'): boolean {
     const url = this.router.url;
@@ -36,11 +40,11 @@ export class AdminNav {
     }
   }
 
-  goDashboard()      { this.routingService.route(MyRoutes.ADMIN_DASHBOARD); }
-  goProducts()       { this.routingService.route(MyRoutes.ADMIN_PRODUCTS_OVERVIEW); }
-  goOrders()         { this.routingService.route(MyRoutes.ADMIN_BESTELLUNGEN_OVERVIEW); }
-  goUsers()          { this.routingService.route(MyRoutes.ADMIN_USERS); }
-  goSettings()       { this.routingService.route(MyRoutes.ADMIN_SHOP_SETTINGS); }
-  goOwnerSettings()  { this.routingService.route(MyRoutes.ADMIN_OWNER_SETTINGS); }
-  goToShop()         { this.routingService.route(MyRoutes.PRODUKTE_OVERVIEW); }
+  goDashboard()      { this.routingService.route(MyRoutes.ADMIN_DASHBOARD); this.closeMenu(); }
+  goProducts()       { this.routingService.route(MyRoutes.ADMIN_PRODUCTS_OVERVIEW); this.closeMenu(); }
+  goOrders()         { this.routingService.route(MyRoutes.ADMIN_BESTELLUNGEN_OVERVIEW); this.closeMenu(); }
+  goUsers()          { this.routingService.route(MyRoutes.ADMIN_USERS); this.closeMenu(); }
+  goSettings()       { this.routingService.route(MyRoutes.ADMIN_SHOP_SETTINGS); this.closeMenu(); }
+  goOwnerSettings()  { this.routingService.route(MyRoutes.ADMIN_OWNER_SETTINGS); this.closeMenu(); }
+  goToShop()         { this.routingService.route(MyRoutes.PRODUKTE_OVERVIEW); this.closeMenu(); }
 }

@@ -615,6 +615,12 @@
 @media (max-width: 768px) {
   .page-header {
     flex-direction: column;
+    align-items: stretch;
+  }
+
+  .header-right {
+    flex-wrap: wrap;
+    gap: 8px;
   }
 
   .toolbar-row {
@@ -626,18 +632,55 @@
     max-width: 100%;
   }
 
-  .action-buttons {
-    flex-direction: column;
-    gap: 6px;
+  .products-table th,
+  .products-table td {
+    padding: 10px 12px;
   }
+}
 
-  .btn-sm {
+@media (max-width: 640px) {
+  /* Header buttons: full-width stack */
+  .header-right {
+    flex-direction: column;
+  }
+  .header-right .btn-primary,
+  .header-right .btn-secondary {
     width: 100%;
     justify-content: center;
   }
 
-  .products-table th,
-  .products-table td {
-    padding: 10px 12px;
+  /* Hide image column (2) and stock column (5) */
+  .products-table th:nth-child(2),
+  .products-table td:nth-child(2),
+  .products-table th:nth-child(5),
+  .products-table td:nth-child(5) {
+    display: none;
+  }
+
+  /* Hide the inline filter row — search bar is sufficient on mobile */
+  .filter-row {
+    display: none;
+  }
+
+  /* Keep action buttons as a row inside table cells */
+  .action-buttons {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .btn-sm {
+    width: auto;
+    justify-content: flex-start;
+  }
+
+  /* Search input touch-friendly height */
+  .search-input {
+    min-height: 44px;
+  }
+
+  /* Pagination: hide ellipsis page buttons, keep prev/next + current */
+  .page-ellipsis {
+    display: none;
   }
 }

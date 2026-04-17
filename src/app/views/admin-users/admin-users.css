@@ -505,10 +505,18 @@
   .edit-panel {
     position: static;
     order: -1;
+    margin-bottom: 4px;
+  }
+
+  /* Let the panel body scroll naturally on tablet/mobile */
+  .edit-panel__body {
+    max-height: none;
   }
 }
 
 @media (max-width: 640px) {
+  .page-title { font-size: 1.4rem; }
+
   .form-row-2 {
     grid-template-columns: 1fr;
   }
@@ -517,7 +525,40 @@
     max-width: 100%;
   }
 
+  /* Touch-friendly table edit button */
+  .edit-row-btn {
+    min-height: 40px;
+    min-width: 40px;
+    padding: 0 10px;
+  }
+
   .edit-row-btn span:last-child {
+    display: none;
+  }
+
+  /* Touch-friendly role options */
+  .role-option {
+    min-height: 44px;
+  }
+
+  /* Save button full-width */
+  .edit-panel__footer {
+    flex-direction: column;
+  }
+
+  .save-user-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Search input */
+  .search-input {
+    min-height: 44px;
+  }
+
+  /* Email column: hide on very small screens to reduce table width */
+  .users-table th:nth-child(2),
+  .users-table td:nth-child(2) {
     display: none;
   }
 }

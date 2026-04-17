@@ -318,9 +318,15 @@
     gap: 10px;
   }
 
+  /* 3rd stat card spans full width on small screens */
+  .stats-grid > :nth-child(3) {
+    grid-column: 1 / -1;
+  }
+
   .stat-card {
     padding: 14px;
     gap: 10px;
+    min-height: 72px;
   }
 
   .stat-card__value {
@@ -335,6 +341,12 @@
     font-size: 1.4rem;
   }
 
+  /* Quick action cards: single column, touch-friendly */
+  .action-card {
+    min-height: 56px;
+  }
+
+  /* Orders table: hide Artikel column on tiny screens */
   .orders-table th:nth-child(3),
   .orders-table td:nth-child(3) {
     display: none;

@@ -426,16 +426,37 @@
 
 /* ── Mobile ───────────────────────────────────────────────── */
 @media (max-width: 640px) {
+  /* Page header */
+  .page-title { font-size: 1.4rem; }
+
+  /* View toggle + status tabs: touch-friendly heights */
+  .view-btn  { min-height: 40px; }
+  .status-tab { min-height: 44px; padding: 0 14px; }
+
+  /* Search input */
+  .search-input { min-height: 44px; }
+
+  /* Order cards: stack vertically */
   .order-card { flex-direction: column; }
   .order-accent { width: 100%; height: 4px; }
+
   .order-actions {
     flex-direction: row;
     border-left: none;
     border-top: 1px solid var(--border);
-    padding: 8px 12px;
+    padding: 10px 12px;
     justify-content: flex-end;
     gap: 8px;
+    flex-wrap: wrap;
   }
-  .btn-advance { flex: 1; }
+
+  .btn-advance { flex: 1; min-height: 44px; }
+  .action-icon-btn { min-height: 44px; min-width: 44px; }
+
+  /* Product chips: don't wrap excessively */
+  .product-chips { gap: 4px; }
+  .product-chip  { font-size: 0.75rem; }
+
+  /* Hide result count */
   .result-count { display: none; }
 }

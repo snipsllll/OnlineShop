@@ -337,10 +337,16 @@
   color: var(--text-secondary);
 }
 
-/* Permissions table */
-.perm-table {
+/* Permissions table scroll wrapper */
+.perm-table-scroll {
   border: 1px solid var(--border);
   border-radius: var(--radius-md);
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Permissions table */
+.perm-table {
   overflow: hidden;
   font-size: 0.875rem;
 }
@@ -348,6 +354,7 @@
 .perm-header {
   display: grid;
   grid-template-columns: 1fr 72px 88px 72px 80px;
+  min-width: 400px;
   background: var(--bg);
   padding: 10px 16px;
   font-size: 0.75rem;
@@ -366,6 +373,7 @@
 .perm-row {
   display: grid;
   grid-template-columns: 1fr 72px 88px 72px 80px;
+  min-width: 400px;
   align-items: center;
   padding: 10px 16px;
   border-bottom: 1px solid var(--border);
@@ -412,7 +420,22 @@
 
   .perm-header,
   .perm-row {
-    grid-template-columns: 1fr 56px 72px 56px 64px;
-    padding: 10px 12px;
+    grid-template-columns: 1fr 52px 68px 52px 60px;
+    min-width: 360px;
+    padding: 8px 10px;
+  }
+
+  .perm-label {
+    font-size: 0.8rem;
+  }
+
+  .perm-yes,
+  .perm-no {
+    font-size: 16px;
+  }
+
+  .mitarbeiter-warning {
+    flex-direction: column;
+    gap: 6px;
   }
 }
