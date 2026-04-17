@@ -16,10 +16,13 @@ export class AuthService {
   public currentUser: UserCredential | null = null;
   public isLoggedIn = signal(false);
   public displayName = signal<string | null>(null);
+  /** true sobald onAuthStateChanged das erste Mal gefeuert hat (Session bekannt) */
+  public authInitialized = signal(false);
 
   constructor(private userService: UserService, private warenkorbService: WarenkorbService) {
     onAuthStateChanged(auth, async (user: User | null) => {
       this.isLoggedIn.set(!!user);
+      this.authInitialized.set(true); // Auth-Zustand ist jetzt bekannt
       if (user) {
         // Merge guest cart into Firestore, then load display name
         await this.warenkorbService.mergeGuestCart().catch(() => {});

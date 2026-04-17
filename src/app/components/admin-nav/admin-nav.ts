@@ -21,6 +21,7 @@ export class AdminNav {
       case 'dashboard': return url.includes('admin-dashboard');
       case 'products':  return url.includes('admin-products') || url.includes('admin-product-details');
       case 'orders':    return url.includes('admin-bestellungen') || url.includes('admin-bestellung-details');
+      default: return false;
     }
   }
 

@@ -1,8 +1,7 @@
-import {Component, inject, OnInit, signal} from '@angular/core';
+import {Component, effect, inject, signal} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {IUser} from '../../models/interfaces/IUser';
-import {IAdresse} from '../../models/interfaces/IAdresse';
 import {UserService} from '../../services/user.service';
 import {AuthService} from '../../services/auth.service';
 import {RoutingService} from '../../services/routing.service';
@@ -17,9 +16,9 @@ import {Rolle} from '../../models/enums/Rolle';
   templateUrl: './account-settings.html',
   styleUrl: './account-settings.css',
 })
-export class AccountSettings implements OnInit {
+export class AccountSettings {
   private userService = inject(UserService);
-  private authService = inject(AuthService);
+  protected authService = inject(AuthService);
   private routingService = inject(RoutingService);
   protected dialogService = inject(DialogService);
 
@@ -37,7 +36,19 @@ export class AccountSettings implements OnInit {
   protected ort = '';
   protected land = '';
 
-  async ngOnInit() {
+  constructor() {
+    effect(() => {
+      if (!this.authService.authInitialized()) return;
+      if (this.authService.isLoggedIn()) {
+        this.loadUser();
+      } else {
+        this.user.set(null);
+        this.loading.set(false);
+      }
+    }, { allowSignalWrites: true });
+  }
+
+  private async loadUser() {
     this.loading.set(true);
     try {
       const user = await this.userService.getCurrentUser();
@@ -52,7 +63,7 @@ export class AccountSettings implements OnInit {
       this.ort = adr.ort ?? '';
       this.land = adr.land ?? 'Deutschland';
     } catch {
-      // Not logged in
+      this.user.set(null);
     } finally {
       this.loading.set(false);
     }
