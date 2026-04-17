@@ -1,4 +1,4 @@
-import {Component, inject, OnInit, signal} from '@angular/core';
+import {Component, effect, inject, OnInit, signal} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {ActivatedRoute} from '@angular/router';
@@ -36,17 +36,28 @@ export class ProductDetails implements OnInit {
   protected addedToCart = false;
   protected selectedImageIndex = 0;
 
+  constructor() {
+    // Reacts to both login state changes and product loading completing
+    effect(() => {
+      const loggedIn = this.authService.isLoggedIn();
+      const p = this.produkt(); // track product signal too
+      if (!loggedIn || !p) {
+        this.isFavorit.set(false);
+        return;
+      }
+      this.favoritService.getFavoritenIds()
+        .then(ids => this.isFavorit.set(ids.includes(p.id)))
+        .catch(() => this.isFavorit.set(false));
+    });
+  }
+
   async ngOnInit() {
     const id = this.route.snapshot.paramMap.get(RouteParams.PRODUCT_ID);
     if (!id) return;
     this.loading.set(true);
     try {
-      const [produkt, favIds] = await Promise.all([
-        this.produktService.getProdukt(id),
-        this.favoritService.getFavoritenIds().catch(() => [] as string[])
-      ]);
+      const produkt = await this.produktService.getProdukt(id);
       this.produkt.set(produkt ?? null);
-      this.isFavorit.set(favIds.includes(id));
     } finally {
       this.loading.set(false);
     }

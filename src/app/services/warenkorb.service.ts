@@ -99,6 +99,35 @@ export class WarenkorbService {
     }
   }
 
+  public async mergeGuestCart(): Promise<void> {
+    const raw = localStorage.getItem(GUEST_CART_KEY);
+    if (!raw) return;
+    let guestItems: Array<{produktId: string, anzahl: number}>;
+    try {
+      guestItems = JSON.parse(raw)?.produkteMitAnzahl ?? [];
+    } catch {
+      localStorage.removeItem(GUEST_CART_KEY);
+      return;
+    }
+    if (!guestItems.length) {
+      localStorage.removeItem(GUEST_CART_KEY);
+      return;
+    }
+    const user = await this.userService.getCurrentUser();
+    const wk = user.warenkorb ?? { id: '', produkteMitAnzahl: [], gesamtPreis: 0 };
+    for (const guestItem of guestItems) {
+      const existing = wk.produkteMitAnzahl.find(p => p.produktId === guestItem.produktId);
+      if (existing) {
+        existing.anzahl += guestItem.anzahl;
+      } else {
+        wk.produkteMitAnzahl.push(guestItem);
+      }
+    }
+    user.warenkorb = wk;
+    await this.userService.updateUser(user);
+    localStorage.removeItem(GUEST_CART_KEY);
+  }
+
   private async updateWarenkorb(wk: IWarenkorb) {
     const user = await this.userService.getCurrentUser();
     user.warenkorb = wk;

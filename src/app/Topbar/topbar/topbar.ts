@@ -1,4 +1,4 @@
-import {Component, ElementRef, HostListener, inject, OnInit, signal} from '@angular/core';
+import {Component, ElementRef, HostListener, effect, inject, signal} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {RoutingService} from '../../services/routing.service';
@@ -14,7 +14,7 @@ import {MyRoutes} from '../../models/enums/MyRoutes';
   templateUrl: './topbar.html',
   styleUrl: './topbar.css',
 })
-export class Topbar implements OnInit {
+export class Topbar {
   private routingService = inject(RoutingService);
   protected dialogService = inject(DialogService);
   private warenkorbService = inject(WarenkorbService);
@@ -24,10 +24,13 @@ export class Topbar implements OnInit {
   protected cartCount = signal(0);
   protected menuOpen = signal(false);
 
-  ngOnInit() {
-    this.warenkorbService.getWahrenkorb().then(wk => {
-      this.cartCount.set(wk?.produkteMitAnzahl?.length ?? 0);
-    }).catch(() => {});
+  constructor() {
+    effect(() => {
+      this.authService.isLoggedIn(); // track login state changes
+      this.warenkorbService.getWahrenkorb()
+        .then(wk => this.cartCount.set(wk?.produkteMitAnzahl?.length ?? 0))
+        .catch(() => this.cartCount.set(0));
+    });
   }
 
   @HostListener('document:click', ['$event'])

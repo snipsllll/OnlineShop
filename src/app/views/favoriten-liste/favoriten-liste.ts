@@ -1,4 +1,4 @@
-import {Component, inject, OnInit, signal} from '@angular/core';
+import {Component, effect, inject, signal} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {IProdukt} from '../../models/interfaces/IProdukt';
 import {FavoritService} from '../../services/favorit.service';
@@ -15,21 +15,30 @@ import {ProductKachel} from '../../components/product-kachel/product-kachel';
   templateUrl: './favoriten-liste.html',
   styleUrl: './favoriten-liste.css',
 })
-export class FavoritenListe implements OnInit {
+export class FavoritenListe {
   private favoritService = inject(FavoritService);
   private routingService = inject(RoutingService);
   protected authService = inject(AuthService);
   private dialogService = inject(DialogService);
 
   protected favoriten = signal<IProdukt[]>([]);
-  protected loading = signal(true);
+  protected loading = signal(false);
   protected favoritenIds = signal<string[]>([]);
 
-  async ngOnInit() {
-    if (!this.authService.isLoggedIn()) {
-      this.loading.set(false);
-      return;
-    }
+  constructor() {
+    effect(() => {
+      const loggedIn = this.authService.isLoggedIn(); // track
+      if (!loggedIn) {
+        this.favoriten.set([]);
+        this.favoritenIds.set([]);
+        this.loading.set(false);
+        return;
+      }
+      this.loadFavoriten();
+    });
+  }
+
+  private async loadFavoriten() {
     this.loading.set(true);
     try {
       const [produkte, ids] = await Promise.all([
@@ -43,12 +52,11 @@ export class FavoritenListe implements OnInit {
     }
   }
 
-  openLogin() { this.dialogService.openLogin(); }
-
   onFavoritToggled(id: string) {
     this.favoriten.update(f => f.filter(p => p.id !== id));
     this.favoritenIds.update(ids => ids.filter(x => x !== id));
   }
 
+  openLogin() { this.dialogService.openLogin(); }
   goShopping() { this.routingService.route(MyRoutes.PRODUKTE_OVERVIEW); }
 }

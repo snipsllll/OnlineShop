@@ -1,6 +1,7 @@
 import {Injectable, signal} from '@angular/core';
 import {createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut, User, UserCredential} from 'firebase/auth';
 import {UserService} from './user.service';
+import {WarenkorbService} from './warenkorb.service';
 import {auth} from '../../environments/environment';
 
 export interface IActionResult {
@@ -16,10 +17,12 @@ export class AuthService {
   public isLoggedIn = signal(false);
   public displayName = signal<string | null>(null);
 
-  constructor(private userService: UserService) {
-    onAuthStateChanged(auth, (user: User | null) => {
+  constructor(private userService: UserService, private warenkorbService: WarenkorbService) {
+    onAuthStateChanged(auth, async (user: User | null) => {
       this.isLoggedIn.set(!!user);
       if (user) {
+        // Merge guest cart into Firestore, then load display name
+        await this.warenkorbService.mergeGuestCart().catch(() => {});
         this.userService.getCurrentUser().then(u => {
           this.displayName.set(u.displayName ?? u.vorname ?? null);
         }).catch(() => {});

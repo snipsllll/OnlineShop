@@ -1,10 +1,11 @@
-import {Component, inject, OnInit, signal} from '@angular/core';
+import {Component, effect, inject, signal} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {IProdukt} from '../../models/interfaces/IProdukt';
 import {IWarenkorb} from '../../models/interfaces/IWarenkorb';
 import {WarenkorbService} from '../../services/warenkorb.service';
 import {ProduktService} from '../../services/produkt.service';
+import {AuthService} from '../../services/auth.service';
 import {RoutingService} from '../../services/routing.service';
 import {MyRoutes} from '../../models/enums/MyRoutes';
 
@@ -20,15 +21,23 @@ interface CartItem {
   templateUrl: './warenkorb.html',
   styleUrl: './warenkorb.css',
 })
-export class Warenkorb implements OnInit {
+export class Warenkorb {
   private warenkorbService = inject(WarenkorbService);
   private produktService = inject(ProduktService);
+  private authService = inject(AuthService);
   private routingService = inject(RoutingService);
 
   protected cartItems = signal<CartItem[]>([]);
   protected loading = signal(true);
 
-  async ngOnInit() {
+  constructor() {
+    effect(() => {
+      this.authService.isLoggedIn(); // track login state changes
+      this.loadCart();
+    });
+  }
+
+  private async loadCart() {
     this.loading.set(true);
     try {
       const wk = await this.warenkorbService.getWahrenkorb();
