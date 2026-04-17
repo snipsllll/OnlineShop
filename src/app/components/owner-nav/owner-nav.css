@@ -1,0 +1,325 @@
+/* ── Owner Nav bar ───────────────────────────────────────── */
+
+.owner-nav {
+  position: sticky;
+  top: calc(var(--topbar-height) + var(--dev-banner-height, 0px));
+  z-index: 50;
+  background: var(--surface);
+  border-bottom: 2px solid #ddd6fe;
+  box-shadow: 0 2px 8px rgba(124, 58, 237, 0.08);
+}
+
+.owner-nav__inner {
+  max-width: var(--content-max-width);
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+/* Brand */
+.owner-nav__brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #7c3aed;
+  font-weight: 700;
+  font-size: 0.95rem;
+  flex-shrink: 0;
+  padding-right: 24px;
+  border-right: 1px solid #ddd6fe;
+  margin-right: 8px;
+}
+
+.owner-nav__brand .material-symbols-outlined {
+  font-size: 22px;
+}
+
+/* Hamburger (hidden on desktop) */
+.owner-nav__hamburger {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  color: var(--text);
+  transition: background var(--transition);
+  flex-shrink: 0;
+}
+
+.owner-nav__hamburger:hover {
+  background: #f5f3ff;
+}
+
+.owner-nav__hamburger .material-symbols-outlined {
+  font-size: 24px;
+}
+
+/* Tabs */
+.owner-nav__tabs {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  height: 100%;
+  gap: 2px;
+}
+
+.owner-nav__tab {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 16px;
+  border: none;
+  background: none;
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  height: 36px;
+  transition: background var(--transition), color var(--transition);
+  font-family: inherit;
+  white-space: nowrap;
+  position: relative;
+}
+
+.owner-nav__tab::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 2px;
+  background: #7c3aed;
+  border-radius: 2px 2px 0 0;
+  transition: width var(--transition);
+}
+
+.owner-nav__tab:hover {
+  background: #f5f3ff;
+  color: #7c3aed;
+}
+
+.owner-nav__tab--active {
+  color: #7c3aed;
+  background: #f5f3ff;
+  font-weight: 600;
+}
+
+.owner-nav__tab--active::after {
+  width: 80%;
+}
+
+.owner-nav__tab .material-symbols-outlined {
+  font-size: 18px;
+}
+
+/* End / admin button */
+.owner-nav__end {
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.owner-nav__admin-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border: 1.5px solid #ddd6fe;
+  background: none;
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #7c3aed;
+  cursor: pointer;
+  transition: all var(--transition);
+  font-family: inherit;
+}
+
+.owner-nav__admin-btn:hover {
+  border-color: #7c3aed;
+  background: #f5f3ff;
+}
+
+.owner-nav__admin-btn .material-symbols-outlined {
+  font-size: 18px;
+}
+
+/* ── Mobile drawer overlay ───────────────────────────────── */
+
+.owner-nav__overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 300;
+  animation: ownerFadeIn 0.18s ease;
+}
+
+/* ── Mobile drawer panel ─────────────────────────────────── */
+
+.owner-nav__drawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 280px;
+  background: var(--surface);
+  z-index: 301;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 4px 0 32px rgba(124, 58, 237, 0.18);
+  animation: ownerSlideInLeft 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.owner-nav__drawer-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 16px;
+  height: 60px;
+  border-bottom: 1px solid #ddd6fe;
+  color: #7c3aed;
+  font-weight: 700;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.owner-nav__drawer-header .material-symbols-outlined {
+  font-size: 22px;
+}
+
+.owner-nav__drawer-close {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border: none;
+  background: none;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  color: var(--text-muted);
+  transition: background var(--transition), color var(--transition);
+  flex-shrink: 0;
+}
+
+.owner-nav__drawer-close:hover {
+  background: #f5f3ff;
+  color: #7c3aed;
+}
+
+.owner-nav__drawer-close .material-symbols-outlined {
+  font-size: 20px;
+}
+
+.owner-nav__drawer-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 10px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.owner-nav__drawer-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 16px;
+  min-height: 48px;
+  border: none;
+  background: none;
+  border-radius: var(--radius-md);
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-family: inherit;
+  text-align: left;
+  width: 100%;
+  transition: background var(--transition), color var(--transition);
+}
+
+.owner-nav__drawer-item:hover {
+  background: #f5f3ff;
+  color: #7c3aed;
+}
+
+.owner-nav__drawer-item--active {
+  background: #f5f3ff;
+  color: #7c3aed;
+  font-weight: 600;
+}
+
+.owner-nav__drawer-item .material-symbols-outlined {
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.owner-nav__drawer-footer {
+  flex-shrink: 0;
+  padding: 10px 8px;
+  border-top: 1px solid #ddd6fe;
+}
+
+.owner-nav__drawer-admin-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 48px;
+  padding: 0 16px;
+  border: 1.5px solid #ddd6fe;
+  background: none;
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #7c3aed;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all var(--transition);
+}
+
+.owner-nav__drawer-admin-btn:hover {
+  border-color: #7c3aed;
+  background: #f5f3ff;
+}
+
+.owner-nav__drawer-admin-btn .material-symbols-outlined {
+  font-size: 20px;
+}
+
+/* ── Animations ──────────────────────────────────────────── */
+
+@keyframes ownerFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes ownerSlideInLeft {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(0); }
+}
+
+/* ── Mobile overrides ────────────────────────────────────── */
+
+@media (max-width: 640px) {
+  .owner-nav__inner {
+    padding: 0 12px;
+  }
+
+  .owner-nav__brand     { display: none; }
+  .owner-nav__tabs      { display: none; }
+  .owner-nav__hamburger { display: flex; }
+
+  .owner-nav__admin-text { display: none; }
+  .owner-nav__admin-btn  { padding: 6px 10px; }
+}

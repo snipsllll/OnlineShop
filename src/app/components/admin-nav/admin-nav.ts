@@ -27,7 +27,7 @@ export class AdminNav {
   toggleMenu() { this.menuOpen.update(v => !v); }
   closeMenu() { this.menuOpen.set(false); }
 
-  isActive(section: 'dashboard' | 'products' | 'orders' | 'users' | 'settings' | 'owner-settings'): boolean {
+  isActive(section: 'dashboard' | 'products' | 'orders' | 'users' | 'settings' | 'owner-settings' | 'owner-panel'): boolean {
     const url = this.router.url;
     switch (section) {
       case 'dashboard':      return url.includes('admin-dashboard');
@@ -36,6 +36,7 @@ export class AdminNav {
       case 'users':          return url.includes('admin-users');
       case 'settings':       return url.includes('admin-shop-settings');
       case 'owner-settings': return url.includes('admin-owner-settings');
+      case 'owner-panel':    return url.includes('owner-shops');
       default: return false;
     }
   }
@@ -46,5 +47,6 @@ export class AdminNav {
   goUsers()          { this.routingService.route(MyRoutes.ADMIN_USERS); this.closeMenu(); }
   goSettings()       { this.routingService.route(MyRoutes.ADMIN_SHOP_SETTINGS); this.closeMenu(); }
   goOwnerSettings()  { this.routingService.route(MyRoutes.ADMIN_OWNER_SETTINGS); this.closeMenu(); }
+  goOwnerPanel()     { this.routingService.route(MyRoutes.OWNER_SHOPS); this.closeMenu(); }
   goToShop()         { this.routingService.route(MyRoutes.PRODUKTE_OVERVIEW); this.closeMenu(); }
 }

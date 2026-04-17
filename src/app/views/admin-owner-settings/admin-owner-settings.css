@@ -413,6 +413,44 @@
   color: var(--border);
 }
 
+/* Firebase Config fields */
+.conn-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.conn-field-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.conn-field-group {
+  min-width: 0;
+}
+
+.conn-input {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.82rem;
+}
+
+.inline-code {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 0.82rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 1px 5px;
+  color: var(--text);
+}
+
+@media (max-width: 560px) {
+  .conn-field-row {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 640px) {
   .settings-card {
     padding: 18px 16px;

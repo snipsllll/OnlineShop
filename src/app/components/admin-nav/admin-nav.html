@@ -69,6 +69,14 @@
           <span class="material-symbols-outlined">shield_person</span>
           <span>Owner</span>
         </button>
+        <button
+          class="admin-nav__tab admin-nav__tab--owner"
+          [class.admin-nav__tab--active]="isActive('owner-panel')"
+          (click)="goOwnerPanel()"
+        >
+          <span class="material-symbols-outlined">store</span>
+          <span>Owner Panel</span>
+        </button>
       }
     </div>
 
@@ -152,6 +160,14 @@
         >
           <span class="material-symbols-outlined">shield_person</span>
           <span>Owner-Einstellungen</span>
+        </button>
+        <button
+          class="admin-nav__drawer-item admin-nav__drawer-item--owner"
+          [class.admin-nav__drawer-item--active]="isActive('owner-panel')"
+          (click)="goOwnerPanel()"
+        >
+          <span class="material-symbols-outlined">store</span>
+          <span>Owner Panel</span>
         </button>
       }
     </div>

@@ -1,0 +1,69 @@
+.owner-shops-page {
+  padding-top: 32px;
+  padding-bottom: 64px;
+}
+
+.page-header {
+  margin-bottom: 32px;
+}
+
+.page-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin: 0 0 6px;
+}
+
+.title-icon {
+  color: #7c3aed;
+  font-size: 1.8rem;
+}
+
+.page-subtitle {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.placeholder-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 64px 32px;
+  background: var(--surface);
+  border: 2px dashed #ddd6fe;
+  border-radius: var(--radius-lg);
+  gap: 16px;
+}
+
+.placeholder-icon {
+  width: 72px;
+  height: 72px;
+  background: #f5f3ff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.placeholder-icon .material-symbols-outlined {
+  font-size: 36px;
+  color: #7c3aed;
+}
+
+.placeholder-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+}
+
+.placeholder-desc {
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  margin: 0;
+}

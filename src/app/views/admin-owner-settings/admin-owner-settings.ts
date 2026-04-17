@@ -1,6 +1,7 @@
 import {Component, effect, inject, OnInit, signal} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
+import {doc, Firestore, getDoc, setDoc} from 'firebase/firestore';
 import {AdminNav} from '../../components/admin-nav/admin-nav';
 import {AuthService} from '../../services/auth.service';
 import {UserService} from '../../services/user.service';
@@ -9,6 +10,7 @@ import {ShopSettingsService} from '../../services/shop-settings.service';
 import {IUser} from '../../models/interfaces/IUser';
 import {Rolle} from '../../models/enums/Rolle';
 import {MyRoutes} from '../../models/enums/MyRoutes';
+import {db, firebaseConfig} from '../../../environments/environment';
 
 @Component({
   selector: 'app-admin-owner-settings',
@@ -45,6 +47,20 @@ export class AdminOwnerSettings implements OnInit {
   protected mitarbeiterRoleSaving = signal(false);
   protected mitarbeiterRoleSaveSuccess = signal(false);
   protected mitarbeiterRoleSaveError = signal(false);
+
+  // Firebase Config (editable)
+  protected fbConfig = {
+    apiKey:            firebaseConfig.apiKey,
+    authDomain:        firebaseConfig.authDomain,
+    projectId:         firebaseConfig.projectId,
+    storageBucket:     firebaseConfig.storageBucket,
+    messagingSenderId: firebaseConfig.messagingSenderId,
+    appId:             firebaseConfig.appId,
+    measurementId:     (firebaseConfig as any).measurementId ?? '',
+  };
+  protected connSaving = signal(false);
+  protected connSaveSuccess = signal(false);
+  protected connSaveError = signal(false);
 
   constructor() {
     effect(() => {
@@ -107,14 +123,48 @@ export class AdminOwnerSettings implements OnInit {
 
     this.loading.set(true);
     try {
-      const all = await this.userService.getAllUsers();
+      const [all, connSnap] = await Promise.all([
+        this.userService.getAllUsers(),
+        getDoc(doc(db as Firestore, 'settings', 'connections')),
+      ]);
       this.elevatedUsers.set(
         all.filter(u => u.rolle === Rolle.OWNER || u.rolle === Rolle.ADMIN)
            .sort((a, b) => a.rolle - b.rolle)
       );
       this.mitarbeiterUserCount.set(all.filter(u => u.rolle === Rolle.MITARBEITER).length);
+      if (connSnap.exists()) {
+        const saved = connSnap.data()['firebaseConfig'];
+        if (saved) {
+          this.fbConfig = {
+            apiKey:            saved['apiKey']            ?? this.fbConfig.apiKey,
+            authDomain:        saved['authDomain']        ?? this.fbConfig.authDomain,
+            projectId:         saved['projectId']         ?? this.fbConfig.projectId,
+            storageBucket:     saved['storageBucket']     ?? this.fbConfig.storageBucket,
+            messagingSenderId: saved['messagingSenderId'] ?? this.fbConfig.messagingSenderId,
+            appId:             saved['appId']             ?? this.fbConfig.appId,
+            measurementId:     saved['measurementId']     ?? this.fbConfig.measurementId,
+          };
+        }
+      }
     } finally {
       this.loading.set(false);
+    }
+  }
+
+  async saveConnections() {
+    this.connSaving.set(true);
+    this.connSaveError.set(false);
+    try {
+      await setDoc(doc(db as Firestore, 'settings', 'connections'), {
+        firebaseConfig: {...this.fbConfig},
+      });
+      this.connSaveSuccess.set(true);
+      setTimeout(() => this.connSaveSuccess.set(false), 3000);
+    } catch {
+      this.connSaveError.set(true);
+      setTimeout(() => this.connSaveError.set(false), 4000);
+    } finally {
+      this.connSaving.set(false);
     }
   }
 

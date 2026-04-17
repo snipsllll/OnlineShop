@@ -19,5 +19,6 @@ export enum MyRoutes {
   PAYMENT_APPROVAL = "payment-approval",
   PRODUKT_DETAILS = "produkt-details",
   PRODUKTE_OVERVIEW = "produkt-overview",
-  WARENKORB = "warenkorb"
+  WARENKORB = "warenkorb",
+  OWNER_SHOPS = "owner-shops"
 }

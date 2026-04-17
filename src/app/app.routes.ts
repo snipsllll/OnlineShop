@@ -21,6 +21,7 @@ import {Datenschutz} from './views/datenschutz/datenschutz';
 import {Agb} from './views/agb/agb';
 import {Widerrufsrecht} from './views/widerrufsrecht/widerrufsrecht';
 import {NotFound} from './views/not-found/not-found';
+import {OwnerShops} from './views/owner-shops/owner-shops';
 import {RouteParams} from './models/enums/RouteParams';
 import {MyRoutes} from './models/enums/MyRoutes';
 import {adminGuard, authGuard, ownerGuard} from './guards/admin.guard';
@@ -57,6 +58,7 @@ export const routes: Routes = [
 
   // ── Owner-only routes ─────────────────────────────────────────
   {path: `${MyRoutes.ADMIN_OWNER_SETTINGS}`, component: AdminOwnerSettings, canActivate: [ownerGuard]},
+  {path: `${MyRoutes.OWNER_SHOPS}`, component: OwnerShops, canActivate: [ownerGuard]},
 
   // ── 404 catch-all ─────────────────────────────────────────────
   {path: '**', component: NotFound},

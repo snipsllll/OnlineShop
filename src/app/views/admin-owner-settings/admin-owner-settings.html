@@ -286,5 +286,80 @@
       </div><!-- /perm-table-scroll -->
     </div>
 
+    <!-- Firebase Konfiguration -->
+    <div class="card settings-card">
+      <h2 class="card-title">
+        <span class="material-symbols-outlined">local_fire_department</span>
+        Firebase-Konfiguration
+      </h2>
+      <p class="card-desc">
+        Die aktuelle Firebase-Konfiguration dieses Projekts. Änderungen werden in Firestore gespeichert und sind nur für den Owner sichtbar. Die Werte entsprechen initial der <code class="inline-code">environment.ts</code>.
+      </p>
+
+      <div class="conn-fields">
+        <div class="conn-field-row">
+          <div class="form-group conn-field-group">
+            <label class="form-label" for="fb-apiKey">apiKey</label>
+            <input id="fb-apiKey" class="form-input conn-input" type="text" [(ngModel)]="fbConfig.apiKey" spellcheck="false" autocomplete="off" />
+          </div>
+          <div class="form-group conn-field-group">
+            <label class="form-label" for="fb-authDomain">authDomain</label>
+            <input id="fb-authDomain" class="form-input conn-input" type="text" [(ngModel)]="fbConfig.authDomain" spellcheck="false" autocomplete="off" />
+          </div>
+        </div>
+
+        <div class="conn-field-row">
+          <div class="form-group conn-field-group">
+            <label class="form-label" for="fb-projectId">projectId</label>
+            <input id="fb-projectId" class="form-input conn-input" type="text" [(ngModel)]="fbConfig.projectId" spellcheck="false" autocomplete="off" />
+          </div>
+          <div class="form-group conn-field-group">
+            <label class="form-label" for="fb-storageBucket">storageBucket</label>
+            <input id="fb-storageBucket" class="form-input conn-input" type="text" [(ngModel)]="fbConfig.storageBucket" spellcheck="false" autocomplete="off" />
+          </div>
+        </div>
+
+        <div class="conn-field-row">
+          <div class="form-group conn-field-group">
+            <label class="form-label" for="fb-messagingSenderId">messagingSenderId</label>
+            <input id="fb-messagingSenderId" class="form-input conn-input" type="text" [(ngModel)]="fbConfig.messagingSenderId" spellcheck="false" autocomplete="off" />
+          </div>
+          <div class="form-group conn-field-group">
+            <label class="form-label" for="fb-measurementId">measurementId</label>
+            <input id="fb-measurementId" class="form-input conn-input" type="text" [(ngModel)]="fbConfig.measurementId" spellcheck="false" autocomplete="off" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="fb-appId">appId</label>
+          <input id="fb-appId" class="form-input conn-input" type="text" [(ngModel)]="fbConfig.appId" spellcheck="false" autocomplete="off" />
+        </div>
+      </div>
+
+      <div class="banner-save-row">
+        @if (connSaveSuccess()) {
+          <div class="success-toast">
+            <span class="material-symbols-outlined">check_circle</span>
+            Gespeichert!
+          </div>
+        }
+        @if (connSaveError()) {
+          <div class="error-toast">
+            <span class="material-symbols-outlined">error</span>
+            Speichern fehlgeschlagen.
+          </div>
+        }
+        <button class="btn-primary save-btn" (click)="saveConnections()" [disabled]="connSaving()">
+          @if (connSaving()) {
+            <div class="spinner spinner--sm"></div>
+            Wird gespeichert...
+          } @else {
+            <span class="material-symbols-outlined">save</span>
+            Speichern
+          }
+        </button>
+      </div>
+    </div>
+
   </div>
 </div>
