@@ -22,7 +22,6 @@ export class Topbar implements OnInit {
   private elementRef = inject(ElementRef);
 
   protected cartCount = signal(0);
-  protected searchQuery = '';
   protected menuOpen = signal(false);
 
   ngOnInit() {

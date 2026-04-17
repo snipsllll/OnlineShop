@@ -7,13 +7,6 @@
       </button>
     </div>
 
-    <div class="topbar__center">
-      <div class="topbar__search">
-        <span class="material-symbols-outlined topbar__search-icon">search</span>
-        <input class="topbar__search-input" type="text" [(ngModel)]="searchQuery" placeholder="Produkte suchen...">
-      </div>
-    </div>
-
     <div class="topbar__right">
       <button class="topbar__icon-btn topbar__desktop-only" (click)="goFavorites()" title="Favoriten">
         <span class="material-symbols-outlined">favorite</span>
@@ -40,10 +33,6 @@
 
   @if (menuOpen()) {
     <nav class="topbar__mobile-menu">
-      <div class="topbar__mobile-search">
-        <span class="material-symbols-outlined">search</span>
-        <input type="text" [(ngModel)]="searchQuery" placeholder="Produkte suchen...">
-      </div>
       <div class="topbar__mobile-nav">
         <button class="topbar__mobile-link" (click)="goHome()">
           <span class="material-symbols-outlined">home</span>
