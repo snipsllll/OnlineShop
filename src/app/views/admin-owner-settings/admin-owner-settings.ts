@@ -6,7 +6,7 @@ import {AdminNav} from '../../components/admin-nav/admin-nav';
 import {AuthService} from '../../services/auth.service';
 import {UserService} from '../../services/user.service';
 import {RoutingService} from '../../services/routing.service';
-import {ShopSettingsService} from '../../services/shop-settings.service';
+import {ShopSettingsService, ShopTheme} from '../../services/shop-settings.service';
 import {IUser} from '../../models/interfaces/IUser';
 import {Rolle} from '../../models/enums/Rolle';
 import {MyRoutes} from '../../models/enums/MyRoutes';
@@ -48,6 +48,12 @@ export class AdminOwnerSettings implements OnInit {
   protected mitarbeiterRoleSaveSuccess = signal(false);
   protected mitarbeiterRoleSaveError = signal(false);
 
+  // Design / Theme
+  protected themeLocal: ShopTheme = 'modern';
+  protected themeSaving = signal(false);
+  protected themeSaveSuccess = signal(false);
+  protected themeSaveError = signal(false);
+
   // Firebase Config (editable)
   protected fbConfig = {
     apiKey:            firebaseConfig.apiKey,
@@ -68,6 +74,7 @@ export class AdminOwnerSettings implements OnInit {
       this.devBannerEnabled = this.settings.devBannerEnabled();
       this.adminPermsLocal = {...this.settings.adminPerms()};
       this.mitarbeiterRoleEnabledLocal = this.settings.mitarbeiterRoleEnabled();
+      this.themeLocal = this.settings.theme();
     });
   }
 
@@ -180,6 +187,21 @@ export class AdminOwnerSettings implements OnInit {
       setTimeout(() => this.mitarbeiterRoleSaveError.set(false), 4000);
     } finally {
       this.mitarbeiterRoleSaving.set(false);
+    }
+  }
+
+  async saveTheme() {
+    this.themeSaving.set(true);
+    this.themeSaveError.set(false);
+    try {
+      await this.settings.saveTheme(this.themeLocal);
+      this.themeSaveSuccess.set(true);
+      setTimeout(() => this.themeSaveSuccess.set(false), 3000);
+    } catch {
+      this.themeSaveError.set(true);
+      setTimeout(() => this.themeSaveError.set(false), 4000);
+    } finally {
+      this.themeSaving.set(false);
     }
   }
 

@@ -28,6 +28,51 @@
 }
 
 /* =============================================
+   GARDEN THEME  (warm, organic, cozy)
+   Activated via data-theme="garden" on <html>
+   ============================================= */
+:root[data-theme="garden"] {
+  --primary:        #5a7f47;
+  --primary-dark:   #3d5c2f;
+  --primary-light:  #ecf4e6;
+  --accent:         #c2784a;
+  --success:        #3d8b5b;
+  --error:          #c03b28;
+  --bg:             #f4efe6;
+  --surface:        #fdfaf4;
+  --border:         #dbd0c0;
+  --text:           #2a1d0d;
+  --text-secondary: #7a6045;
+  --text-muted:     #a89070;
+  --radius-sm:      8px;
+  --radius-md:      12px;
+  --radius-lg:      20px;
+  --shadow-sm:      0 1px 4px rgba(42, 29, 13, 0.08);
+  --shadow-md:      0 4px 14px rgba(42, 29, 13, 0.10);
+  --shadow-lg:      0 8px 28px rgba(42, 29, 13, 0.14);
+}
+
+/* Warm serif font for the garden theme */
+:root[data-theme="garden"] body {
+  font-family: 'Georgia', 'Palatino Linotype', Palatino, serif;
+}
+
+/* Override hardcoded rgba colors that don't use CSS vars */
+:root[data-theme="garden"] .form-input:focus {
+  box-shadow: 0 0 0 3px rgba(90, 127, 71, 0.18);
+}
+:root[data-theme="garden"] .btn-primary:hover:not(:disabled) {
+  box-shadow: 0 2px 8px rgba(90, 127, 71, 0.35);
+}
+:root[data-theme="garden"] .badge--neutral {
+  background: #ede5d8;
+  color: var(--text-secondary);
+}
+:root[data-theme="garden"] .overlay {
+  background: rgba(42, 29, 13, 0.5);
+}
+
+/* =============================================
    RESET & BASE
    ============================================= */
 *, *::before, *::after {

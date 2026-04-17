@@ -31,6 +31,8 @@ const DEFAULT_MITARBEITER_PERMS: IMitarbeiterPerms = {
   canViewUsers: false,
 };
 
+export type ShopTheme = 'modern' | 'garden';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -40,6 +42,7 @@ export class ShopSettingsService {
   readonly adminPerms = signal<IRolePerms>({...DEFAULT_ADMIN_PERMS});
   readonly mitarbeiterPerms = signal<IMitarbeiterPerms>({...DEFAULT_MITARBEITER_PERMS});
   readonly mitarbeiterRoleEnabled = signal(true);
+  readonly theme = signal<ShopTheme>('modern');
   readonly initialized = signal(false);
 
   constructor() {
@@ -59,11 +62,22 @@ export class ShopSettingsService {
         this.adminPerms.set({...DEFAULT_ADMIN_PERMS, ...(d['adminPerms'] ?? {})});
         this.mitarbeiterPerms.set({...DEFAULT_MITARBEITER_PERMS, ...(d['mitarbeiterPerms'] ?? {})});
         this.mitarbeiterRoleEnabled.set(d['mitarbeiterRoleEnabled'] ?? true);
+        const t = d['theme'] === 'garden' ? 'garden' : 'modern';
+        this.theme.set(t);
+        this.applyTheme(t);
       }
     } catch (e) {
       console.error('ShopSettingsService: failed to load settings', e);
     }
     this.initialized.set(true);
+  }
+
+  private applyTheme(theme: ShopTheme) {
+    if (theme === 'garden') {
+      document.documentElement.setAttribute('data-theme', 'garden');
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+    }
   }
 
   private fullDoc() {
@@ -73,6 +87,7 @@ export class ShopSettingsService {
       adminPerms: this.adminPerms(),
       mitarbeiterPerms: this.mitarbeiterPerms(),
       mitarbeiterRoleEnabled: this.mitarbeiterRoleEnabled(),
+      theme: this.theme(),
     };
   }
 
@@ -101,6 +116,13 @@ export class ShopSettingsService {
     const data = {...this.fullDoc(), mitarbeiterRoleEnabled: enabled};
     await setDoc(doc(db as Firestore, 'settings', 'shop'), data);
     this.mitarbeiterRoleEnabled.set(enabled);
+  }
+
+  async saveTheme(theme: ShopTheme): Promise<void> {
+    const data = {...this.fullDoc(), theme};
+    await setDoc(doc(db as Firestore, 'settings', 'shop'), data);
+    this.theme.set(theme);
+    this.applyTheme(theme);
   }
 
   async saveMitarbeiterPerms(perms: IMitarbeiterPerms): Promise<void> {

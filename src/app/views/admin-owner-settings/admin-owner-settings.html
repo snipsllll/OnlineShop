@@ -13,6 +13,93 @@
 
   <div class="settings-layout">
 
+    <!-- Design / Theme -->
+    <div class="card settings-card">
+      <h2 class="card-title">
+        <span class="material-symbols-outlined">palette</span>
+        Design
+      </h2>
+      <p class="card-desc">Wähle das Erscheinungsbild deines Shops. Die Änderung wirkt sich für alle Besucher aus.</p>
+
+      <div class="theme-picker">
+
+        <!-- Modern -->
+        <button
+          class="theme-card"
+          [class.theme-card--active]="themeLocal === 'modern'"
+          (click)="themeLocal = 'modern'"
+          type="button"
+        >
+          <div class="theme-preview theme-preview--modern">
+            <div class="theme-preview__nav"></div>
+            <div class="theme-preview__content">
+              <div class="theme-preview__card">
+                <div class="theme-preview__line theme-preview__line--primary"></div>
+                <div class="theme-preview__line"></div>
+              </div>
+              <div class="theme-preview__btn"></div>
+            </div>
+          </div>
+          <div class="theme-card__body">
+            <span class="theme-card__name">Modern</span>
+            <span class="theme-card__desc">Klar, frisch &amp; zeitgemäß</span>
+            @if (themeLocal === 'modern') {
+              <span class="theme-card__check">
+                <span class="material-symbols-outlined">check_circle</span>
+                Aktiv
+              </span>
+            }
+          </div>
+        </button>
+
+        <!-- Garten -->
+        <button
+          class="theme-card"
+          [class.theme-card--active]="themeLocal === 'garden'"
+          (click)="themeLocal = 'garden'"
+          type="button"
+        >
+          <div class="theme-preview theme-preview--garden">
+            <div class="theme-preview__nav"></div>
+            <div class="theme-preview__content">
+              <div class="theme-preview__card">
+                <div class="theme-preview__line theme-preview__line--primary"></div>
+                <div class="theme-preview__line"></div>
+              </div>
+              <div class="theme-preview__btn"></div>
+            </div>
+          </div>
+          <div class="theme-card__body">
+            <span class="theme-card__name">Garten</span>
+            <span class="theme-card__desc">Warm, natürlich &amp; behaglich</span>
+            @if (themeLocal === 'garden') {
+              <span class="theme-card__check">
+                <span class="material-symbols-outlined">check_circle</span>
+                Aktiv
+              </span>
+            }
+          </div>
+        </button>
+
+      </div>
+
+      <div class="banner-save-row">
+        @if (themeSaveSuccess()) {
+          <div class="success-toast"><span class="material-symbols-outlined">check_circle</span>Gespeichert!</div>
+        }
+        @if (themeSaveError()) {
+          <div class="error-toast"><span class="material-symbols-outlined">error</span>Speichern fehlgeschlagen.</div>
+        }
+        <button class="btn-primary save-btn" (click)="saveTheme()" [disabled]="themeSaving()">
+          @if (themeSaving()) {
+            <div class="spinner spinner--sm"></div>Wird gespeichert...
+          } @else {
+            <span class="material-symbols-outlined">save</span>Speichern
+          }
+        </button>
+      </div>
+    </div>
+
     <!-- Dev Banner -->
     <div class="card settings-card">
       <h2 class="card-title">
