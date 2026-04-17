@@ -1,0 +1,44 @@
+<nav class="admin-nav">
+  <div class="admin-nav__inner">
+
+    <div class="admin-nav__brand">
+      <span class="material-symbols-outlined">admin_panel_settings</span>
+      <span class="admin-nav__brand-text">Admin Panel</span>
+    </div>
+
+    <div class="admin-nav__tabs">
+      <button
+        class="admin-nav__tab"
+        [class.admin-nav__tab--active]="isActive('dashboard')"
+        (click)="goDashboard()"
+      >
+        <span class="material-symbols-outlined">dashboard</span>
+        <span>Dashboard</span>
+      </button>
+      <button
+        class="admin-nav__tab"
+        [class.admin-nav__tab--active]="isActive('products')"
+        (click)="goProducts()"
+      >
+        <span class="material-symbols-outlined">inventory_2</span>
+        <span>Produkte</span>
+      </button>
+      <button
+        class="admin-nav__tab"
+        [class.admin-nav__tab--active]="isActive('orders')"
+        (click)="goOrders()"
+      >
+        <span class="material-symbols-outlined">receipt_long</span>
+        <span>Bestellungen</span>
+      </button>
+    </div>
+
+    <div class="admin-nav__end">
+      <button class="admin-nav__shop-btn" (click)="goToShop()">
+        <span class="material-symbols-outlined">storefront</span>
+        <span class="admin-nav__shop-text">Zum Shop</span>
+      </button>
+    </div>
+
+  </div>
+</nav>

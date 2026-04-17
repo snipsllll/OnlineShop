@@ -193,19 +193,15 @@
       <aside class="settings-sidebar">
 
         @if (isAdmin) {
-          <div class="card sidebar-card">
+          <div class="card sidebar-card sidebar-card--admin">
             <h3 class="card-title">
               <span class="material-symbols-outlined">admin_panel_settings</span>
               Administration
             </h3>
-            <p class="sidebar-text">Verwalte Produkte und Bestellungen des Shops.</p>
-            <button class="btn-secondary sidebar-btn" (click)="goToAdminProducts()">
-              <span class="material-symbols-outlined">inventory_2</span>
-              Produkte verwalten
-            </button>
-            <button class="btn-secondary sidebar-btn" style="margin-top: 8px" (click)="goToAdminOrders()">
-              <span class="material-symbols-outlined">receipt_long</span>
-              Bestellungen verwalten
+            <p class="sidebar-text">Verwalte Produkte, Bestellungen und alles Weitere im Admin Panel.</p>
+            <button class="btn-primary sidebar-btn" (click)="goToAdminPanel()">
+              <span class="material-symbols-outlined">dashboard</span>
+              Zum Admin Panel
             </button>
           </div>
         }

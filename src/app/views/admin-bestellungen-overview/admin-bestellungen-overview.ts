@@ -8,11 +8,12 @@ import {DialogService} from '../../services/dialog.service';
 import {MyRoutes} from '../../models/enums/MyRoutes';
 import {BestellungsZustand} from '../../models/enums/BestellungsZustand';
 import {AdminBestellungenOverviewTable} from '../../components/admin-bestellungen-overview-table/admin-bestellungen-overview-table';
+import {AdminNav} from '../../components/admin-nav/admin-nav';
 
 @Component({
   selector: 'app-admin-bestellungen-overview',
   standalone: true,
-  imports: [CommonModule, FormsModule, AdminBestellungenOverviewTable],
+  imports: [CommonModule, FormsModule, AdminBestellungenOverviewTable, AdminNav],
   templateUrl: './admin-bestellungen-overview.html',
   styleUrl: './admin-bestellungen-overview.css',
 })

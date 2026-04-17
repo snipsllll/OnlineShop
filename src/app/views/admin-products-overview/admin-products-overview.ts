@@ -7,11 +7,12 @@ import {ProduktService} from '../../services/produkt.service';
 import {RoutingService} from '../../services/routing.service';
 import {DialogService} from '../../services/dialog.service';
 import {MyRoutes} from '../../models/enums/MyRoutes';
+import {AdminNav} from '../../components/admin-nav/admin-nav';
 
 @Component({
   selector: 'app-admin-products-overview',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, AdminNav],
   templateUrl: './admin-products-overview.html',
   styleUrl: './admin-products-overview.css',
 })

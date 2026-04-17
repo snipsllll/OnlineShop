@@ -99,6 +99,5 @@ export class AccountSettings implements OnInit {
   }
 
   goToOrders() { this.routingService.route(MyRoutes.BESTELLUNGEN_OVERVIEW); }
-  goToAdminProducts() { this.routingService.route(MyRoutes.ADMIN_PRODUCTS_OVERVIEW); }
-  goToAdminOrders() { this.routingService.route(MyRoutes.ADMIN_BESTELLUNGEN_OVERVIEW); }
+  goToAdminPanel() { this.routingService.route(MyRoutes.ADMIN_DASHBOARD); }
 }

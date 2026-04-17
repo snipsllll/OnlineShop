@@ -1,5 +1,6 @@
 import {Routes} from '@angular/router';
 import {AboutUs} from './views/about-us/about-us';
+import {AdminDashboard} from './views/admin-dashboard/admin-dashboard';
 import {AccountSettings} from './views/account-settings/account-settings';
 import {AdminBestellungDetails} from './views/admin-bestellung-details/admin-bestellung-details';
 import {AdminBestellungenOverview} from './views/admin-bestellungen-overview/admin-bestellungen-overview';
@@ -23,6 +24,7 @@ export const routes: Routes = [
   {path: '', redirectTo: 'home', pathMatch: 'full'},
   {path: `${MyRoutes.PRODUKTE_OVERVIEW}`, redirectTo: 'home', pathMatch: 'full'},
   {path: `${MyRoutes.ABOUT_US}`, component: AboutUs},
+  {path: `${MyRoutes.ADMIN_DASHBOARD}`, component: AdminDashboard},
   {path: `${MyRoutes.DATENSCHUTZ}`, component: Datenschutz},
   {path: `${MyRoutes.AGB}`, component: Agb},
   {path: `${MyRoutes.WIDERRUFSRECHT}`, component: Widerrufsrecht},

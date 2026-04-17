@@ -1,0 +1,149 @@
+<app-admin-nav />
+
+<div class="page-container dashboard-page">
+
+  @if (loading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Dashboard wird geladen...</p>
+    </div>
+  } @else {
+
+    <div class="dashboard-header">
+      <div>
+        <h1 class="dashboard-title">
+          <span class="material-symbols-outlined">dashboard</span>
+          Dashboard
+        </h1>
+        <p class="dashboard-subtitle">Willkommen im Admin Panel – hier hast du alles im Blick.</p>
+      </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+      <div class="stat-card stat-card--blue" (click)="goProducts()">
+        <div class="stat-card__icon">
+          <span class="material-symbols-outlined">inventory_2</span>
+        </div>
+        <div class="stat-card__body">
+          <span class="stat-card__value">{{ produktCount() }}</span>
+          <span class="stat-card__label">Produkte</span>
+        </div>
+        <span class="material-symbols-outlined stat-card__arrow">arrow_forward</span>
+      </div>
+
+      <div class="stat-card stat-card--gray" (click)="goOrders()">
+        <div class="stat-card__icon">
+          <span class="material-symbols-outlined">shopping_bag</span>
+        </div>
+        <div class="stat-card__body">
+          <span class="stat-card__value">{{ countGesamt }}</span>
+          <span class="stat-card__label">Bestellungen gesamt</span>
+        </div>
+        <span class="material-symbols-outlined stat-card__arrow">arrow_forward</span>
+      </div>
+
+      <div class="stat-card stat-card--orange">
+        <div class="stat-card__icon">
+          <span class="material-symbols-outlined">new_releases</span>
+        </div>
+        <div class="stat-card__body">
+          <span class="stat-card__value">{{ countNeu }}</span>
+          <span class="stat-card__label">Neu / Eingegangen</span>
+        </div>
+      </div>
+
+      <div class="stat-card stat-card--indigo">
+        <div class="stat-card__icon">
+          <span class="material-symbols-outlined">autorenew</span>
+        </div>
+        <div class="stat-card__body">
+          <span class="stat-card__value">{{ countInBearbeitung }}</span>
+          <span class="stat-card__label">In Bearbeitung</span>
+        </div>
+      </div>
+
+      <div class="stat-card stat-card--purple">
+        <div class="stat-card__icon">
+          <span class="material-symbols-outlined">local_shipping</span>
+        </div>
+        <div class="stat-card__body">
+          <span class="stat-card__value">{{ countVersandt }}</span>
+          <span class="stat-card__label">Versandt</span>
+        </div>
+      </div>
+
+      <div class="stat-card stat-card--green">
+        <div class="stat-card__icon">
+          <span class="material-symbols-outlined">check_circle</span>
+        </div>
+        <div class="stat-card__body">
+          <span class="stat-card__value">{{ countAngekommen }}</span>
+          <span class="stat-card__label">Angekommen</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="section">
+      <h2 class="section-title">Schnellzugriff</h2>
+      <div class="actions-grid">
+        <button class="action-card" (click)="goNewProduct()">
+          <span class="material-symbols-outlined action-card__icon action-card__icon--blue">add_circle</span>
+          <span class="action-card__label">Neues Produkt anlegen</span>
+          <span class="material-symbols-outlined action-card__chevron">chevron_right</span>
+        </button>
+        <button class="action-card" (click)="goProducts()">
+          <span class="material-symbols-outlined action-card__icon action-card__icon--gray">inventory_2</span>
+          <span class="action-card__label">Alle Produkte verwalten</span>
+          <span class="material-symbols-outlined action-card__chevron">chevron_right</span>
+        </button>
+        <button class="action-card" (click)="goOrders()">
+          <span class="material-symbols-outlined action-card__icon action-card__icon--orange">receipt_long</span>
+          <span class="action-card__label">Alle Bestellungen anzeigen</span>
+          <span class="material-symbols-outlined action-card__chevron">chevron_right</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Recent Orders -->
+    @if (recentBestellungen.length > 0) {
+      <div class="section">
+        <div class="section-header">
+          <h2 class="section-title">Letzte Bestellungen</h2>
+          <button class="section-link" (click)="goOrders()">
+            Alle anzeigen
+            <span class="material-symbols-outlined">arrow_forward</span>
+          </button>
+        </div>
+        <div class="card orders-table-card">
+          <table class="orders-table">
+            <thead>
+              <tr>
+                <th>Bestellnummer</th>
+                <th>Datum</th>
+                <th>Artikel</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (b of recentBestellungen; track b.id) {
+                <tr class="orders-table__row" (click)="goOrderDetails(b.id)">
+                  <td class="orders-table__id">#{{ b.id.slice(0, 8).toUpperCase() }}</td>
+                  <td>{{ formatDate(b.bestelldatum) }}</td>
+                  <td>{{ b.produkte?.length ?? 0 }} {{ (b.produkte?.length ?? 0) === 1 ? 'Artikel' : 'Artikel' }}</td>
+                  <td>
+                    <span class="badge {{ statusClass(b.bestellungsZustand) }}">
+                      {{ statusLabel(b.bestellungsZustand) }}
+                    </span>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+
+  }
+</div>

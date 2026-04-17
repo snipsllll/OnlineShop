@@ -10,11 +10,12 @@ import {MyRoutes} from '../../models/enums/MyRoutes';
 import {RouteParams} from '../../models/enums/RouteParams';
 import {BestellungsZustand} from '../../models/enums/BestellungsZustand';
 import {ZahlungsZustand} from '../../models/enums/ZahlungsZustand';
+import {AdminNav} from '../../components/admin-nav/admin-nav';
 
 @Component({
   selector: 'app-admin-bestellung-details',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, AdminNav],
   templateUrl: './admin-bestellung-details.html',
   styleUrl: './admin-bestellung-details.css',
 })

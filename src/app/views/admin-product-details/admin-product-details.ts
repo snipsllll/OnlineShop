@@ -9,11 +9,12 @@ import {StorageService} from '../../services/storage.service';
 import {RoutingService} from '../../services/routing.service';
 import {MyRoutes} from '../../models/enums/MyRoutes';
 import {RouteParams} from '../../models/enums/RouteParams';
+import {AdminNav} from '../../components/admin-nav/admin-nav';
 
 @Component({
   selector: 'app-admin-product-details',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, AdminNav],
   templateUrl: './admin-product-details.html',
   styleUrl: './admin-product-details.css',
 })
