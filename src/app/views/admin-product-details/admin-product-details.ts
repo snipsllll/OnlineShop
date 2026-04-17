@@ -43,12 +43,16 @@ export class AdminProductDetails implements OnInit {
       if (!this.isNew && id) {
         const p = await this.produktService.getProdukt(id);
         if (p) {
-          this.bezeichnung = p.bezeichnung;
-          this.beschreibung = p.beschreibung;
-          this.preis = p.preis;
-          this.lagerbestand = p.lagerbestand;
-          this.verfuegbar = p.verfuegbar;
-          this.imgRefs = [...(p.imgRefs ?? [])];
+          this.bezeichnung = p.bezeichnung ?? '';
+          this.beschreibung = p.beschreibung ?? '';
+          this.preis = p.preis ?? 0;
+          this.lagerbestand = p.lagerbestand ?? 0;
+          this.verfuegbar = p.verfuegbar ?? true;
+          this.imgRefs = (p.imgRefs ?? []).map((img, i) => ({
+            id: img.id ?? '',
+            path: img.path ?? '',
+            position: img.position ?? i,
+          }));
         }
       }
     } finally {
@@ -93,6 +97,6 @@ export class AdminProductDetails implements OnInit {
   goBack() { this.routingService.route(MyRoutes.ADMIN_PRODUCTS_OVERVIEW); }
 
   get isValid(): boolean {
-    return !!(this.bezeichnung.trim() && this.beschreibung.trim() && this.preis > 0 && this.lagerbestand >= 0);
+    return !!((this.bezeichnung ?? '').trim() && (this.beschreibung ?? '').trim() && this.preis > 0 && this.lagerbestand >= 0);
   }
 }

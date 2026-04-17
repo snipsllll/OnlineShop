@@ -44,7 +44,7 @@ export class Register {
     }
 
     this.loading = true;
-    const result = await this.authService.register(this.email, this.password);
+    const result = await this.authService.register(this.email, this.password, this.vorname, this.nachname);
     this.loading = false;
 
     if (result.success) {

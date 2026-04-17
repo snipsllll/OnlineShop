@@ -33,14 +33,14 @@ export class ProduktService {
     const produktDocRef = doc(db as Firestore, 'products', id);
 
     const firestoreCompatibleProdukt: { [key: string]: any } = {
-      bezeichnung: produkt.bezeichnung,
-      beschreibung: produkt.beschreibung,
-      preis: produkt.preis,
-      verfuegbar: produkt.verfuegbar,
-      lagerbestand: produkt.lagerbestand,
-      imgRefs: produkt.imgRefs.map(img => ({
-        path: img.path,
-        position: img.position
+      bezeichnung: produkt.bezeichnung ?? '',
+      beschreibung: produkt.beschreibung ?? '',
+      preis: produkt.preis ?? 0,
+      verfuegbar: produkt.verfuegbar ?? true,
+      lagerbestand: produkt.lagerbestand ?? 0,
+      imgRefs: (produkt.imgRefs ?? []).map(img => ({
+        path: img.path ?? '',
+        position: img.position ?? 0
       }))
     };
 

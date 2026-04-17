@@ -27,7 +27,11 @@
       <button class="topbar__icon-btn" (click)="goAccount()" title="Konto">
         <span class="material-symbols-outlined">person</span>
       </button>
-      <button class="topbar__btn-login" (click)="openLogin()">Anmelden</button>
+      @if (authService.isLoggedIn()) {
+        <button class="topbar__btn-login" (click)="logout()">Abmelden</button>
+      } @else {
+        <button class="topbar__btn-login" (click)="openLogin()">Anmelden</button>
+      }
     </div>
   </div>
 </header>

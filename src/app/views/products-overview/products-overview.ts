@@ -47,8 +47,8 @@ export class ProductsOverview implements OnInit {
     if (this.searchText.trim()) {
       const q = this.searchText.toLowerCase();
       result = result.filter(p =>
-        p.bezeichnung.toLowerCase().includes(q) ||
-        p.beschreibung.toLowerCase().includes(q)
+        (p.bezeichnung ?? '').toLowerCase().includes(q) ||
+        (p.beschreibung ?? '').toLowerCase().includes(q)
       );
     }
     if (this.showOnlyAvailable) {
@@ -57,7 +57,7 @@ export class ProductsOverview implements OnInit {
     switch (this.sortBy) {
       case 'preis-asc': return [...result].sort((a, b) => a.preis - b.preis);
       case 'preis-desc': return [...result].sort((a, b) => b.preis - a.preis);
-      default: return [...result].sort((a, b) => a.bezeichnung.localeCompare(b.bezeichnung));
+      default: return [...result].sort((a, b) => (a.bezeichnung ?? '').localeCompare(b.bezeichnung ?? ''));
     }
   }
 

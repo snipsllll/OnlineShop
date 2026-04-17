@@ -12,51 +12,48 @@ export class WarenkorbService {
   }
 
   public async getWahrenkorb(): Promise<IWarenkorb> {
-    return this.userService.getCurrentUser().then(user => {
-      return user.warenkorb;
-    })
+    const user = await this.userService.getCurrentUser();
+    return user.warenkorb ?? { id: '', produkteMitAnzahl: [], gesamtPreis: 0 };
   }
 
   public async addToWarenkorb(produktId: string, anzahl: number) {
-    this.getWahrenkorb().then(wk => {
-      if (!wk.produkteMitAnzahl.find(p => p.produktId === produktId)) {
-        wk.produkteMitAnzahl.push({produktId: produktId, anzahl: anzahl})
-        this.updateWarenkorb(wk);
-      }
-    })
+    const wk = await this.getWahrenkorb();
+    wk.produkteMitAnzahl = wk.produkteMitAnzahl ?? [];
+    if (!wk.produkteMitAnzahl.find(p => p.produktId === produktId)) {
+      wk.produkteMitAnzahl.push({ produktId, anzahl });
+      await this.updateWarenkorb(wk);
+    }
   }
 
   public async removeFromWarenkorb(produktId: string) {
-    this.getWahrenkorb().then(wk => {
-      if (wk.produkteMitAnzahl.find(p => p.produktId === produktId)) {
-        const index = wk.produkteMitAnzahl.findIndex(p => p.produktId === produktId);
-        wk.produkteMitAnzahl.splice(index, 1);
-        this.updateWarenkorb(wk);
-      }
-    })
+    const wk = await this.getWahrenkorb();
+    wk.produkteMitAnzahl = wk.produkteMitAnzahl ?? [];
+    const index = wk.produkteMitAnzahl.findIndex(p => p.produktId === produktId);
+    if (index !== -1) {
+      wk.produkteMitAnzahl.splice(index, 1);
+      await this.updateWarenkorb(wk);
+    }
   }
 
   public async clearWarenkorb() {
-    this.getWahrenkorb().then(wk => {
-      wk.produkteMitAnzahl = [];
-      this.updateWarenkorb(wk);
-    });
+    const wk = await this.getWahrenkorb();
+    wk.produkteMitAnzahl = [];
+    await this.updateWarenkorb(wk);
   }
 
   public async changeProduktAnzahl(produktId: string, anzahl: number) {
-    this.getWahrenkorb().then(wk => {
-      if (wk.produkteMitAnzahl.find(p => p.produktId === produktId)) {
-        const index = wk.produkteMitAnzahl.findIndex(p => p.produktId === produktId);
-        wk.produkteMitAnzahl[index].anzahl = anzahl;
-        this.updateWarenkorb(wk);
-      }
-    })
+    const wk = await this.getWahrenkorb();
+    wk.produkteMitAnzahl = wk.produkteMitAnzahl ?? [];
+    const index = wk.produkteMitAnzahl.findIndex(p => p.produktId === produktId);
+    if (index !== -1) {
+      wk.produkteMitAnzahl[index].anzahl = anzahl;
+      await this.updateWarenkorb(wk);
+    }
   }
 
   private async updateWarenkorb(wk: IWarenkorb) {
-    this.userService.getCurrentUser().then(user => {
-      user.warenkorb = wk;
-      this.userService.updateUser(user);
-    })
+    const user = await this.userService.getCurrentUser();
+    user.warenkorb = wk;
+    await this.userService.updateUser(user);
   }
 }

@@ -8,6 +8,7 @@ import {AuthService} from '../../services/auth.service';
 import {RoutingService} from '../../services/routing.service';
 import {DialogService} from '../../services/dialog.service';
 import {MyRoutes} from '../../models/enums/MyRoutes';
+import {Rolle} from '../../models/enums/Rolle';
 
 @Component({
   selector: 'app-account-settings',
@@ -79,5 +80,11 @@ export class AccountSettings implements OnInit {
     this.routingService.route(MyRoutes.PRODUKTE_OVERVIEW);
   }
 
+  get isAdmin(): boolean {
+    return this.user()?.rolle === Rolle.ADMIN;
+  }
+
   goToOrders() { this.routingService.route(MyRoutes.BESTELLUNGEN_OVERVIEW); }
+  goToAdminProducts() { this.routingService.route(MyRoutes.ADMIN_PRODUCTS_OVERVIEW); }
+  goToAdminOrders() { this.routingService.route(MyRoutes.ADMIN_BESTELLUNGEN_OVERVIEW); }
 }

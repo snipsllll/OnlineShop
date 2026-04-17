@@ -1,5 +1,5 @@
-import {Injectable} from '@angular/core';
-import {createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, UserCredential} from 'firebase/auth';
+import {Injectable, signal} from '@angular/core';
+import {createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut, User, UserCredential} from 'firebase/auth';
 import {UserService} from './user.service';
 import {auth} from '../../environments/environment';
 
@@ -13,14 +13,18 @@ export interface IActionResult {
 })
 export class AuthService {
   public currentUser: UserCredential | null = null;
+  public isLoggedIn = signal(false);
 
   constructor(private userService: UserService) {
+    onAuthStateChanged(auth, (user: User | null) => {
+      this.isLoggedIn.set(!!user);
+    });
   }
 
-  async register(email: string, password: string): Promise<IActionResult> {
+  async register(email: string, password: string, vorname: string, nachname: string): Promise<IActionResult> {
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      await this.userService.createNewUser(userCredential.user.uid, userCredential.user.email!, userCredential.user.displayName || '');
+      await this.userService.createNewUser(userCredential.user.uid, userCredential.user.email!, vorname, nachname);
       return {success: true};
     } catch (error: any) {
       return {
@@ -32,10 +36,7 @@ export class AuthService {
 
   async login(email: string, password: string): Promise<IActionResult> {
     try {
-      signInWithEmailAndPassword(auth, email, password).then(uc => {
-        this.currentUser = uc;
-        return {success: true};
-      });
+      this.currentUser = await signInWithEmailAndPassword(auth, email, password);
       return {success: true};
     } catch (error: any) {
       return {
@@ -48,6 +49,7 @@ export class AuthService {
   async logout(): Promise<IActionResult> {
     try {
       await signOut(auth);
+      this.currentUser = null;
       return {success: true};
     } catch (error: any) {
       return {
