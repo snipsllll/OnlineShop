@@ -168,6 +168,16 @@
         </div>
         <div class="perm-toggle-row">
           <div class="toggle-info">
+            <span class="toggle-label">Benutzerliste bearbeiten</span>
+            <span class="toggle-sub">Benutzer bearbeiten (außer Owner-Konten)</span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" [(ngModel)]="adminPermsLocal.canEditUsers" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="perm-toggle-row">
+          <div class="toggle-info">
             <span class="toggle-label">Shop-Einstellungen</span>
             <span class="toggle-sub">Shop-Namen und Mitarbeiter-Rechte konfigurieren</span>
           </div>

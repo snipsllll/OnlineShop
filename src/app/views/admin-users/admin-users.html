@@ -86,7 +86,7 @@
                       </span>
                     </td>
                     <td class="col-actions">
-                      @if (isOwner()) {
+                      @if (canEditThisUser(u)) {
                         <button class="btn-secondary btn-sm edit-row-btn" (click)="selectUser(u); $event.stopPropagation()">
                           <span class="material-symbols-outlined">edit</span>
                           Bearbeiten
@@ -101,8 +101,8 @@
         }
       </div>
 
-      <!-- Edit Panel (nur Owner) -->
-      @if (isOwner() && selectedUser(); as u) {
+      <!-- Edit Panel -->
+      @if (selectedUser(); as u) { @if (canEditThisUser(u)) {
         <div class="edit-panel card">
           <div class="edit-panel__header">
             <div class="edit-panel__title">
@@ -129,32 +129,41 @@
             <!-- Rolle -->
             <div class="form-section">
               <h3 class="form-section-title">Rolle</h3>
-              <div class="role-options">
-                <label class="role-option" [class.role-option--active]="editRolle === Rolle.KUNDE">
-                  <input type="radio" [(ngModel)]="editRolle" [value]="Rolle.KUNDE" />
-                  <span class="material-symbols-outlined">person</span>
-                  <span>Kunde</span>
-                </label>
-                <label class="role-option role-option--mitarbeiter" [class.role-option--active]="editRolle === Rolle.MITARBEITER">
-                  <input type="radio" [(ngModel)]="editRolle" [value]="Rolle.MITARBEITER" />
-                  <span class="material-symbols-outlined">badge</span>
-                  <span>Mitarbeiter</span>
-                </label>
-                @if (perms.assignableRoles().includes(Rolle.ADMIN)) {
-                  <label class="role-option role-option--admin" [class.role-option--active]="editRolle === Rolle.ADMIN">
-                    <input type="radio" [(ngModel)]="editRolle" [value]="Rolle.ADMIN" />
-                    <span class="material-symbols-outlined">admin_panel_settings</span>
-                    <span>Admin</span>
+              @if (isSelf(u) && !isOwner()) {
+                <p class="self-role-hint">
+                  <span class="material-symbols-outlined">lock</span>
+                  Du kannst deine eigene Rolle nicht ändern.
+                </p>
+              } @else {
+                <div class="role-options">
+                  <label class="role-option" [class.role-option--active]="editRolle === Rolle.KUNDE">
+                    <input type="radio" [(ngModel)]="editRolle" [value]="Rolle.KUNDE" />
+                    <span class="material-symbols-outlined">person</span>
+                    <span>Kunde</span>
                   </label>
-                }
-                @if (perms.assignableRoles().includes(Rolle.OWNER)) {
-                  <label class="role-option role-option--owner" [class.role-option--active]="editRolle === Rolle.OWNER">
-                    <input type="radio" [(ngModel)]="editRolle" [value]="Rolle.OWNER" />
-                    <span class="material-symbols-outlined">shield_person</span>
-                    <span>Owner</span>
-                  </label>
-                }
-              </div>
+                  @if (perms.assignableRoles().includes(Rolle.MITARBEITER)) {
+                    <label class="role-option role-option--mitarbeiter" [class.role-option--active]="editRolle === Rolle.MITARBEITER">
+                      <input type="radio" [(ngModel)]="editRolle" [value]="Rolle.MITARBEITER" />
+                      <span class="material-symbols-outlined">badge</span>
+                      <span>Mitarbeiter</span>
+                    </label>
+                  }
+                  @if (perms.assignableRoles().includes(Rolle.ADMIN)) {
+                    <label class="role-option role-option--admin" [class.role-option--active]="editRolle === Rolle.ADMIN">
+                      <input type="radio" [(ngModel)]="editRolle" [value]="Rolle.ADMIN" />
+                      <span class="material-symbols-outlined">admin_panel_settings</span>
+                      <span>Admin</span>
+                    </label>
+                  }
+                  @if (perms.assignableRoles().includes(Rolle.OWNER)) {
+                    <label class="role-option role-option--owner" [class.role-option--active]="editRolle === Rolle.OWNER">
+                      <input type="radio" [(ngModel)]="editRolle" [value]="Rolle.OWNER" />
+                      <span class="material-symbols-outlined">shield_person</span>
+                      <span>Owner</span>
+                    </label>
+                  }
+                </div>
+              }
             </div>
 
             <!-- Name -->
@@ -233,7 +242,7 @@
             </button>
           </div>
         </div>
-      }
+      } }
     </div>
   }
 </div>

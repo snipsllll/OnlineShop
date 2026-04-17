@@ -19,6 +19,7 @@ export class AuthService {
   private router = inject(Router);
 
   public currentUser: UserCredential | null = null;
+  public currentUid = signal<string | null>(null);
   public isLoggedIn = signal(false);
   public displayName = signal<string | null>(null);
   public currentRolle = signal<Rolle | null>(null);
@@ -30,6 +31,7 @@ export class AuthService {
   constructor(private userService: UserService, private warenkorbService: WarenkorbService) {
     onAuthStateChanged(auth, async (user: User | null) => {
       this.isLoggedIn.set(!!user);
+      this.currentUid.set(user?.uid ?? null);
       this.authInitialized.set(true); // Auth-Zustand ist jetzt bekannt
       if (user) {
         // Merge guest cart into Firestore, then load display name + role
@@ -48,6 +50,7 @@ export class AuthService {
       } else {
         this.displayName.set(null);
         this.currentRolle.set(null);
+        this.currentUid.set(null);
       }
     });
   }

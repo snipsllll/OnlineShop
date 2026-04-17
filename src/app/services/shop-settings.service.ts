@@ -7,6 +7,7 @@ export interface IRolePerms {
   canManageProducts: boolean;
   canManageOrders: boolean;
   canViewUsers: boolean;
+  canEditUsers: boolean;
   canManageShopSettings: boolean;
 }
 
@@ -20,6 +21,7 @@ const DEFAULT_ADMIN_PERMS: IRolePerms = {
   canManageProducts: true,
   canManageOrders: true,
   canViewUsers: true,
+  canEditUsers: false,
   canManageShopSettings: true,
 };
 

@@ -43,6 +43,13 @@ export class PermissionService {
     return false;
   });
 
+  readonly canEditUsers = computed(() => {
+    const r = this.auth.currentRolle();
+    if (r === Rolle.OWNER) return true;
+    if (r === Rolle.ADMIN) return this.settings.adminPerms().canEditUsers;
+    return false;
+  });
+
   readonly canManageShopSettings = computed(() => {
     const r = this.auth.currentRolle();
     if (r === Rolle.OWNER) return true;

@@ -23,6 +23,13 @@ export class AdminUsers implements OnInit {
   private dialogService = inject(DialogService);
 
   protected isOwner() { return this.authService.currentRolle() === Rolle.OWNER; }
+  protected isSelf(u: IUser) { return u.uid === this.authService.currentUid(); }
+  protected canEditThisUser(u: IUser | null): boolean {
+    if (!u) return false;
+    if (!this.perms.canEditUsers()) return false;
+    if (u.rolle === Rolle.OWNER && !this.isOwner()) return false;
+    return true;
+  }
 
   protected users = signal<IUser[]>([]);
   protected loading = signal(true);
@@ -84,6 +91,10 @@ export class AdminUsers implements OnInit {
   async saveUser() {
     const u = this.selectedUser();
     if (!u) return;
+    // Admins cannot change their own role
+    if (this.isSelf(u) && !this.isOwner()) {
+      this.editRolle = u.rolle ?? Rolle.ADMIN;
+    }
     this.saving.set(true);
     this.saveSuccess.set(false);
     try {

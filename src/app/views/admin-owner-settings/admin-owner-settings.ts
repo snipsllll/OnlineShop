@@ -35,7 +35,7 @@ export class AdminOwnerSettings implements OnInit {
   protected bannerSaveError = signal(false);
 
   // Admin Permissions
-  protected adminPermsLocal = { canManageProducts: true, canManageOrders: true, canViewUsers: true, canManageShopSettings: true };
+  protected adminPermsLocal = { canManageProducts: true, canManageOrders: true, canViewUsers: true, canEditUsers: false, canManageShopSettings: true };
   protected adminPermsSaving = signal(false);
   protected adminPermsSaveSuccess = signal(false);
   protected adminPermsSaveError = signal(false);
@@ -91,6 +91,7 @@ export class AdminOwnerSettings implements OnInit {
     { label: 'Produkte verwalten',              kunde: false, mitarbeiter: true,  admin: true  },
     { label: 'Bestellungen verwalten',          kunde: false, mitarbeiter: true,  admin: true  },
     { label: 'Benutzerliste einsehen',          kunde: false, mitarbeiter: true,  admin: true  },
+    { label: 'Benutzerliste bearbeiten',        kunde: false, mitarbeiter: false, admin: true  },
     { label: 'Kundendaten bearbeiten',          kunde: false, mitarbeiter: false, admin: false },
     { label: 'Shop-Einstellungen ändern',       kunde: false, mitarbeiter: false, admin: true  },
     { label: 'Owner-Einstellungen',             kunde: false, mitarbeiter: false, admin: false },

@@ -1,97 +1,193 @@
 <app-admin-nav />
 <div class="page-container">
-  <!-- Page header -->
+
   <div class="page-header">
     <div class="header-left">
       <h1 class="page-title">
         <span class="material-symbols-outlined title-icon">receipt_long</span>
-        Admin: Bestellungen
+        Bestellungen
       </h1>
       <p class="page-subtitle">Übersicht und Verwaltung aller Bestellungen</p>
     </div>
   </div>
 
-  <!-- Stats row -->
-  @if (!loading()) {
-    <div class="stats-row">
-      <div class="stat-card">
-        <span class="material-symbols-outlined stat-icon stat-icon--total">shopping_bag</span>
-        <div class="stat-info">
-          <span class="stat-value">{{ bestellungen().length }}</span>
-          <span class="stat-label">Gesamt</span>
-        </div>
-      </div>
-      <div class="stat-card">
-        <span class="material-symbols-outlined stat-icon stat-icon--new">fiber_new</span>
-        <div class="stat-info">
-          <span class="stat-value">{{ countByZustand(BestellungsZustand.EINGEGANGEN) }}</span>
-          <span class="stat-label">Eingegangen</span>
-        </div>
-      </div>
-      <div class="stat-card">
-        <span class="material-symbols-outlined stat-icon stat-icon--processing">pending</span>
-        <div class="stat-info">
-          <span class="stat-value">{{ countByZustand(BestellungsZustand.IN_BEARBEITUNG) }}</span>
-          <span class="stat-label">In Bearbeitung</span>
-        </div>
-      </div>
-      <div class="stat-card">
-        <span class="material-symbols-outlined stat-icon stat-icon--shipped">local_shipping</span>
-        <div class="stat-info">
-          <span class="stat-value">{{ countByZustand(BestellungsZustand.VERSANDT) }}</span>
-          <span class="stat-label">Versandt</span>
-        </div>
-      </div>
-      <div class="stat-card">
-        <span class="material-symbols-outlined stat-icon stat-icon--done">check_circle</span>
-        <div class="stat-info">
-          <span class="stat-value">{{ countByZustand(BestellungsZustand.ANGEKOMMEN) }}</span>
-          <span class="stat-label">Angekommen</span>
-        </div>
-      </div>
-      <div class="stat-card">
-        <span class="material-symbols-outlined stat-icon stat-icon--cancelled">cancel</span>
-        <div class="stat-info">
-          <span class="stat-value">{{ countByZustand(BestellungsZustand.STORNIERT) }}</span>
-          <span class="stat-label">Storniert</span>
-        </div>
-      </div>
+  <!-- View mode toggle + status tabs -->
+  <div class="tabs-bar">
+    <div class="view-toggle">
+      <button class="view-btn" [class.view-btn--active]="viewMode === 'aktuelle'" (click)="setViewMode('aktuelle')">
+        Aktuelle
+        @if (!loading() && aktuelleCount > 0) {
+          <span class="tab-badge tab-badge--new">{{ aktuelleCount }}</span>
+        }
+      </button>
+      <button class="view-btn" [class.view-btn--active]="viewMode === 'alle'" (click)="setViewMode('alle')">
+        Alle
+        @if (!loading()) {
+          <span class="tab-badge">{{ bestellungen().length }}</span>
+        }
+      </button>
     </div>
-  }
 
-  <!-- Toolbar -->
+    <div class="status-tabs">
+      <button class="status-tab" [class.status-tab--active]="isActiveFilter('all')" (click)="setFilter('all')">
+        Alle
+      </button>
+      <button class="status-tab" [class.status-tab--active]="isActiveFilter(BestellungsZustand.EINGEGANGEN)" (click)="setFilter(BestellungsZustand.EINGEGANGEN)">
+        <span class="material-symbols-outlined">inbox</span>
+        Eingegangen
+        @if (!loading() && countByZustand(BestellungsZustand.EINGEGANGEN) > 0) {
+          <span class="tab-badge tab-badge--new">{{ countByZustand(BestellungsZustand.EINGEGANGEN) }}</span>
+        }
+      </button>
+      <button class="status-tab" [class.status-tab--active]="isActiveFilter(BestellungsZustand.IN_BEARBEITUNG)" (click)="setFilter(BestellungsZustand.IN_BEARBEITUNG)">
+        <span class="material-symbols-outlined">manufacturing</span>
+        In Bearbeitung
+        @if (!loading() && countByZustand(BestellungsZustand.IN_BEARBEITUNG) > 0) {
+          <span class="tab-badge tab-badge--warn">{{ countByZustand(BestellungsZustand.IN_BEARBEITUNG) }}</span>
+        }
+      </button>
+      <button class="status-tab" [class.status-tab--active]="isActiveFilter(BestellungsZustand.VERSANDT)" (click)="setFilter(BestellungsZustand.VERSANDT)">
+        <span class="material-symbols-outlined">local_shipping</span>
+        Versandt
+        @if (!loading() && countByZustand(BestellungsZustand.VERSANDT) > 0) {
+          <span class="tab-badge">{{ countByZustand(BestellungsZustand.VERSANDT) }}</span>
+        }
+      </button>
+      @if (viewMode === 'alle') {
+        <button class="status-tab" [class.status-tab--active]="isActiveFilter(BestellungsZustand.ANGEKOMMEN)" (click)="setFilter(BestellungsZustand.ANGEKOMMEN)">
+          <span class="material-symbols-outlined">check_circle</span>
+          Angekommen
+          @if (!loading() && countByZustand(BestellungsZustand.ANGEKOMMEN) > 0) {
+            <span class="tab-badge">{{ countByZustand(BestellungsZustand.ANGEKOMMEN) }}</span>
+          }
+        </button>
+        <button class="status-tab" [class.status-tab--active]="isActiveFilter(BestellungsZustand.STORNIERT)" (click)="setFilter(BestellungsZustand.STORNIERT)">
+          <span class="material-symbols-outlined">cancel</span>
+          Storniert
+          @if (!loading() && countByZustand(BestellungsZustand.STORNIERT) > 0) {
+            <span class="tab-badge tab-badge--muted">{{ countByZustand(BestellungsZustand.STORNIERT) }}</span>
+          }
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Search + count -->
   <div class="toolbar-row">
-    <div class="filter-wrapper">
-      <span class="material-symbols-outlined filter-icon">filter_list</span>
-      <select class="filter-select" [(ngModel)]="filterZustand">
-        <option value="all">Alle Bestellungen</option>
-        <option [value]="BestellungsZustand.EINGEGANGEN">Eingegangen</option>
-        <option [value]="BestellungsZustand.IN_BEARBEITUNG">In Bearbeitung</option>
-        <option [value]="BestellungsZustand.VERSANDT">Versandt</option>
-        <option [value]="BestellungsZustand.ANGEKOMMEN">Angekommen</option>
-        <option [value]="BestellungsZustand.STORNIERT">Storniert</option>
-      </select>
+    <div class="search-wrapper">
+      <span class="material-symbols-outlined search-icon">search</span>
+      <input class="search-input" type="text" placeholder="Bestell-ID suchen…" [(ngModel)]="searchText" />
+      @if (searchText) {
+        <button class="search-clear" (click)="searchText = ''">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      }
     </div>
     @if (!loading()) {
-      <div class="result-count">
-        {{ filteredBestellungen.length }} Bestellung{{ filteredBestellungen.length !== 1 ? 'en' : '' }}
-      </div>
+      <span class="result-count">{{ filteredBestellungen.length }} Bestellung{{ filteredBestellungen.length !== 1 ? 'en' : '' }}</span>
     }
   </div>
 
-  <!-- Content -->
+  <!-- Loading -->
   @if (loading()) {
     <div class="loading-state">
       <div class="spinner"></div>
-      <p>Bestellungen werden geladen...</p>
+      <p>Bestellungen werden geladen…</p>
     </div>
+
+  <!-- Empty -->
+  } @else if (filteredBestellungen.length === 0) {
+    <div class="card empty-card">
+      <span class="material-symbols-outlined empty-icon">inbox</span>
+      <p class="empty-title">Keine Bestellungen</p>
+      <p class="empty-sub">{{ searchText ? 'Keine Treffer für deine Suche.' : 'Für diesen Status gibt es keine Einträge.' }}</p>
+    </div>
+
+  <!-- Orders -->
   } @else {
-    <div class="card table-card">
-      <app-admin-bestellungen-table
-        [bestellungen]="filteredBestellungen"
-        (detailsClicked)="onDetails($event)"
-        (deleteClicked)="onDelete($event)"
-      />
+    <div class="orders-list">
+      @for (b of filteredBestellungen; track b.id) {
+        <div class="order-card" [class.order-card--new]="isNewOrder(b)" [class.order-card--cancelled]="isCancelled(b)">
+
+          <!-- Left accent bar -->
+          <div class="order-accent" [ngClass]="getAccentClass(b)"></div>
+
+          <!-- Main content -->
+          <div class="order-body">
+
+            <!-- Row 1: meta + status badges -->
+            <div class="order-row order-row--top">
+              <div class="order-meta">
+                <span class="order-date">{{ formatDate(b.bestelldatum) }}</span>
+                <span class="order-id" [title]="b.id">#{{ b.id.slice(0, 8) }}</span>
+              </div>
+              <div class="order-badges">
+                <span class="badge" [ngClass]="getZustandClass(b)">{{ getZustandLabel(b) }}</span>
+                @if (isPaid(b)) {
+                  <span class="badge badge--success pay-badge">
+                    <span class="material-symbols-outlined">check</span>Bezahlt
+                  </span>
+                } @else {
+                  <span class="badge badge--error pay-badge">
+                    <span class="material-symbols-outlined">schedule</span>Ausstehend
+                  </span>
+                }
+              </div>
+            </div>
+
+            <!-- Row 2: products + total -->
+            <div class="order-row order-row--products">
+              <div class="product-chips">
+                @for (p of b.produkte.slice(0, 3); track p.id) {
+                  <span class="product-chip">{{ p.anzahl }}&thinsp;&times;&thinsp;{{ p.bezeichnung }}</span>
+                }
+                @if (b.produkte.length > 3) {
+                  <span class="product-chip product-chip--more">+{{ b.produkte.length - 3 }}</span>
+                }
+              </div>
+              <span class="order-total">{{ formatPrice(getOrderTotal(b)) }}</span>
+            </div>
+
+          </div>
+
+          <!-- Actions -->
+          <div class="order-actions">
+            @if (getNextZustand(b) !== null) {
+              <div class="advance-wrapper">
+                <button
+                  class="btn-advance"
+                  [class.btn-advance--highlight]="isNewOrder(b) && canAdvance(b)"
+                  [class.btn-advance--blocked]="!canAdvance(b)"
+                  (click)="advanceZustand(b)"
+                  [disabled]="updatingId() === b.id || !canAdvance(b)"
+                  [title]="canAdvance(b) ? getNextLabel(b) : advanceBlockedReason(b)"
+                >
+                  @if (updatingId() === b.id) {
+                    <div class="spinner spinner--sm"></div>
+                  } @else {
+                    <span class="material-symbols-outlined">{{ canAdvance(b) ? getNextIcon(b) : 'lock' }}</span>
+                  }
+                  <span class="btn-advance__label">{{ getNextLabel(b) }}</span>
+                </button>
+                @if (!canAdvance(b)) {
+                  <span class="advance-blocked-hint">
+                    <span class="material-symbols-outlined">schedule</span>
+                    Zahlung ausstehend
+                  </span>
+                }
+              </div>
+            }
+            <button class="action-icon-btn" (click)="onDetails(b.id)" title="Details öffnen">
+              <span class="material-symbols-outlined">open_in_new</span>
+            </button>
+            <button class="action-icon-btn action-icon-btn--danger" (click)="onDelete(b)" title="Löschen">
+              <span class="material-symbols-outlined">delete</span>
+            </button>
+          </div>
+
+        </div>
+      }
     </div>
   }
+
 </div>
