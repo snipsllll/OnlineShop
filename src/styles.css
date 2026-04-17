@@ -73,6 +73,213 @@
 }
 
 /* =============================================
+   NIGHT THEME  (dark, crimson, sharp)
+   Activated via data-theme="night" on <html>
+   ============================================= */
+:root[data-theme="night"] {
+  --primary:        #c0392b;
+  --primary-dark:   #922b21;
+  --primary-light:  #2d1010;
+  --accent:         #e74c3c;
+  --success:        #27ae60;
+  --error:          #e74c3c;
+  --bg:             #0f0f0f;
+  --surface:        #1a1a1a;
+  --border:         #2e1a1a;
+  --text:           #f0dede;
+  --text-secondary: #9a7878;
+  --text-muted:     #5a4040;
+  --radius-sm:      4px;
+  --radius-md:      6px;
+  --radius-lg:      10px;
+  --shadow-sm:      0 1px 4px rgba(192, 57, 43, 0.20);
+  --shadow-md:      0 4px 16px rgba(192, 57, 43, 0.18);
+  --shadow-lg:      0 8px 32px rgba(192, 57, 43, 0.25);
+}
+
+/* btn-secondary has hardcoded white background */
+:root[data-theme="night"] .btn-secondary {
+  background: #1e0d0d;
+  color: var(--primary);
+  border-color: var(--primary);
+}
+:root[data-theme="night"] .btn-secondary:hover:not(:disabled) {
+  background: var(--primary-light);
+}
+:root[data-theme="night"] .btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  border-color: var(--border);
+}
+:root[data-theme="night"] .btn-ghost:hover:not(:disabled) {
+  background: var(--surface);
+  color: var(--text);
+  border-color: var(--text-muted);
+}
+:root[data-theme="night"] .btn-primary:hover:not(:disabled) {
+  box-shadow: 0 2px 8px rgba(192, 57, 43, 0.50);
+}
+:root[data-theme="night"] .form-input:focus {
+  box-shadow: 0 0 0 3px rgba(192, 57, 43, 0.25);
+}
+:root[data-theme="night"] .badge--neutral {
+  background: #231212;
+  color: var(--text-secondary);
+}
+:root[data-theme="night"] .overlay {
+  background: rgba(0, 0, 0, 0.78);
+}
+
+/* =============================================
+   OZEAN THEME  (dark navy, teal/cyan)
+   ============================================= */
+:root[data-theme="ocean"] {
+  --primary:        #0891b2;
+  --primary-dark:   #0e7490;
+  --primary-light:  #0a2535;
+  --accent:         #22d3ee;
+  --success:        #10b981;
+  --error:          #f43f5e;
+  --bg:             #0a1628;
+  --surface:        #0e2040;
+  --border:         #1a3a5c;
+  --text:           #cfe8f5;
+  --text-secondary: #6ba3c4;
+  --text-muted:     #3a6080;
+  --radius-sm:      6px;
+  --radius-md:      10px;
+  --radius-lg:      16px;
+  --shadow-sm:      0 1px 4px rgba(8, 145, 178, 0.20);
+  --shadow-md:      0 4px 16px rgba(8, 145, 178, 0.18);
+  --shadow-lg:      0 8px 32px rgba(8, 145, 178, 0.25);
+}
+:root[data-theme="ocean"] .btn-secondary {
+  background: #0a2535; color: var(--primary); border-color: var(--primary);
+}
+:root[data-theme="ocean"] .btn-secondary:hover:not(:disabled) { background: #0d3348; }
+:root[data-theme="ocean"] .btn-ghost { background: transparent; color: var(--text-secondary); border-color: var(--border); }
+:root[data-theme="ocean"] .btn-ghost:hover:not(:disabled) { background: var(--surface); color: var(--text); border-color: var(--text-muted); }
+:root[data-theme="ocean"] .btn-primary:hover:not(:disabled) { box-shadow: 0 2px 8px rgba(8, 145, 178, 0.50); }
+:root[data-theme="ocean"] .form-input:focus { box-shadow: 0 0 0 3px rgba(8, 145, 178, 0.28); }
+:root[data-theme="ocean"] .badge--neutral { background: #112b44; color: var(--text-secondary); }
+:root[data-theme="ocean"] .overlay { background: rgba(0, 10, 24, 0.80); }
+
+/* =============================================
+   SONNENUNTERGANG THEME  (warm light, deep orange)
+   ============================================= */
+:root[data-theme="sunset"] {
+  --primary:        #e8650f;
+  --primary-dark:   #c2410c;
+  --primary-light:  #fff4e8;
+  --accent:         #f59e0b;
+  --success:        #16a34a;
+  --error:          #dc2626;
+  --bg:             #fffcf5;
+  --surface:        #ffffff;
+  --border:         #fcd4a0;
+  --text:           #431407;
+  --text-secondary: #7c3318;
+  --text-muted:     #a0633a;
+  --radius-sm:      6px;
+  --radius-md:      10px;
+  --radius-lg:      16px;
+  --shadow-sm:      0 1px 3px rgba(232, 101, 15, 0.10);
+  --shadow-md:      0 4px 12px rgba(232, 101, 15, 0.12);
+  --shadow-lg:      0 8px 24px rgba(232, 101, 15, 0.16);
+}
+:root[data-theme="sunset"] .btn-primary:hover:not(:disabled) { box-shadow: 0 2px 8px rgba(232, 101, 15, 0.40); }
+:root[data-theme="sunset"] .form-input:focus { box-shadow: 0 0 0 3px rgba(232, 101, 15, 0.18); }
+:root[data-theme="sunset"] .badge--neutral { background: #fdecd5; color: var(--text-secondary); }
+:root[data-theme="sunset"] .overlay { background: rgba(67, 20, 7, 0.50); }
+
+/* =============================================
+   LAVENDEL THEME  (soft violet, rounded & elegant)
+   ============================================= */
+:root[data-theme="lavender"] {
+  --primary:        #7c3aed;
+  --primary-dark:   #6d28d9;
+  --primary-light:  #f3f0ff;
+  --accent:         #a78bfa;
+  --success:        #059669;
+  --error:          #dc2626;
+  --bg:             #faf8ff;
+  --surface:        #ffffff;
+  --border:         #dfd6ff;
+  --text:           #1e0a4f;
+  --text-secondary: #5b3fa8;
+  --text-muted:     #9b7fd4;
+  --radius-sm:      8px;
+  --radius-md:      14px;
+  --radius-lg:      22px;
+  --shadow-sm:      0 1px 4px rgba(124, 58, 237, 0.10);
+  --shadow-md:      0 4px 14px rgba(124, 58, 237, 0.10);
+  --shadow-lg:      0 8px 28px rgba(124, 58, 237, 0.14);
+}
+:root[data-theme="lavender"] .btn-primary:hover:not(:disabled) { box-shadow: 0 2px 8px rgba(124, 58, 237, 0.40); }
+:root[data-theme="lavender"] .form-input:focus { box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.18); }
+:root[data-theme="lavender"] .badge--neutral { background: #edeaff; color: var(--text-secondary); }
+
+/* =============================================
+   EIS THEME  (icy white, razor-sharp, steel blue)
+   ============================================= */
+:root[data-theme="ice"] {
+  --primary:        #0369a1;
+  --primary-dark:   #075985;
+  --primary-light:  #e8f5ff;
+  --accent:         #38bdf8;
+  --success:        #059669;
+  --error:          #dc2626;
+  --bg:             #f5faff;
+  --surface:        #ffffff;
+  --border:         #bfdbf7;
+  --text:           #0c2a4a;
+  --text-secondary: #2d6a94;
+  --text-muted:     #7aaccc;
+  --radius-sm:      3px;
+  --radius-md:      5px;
+  --radius-lg:      8px;
+  --shadow-sm:      0 1px 3px rgba(3, 105, 161, 0.07);
+  --shadow-md:      0 4px 12px rgba(3, 105, 161, 0.08);
+  --shadow-lg:      0 8px 24px rgba(3, 105, 161, 0.10);
+}
+:root[data-theme="ice"] .btn-primary:hover:not(:disabled) { box-shadow: 0 2px 8px rgba(3, 105, 161, 0.35); }
+:root[data-theme="ice"] .form-input:focus { box-shadow: 0 0 0 3px rgba(3, 105, 161, 0.16); }
+:root[data-theme="ice"] .badge--neutral { background: #ddeef9; color: var(--text-secondary); }
+
+/* =============================================
+   HERBST THEME  (dark warm amber, autumn fire)
+   ============================================= */
+:root[data-theme="autumn"] {
+  --primary:        #c96a0a;
+  --primary-dark:   #a35508;
+  --primary-light:  #2d1800;
+  --accent:         #f59e0b;
+  --success:        #15803d;
+  --error:          #b91c1c;
+  --bg:             #180e00;
+  --surface:        #231400;
+  --border:         #3d2200;
+  --text:           #ffe4a0;
+  --text-secondary: #c8963a;
+  --text-muted:     #7a5525;
+  --radius-sm:      6px;
+  --radius-md:      10px;
+  --radius-lg:      16px;
+  --shadow-sm:      0 1px 4px rgba(201, 106, 10, 0.22);
+  --shadow-md:      0 4px 16px rgba(201, 106, 10, 0.20);
+  --shadow-lg:      0 8px 32px rgba(201, 106, 10, 0.28);
+}
+:root[data-theme="autumn"] body { font-family: 'Georgia', 'Palatino Linotype', Palatino, serif; }
+:root[data-theme="autumn"] .btn-secondary { background: #2d1800; color: var(--primary); border-color: var(--primary); }
+:root[data-theme="autumn"] .btn-secondary:hover:not(:disabled) { background: #3d2200; }
+:root[data-theme="autumn"] .btn-ghost { background: transparent; color: var(--text-secondary); border-color: var(--border); }
+:root[data-theme="autumn"] .btn-ghost:hover:not(:disabled) { background: var(--surface); color: var(--text); border-color: var(--text-muted); }
+:root[data-theme="autumn"] .btn-primary:hover:not(:disabled) { box-shadow: 0 2px 8px rgba(201, 106, 10, 0.55); }
+:root[data-theme="autumn"] .form-input:focus { box-shadow: 0 0 0 3px rgba(201, 106, 10, 0.28); }
+:root[data-theme="autumn"] .badge--neutral { background: #2d1800; color: var(--text-secondary); }
+:root[data-theme="autumn"] .overlay { background: rgba(0, 0, 0, 0.80); }
+
+/* =============================================
    RESET & BASE
    ============================================= */
 *, *::before, *::after {

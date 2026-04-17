@@ -81,6 +81,140 @@
           </div>
         </button>
 
+        <!-- Ozean -->
+        <button class="theme-card" [class.theme-card--active]="themeLocal === 'ocean'" (click)="themeLocal = 'ocean'" type="button">
+          <div class="theme-preview theme-preview--ocean">
+            <div class="theme-preview__nav"></div>
+            <div class="theme-preview__content">
+              <div class="theme-preview__card">
+                <div class="theme-preview__line theme-preview__line--primary"></div>
+                <div class="theme-preview__line"></div>
+              </div>
+              <div class="theme-preview__btn"></div>
+            </div>
+          </div>
+          <div class="theme-card__body">
+            <span class="theme-card__name">Ozean</span>
+            <span class="theme-card__desc">Tief, klar &amp; kühl</span>
+            @if (themeLocal === 'ocean') {
+              <span class="theme-card__check"><span class="material-symbols-outlined">check_circle</span>Aktiv</span>
+            }
+          </div>
+        </button>
+
+        <!-- Sonnenuntergang -->
+        <button class="theme-card" [class.theme-card--active]="themeLocal === 'sunset'" (click)="themeLocal = 'sunset'" type="button">
+          <div class="theme-preview theme-preview--sunset">
+            <div class="theme-preview__nav"></div>
+            <div class="theme-preview__content">
+              <div class="theme-preview__card">
+                <div class="theme-preview__line theme-preview__line--primary"></div>
+                <div class="theme-preview__line"></div>
+              </div>
+              <div class="theme-preview__btn"></div>
+            </div>
+          </div>
+          <div class="theme-card__body">
+            <span class="theme-card__name">Sonnenuntergang</span>
+            <span class="theme-card__desc">Warm, lebendig &amp; satt</span>
+            @if (themeLocal === 'sunset') {
+              <span class="theme-card__check"><span class="material-symbols-outlined">check_circle</span>Aktiv</span>
+            }
+          </div>
+        </button>
+
+        <!-- Lavendel -->
+        <button class="theme-card" [class.theme-card--active]="themeLocal === 'lavender'" (click)="themeLocal = 'lavender'" type="button">
+          <div class="theme-preview theme-preview--lavender">
+            <div class="theme-preview__nav"></div>
+            <div class="theme-preview__content">
+              <div class="theme-preview__card">
+                <div class="theme-preview__line theme-preview__line--primary"></div>
+                <div class="theme-preview__line"></div>
+              </div>
+              <div class="theme-preview__btn"></div>
+            </div>
+          </div>
+          <div class="theme-card__body">
+            <span class="theme-card__name">Lavendel</span>
+            <span class="theme-card__desc">Sanft, elegant &amp; verspielt</span>
+            @if (themeLocal === 'lavender') {
+              <span class="theme-card__check"><span class="material-symbols-outlined">check_circle</span>Aktiv</span>
+            }
+          </div>
+        </button>
+
+        <!-- Eis -->
+        <button class="theme-card" [class.theme-card--active]="themeLocal === 'ice'" (click)="themeLocal = 'ice'" type="button">
+          <div class="theme-preview theme-preview--ice">
+            <div class="theme-preview__nav"></div>
+            <div class="theme-preview__content">
+              <div class="theme-preview__card">
+                <div class="theme-preview__line theme-preview__line--primary"></div>
+                <div class="theme-preview__line"></div>
+              </div>
+              <div class="theme-preview__btn"></div>
+            </div>
+          </div>
+          <div class="theme-card__body">
+            <span class="theme-card__name">Eis</span>
+            <span class="theme-card__desc">Klar, scharf &amp; minimalistisch</span>
+            @if (themeLocal === 'ice') {
+              <span class="theme-card__check"><span class="material-symbols-outlined">check_circle</span>Aktiv</span>
+            }
+          </div>
+        </button>
+
+        <!-- Herbst -->
+        <button class="theme-card" [class.theme-card--active]="themeLocal === 'autumn'" (click)="themeLocal = 'autumn'" type="button">
+          <div class="theme-preview theme-preview--autumn">
+            <div class="theme-preview__nav"></div>
+            <div class="theme-preview__content">
+              <div class="theme-preview__card">
+                <div class="theme-preview__line theme-preview__line--primary"></div>
+                <div class="theme-preview__line"></div>
+              </div>
+              <div class="theme-preview__btn"></div>
+            </div>
+          </div>
+          <div class="theme-card__body">
+            <span class="theme-card__name">Herbst</span>
+            <span class="theme-card__desc">Dunkel, warm &amp; feurig</span>
+            @if (themeLocal === 'autumn') {
+              <span class="theme-card__check"><span class="material-symbols-outlined">check_circle</span>Aktiv</span>
+            }
+          </div>
+        </button>
+
+        <!-- Nacht -->
+        <button
+          class="theme-card"
+          [class.theme-card--active]="themeLocal === 'night'"
+          (click)="themeLocal = 'night'"
+          type="button"
+        >
+          <div class="theme-preview theme-preview--night">
+            <div class="theme-preview__nav"></div>
+            <div class="theme-preview__content">
+              <div class="theme-preview__card">
+                <div class="theme-preview__line theme-preview__line--primary"></div>
+                <div class="theme-preview__line"></div>
+              </div>
+              <div class="theme-preview__btn"></div>
+            </div>
+          </div>
+          <div class="theme-card__body">
+            <span class="theme-card__name">Nacht</span>
+            <span class="theme-card__desc">Dunkel, scharf &amp; intensiv</span>
+            @if (themeLocal === 'night') {
+              <span class="theme-card__check">
+                <span class="material-symbols-outlined">check_circle</span>
+                Aktiv
+              </span>
+            }
+          </div>
+        </button>
+
       </div>
 
       <div class="banner-save-row">

@@ -31,7 +31,7 @@ const DEFAULT_MITARBEITER_PERMS: IMitarbeiterPerms = {
   canViewUsers: false,
 };
 
-export type ShopTheme = 'modern' | 'garden';
+export type ShopTheme = 'modern' | 'garden' | 'night' | 'ocean' | 'sunset' | 'lavender' | 'ice' | 'autumn';
 
 @Injectable({
   providedIn: 'root',
@@ -62,7 +62,9 @@ export class ShopSettingsService {
         this.adminPerms.set({...DEFAULT_ADMIN_PERMS, ...(d['adminPerms'] ?? {})});
         this.mitarbeiterPerms.set({...DEFAULT_MITARBEITER_PERMS, ...(d['mitarbeiterPerms'] ?? {})});
         this.mitarbeiterRoleEnabled.set(d['mitarbeiterRoleEnabled'] ?? true);
-        const t = d['theme'] === 'garden' ? 'garden' : 'modern';
+        const raw = d['theme'];
+        const valid: ShopTheme[] = ['modern','garden','night','ocean','sunset','lavender','ice','autumn'];
+        const t: ShopTheme = valid.includes(raw) ? raw as ShopTheme : 'modern';
         this.theme.set(t);
         this.applyTheme(t);
       }
@@ -73,10 +75,10 @@ export class ShopSettingsService {
   }
 
   private applyTheme(theme: ShopTheme) {
-    if (theme === 'garden') {
-      document.documentElement.setAttribute('data-theme', 'garden');
-    } else {
+    if (theme === 'modern') {
       document.documentElement.removeAttribute('data-theme');
+    } else {
+      document.documentElement.setAttribute('data-theme', theme);
     }
   }
 
