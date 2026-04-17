@@ -4,6 +4,8 @@ import {IProdukt} from '../../models/interfaces/IProdukt';
 import {RoutingService} from '../../services/routing.service';
 import {WarenkorbService} from '../../services/warenkorb.service';
 import {FavoritService} from '../../services/favorit.service';
+import {AuthService} from '../../services/auth.service';
+import {DialogService} from '../../services/dialog.service';
 import {MyRoutes} from '../../models/enums/MyRoutes';
 
 @Component({
@@ -21,6 +23,8 @@ export class ProductKachel {
   private routingService = inject(RoutingService);
   private warenkorbService = inject(WarenkorbService);
   private favoritService = inject(FavoritService);
+  private authService = inject(AuthService);
+  private dialogService = inject(DialogService);
 
   protected addingToCart = false;
 
@@ -40,6 +44,10 @@ export class ProductKachel {
 
   async toggleFavorit(event: Event) {
     event.stopPropagation();
+    if (!this.authService.isLoggedIn()) {
+      this.dialogService.openLogin();
+      return;
+    }
     if (this.isFavorit) {
       await this.favoritService.removeFromFavorit(this.produkt.id);
     } else {

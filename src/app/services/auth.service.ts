@@ -14,10 +14,18 @@ export interface IActionResult {
 export class AuthService {
   public currentUser: UserCredential | null = null;
   public isLoggedIn = signal(false);
+  public displayName = signal<string | null>(null);
 
   constructor(private userService: UserService) {
     onAuthStateChanged(auth, (user: User | null) => {
       this.isLoggedIn.set(!!user);
+      if (user) {
+        this.userService.getCurrentUser().then(u => {
+          this.displayName.set(u.displayName ?? u.vorname ?? null);
+        }).catch(() => {});
+      } else {
+        this.displayName.set(null);
+      }
     });
   }
 

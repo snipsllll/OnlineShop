@@ -6,6 +6,8 @@ import {IProdukt} from '../../models/interfaces/IProdukt';
 import {ProduktService} from '../../services/produkt.service';
 import {WarenkorbService} from '../../services/warenkorb.service';
 import {FavoritService} from '../../services/favorit.service';
+import {AuthService} from '../../services/auth.service';
+import {DialogService} from '../../services/dialog.service';
 import {RoutingService} from '../../services/routing.service';
 import {MyRoutes} from '../../models/enums/MyRoutes';
 import {RouteParams} from '../../models/enums/RouteParams';
@@ -22,6 +24,8 @@ export class ProductDetails implements OnInit {
   private produktService = inject(ProduktService);
   private warenkorbService = inject(WarenkorbService);
   private favoritService = inject(FavoritService);
+  private authService = inject(AuthService);
+  private dialogService = inject(DialogService);
   private routingService = inject(RoutingService);
 
   protected produkt = signal<IProdukt | null>(null);
@@ -64,6 +68,10 @@ export class ProductDetails implements OnInit {
   async toggleFavorit() {
     const p = this.produkt();
     if (!p) return;
+    if (!this.authService.isLoggedIn()) {
+      this.dialogService.openLogin();
+      return;
+    }
     if (this.isFavorit()) {
       await this.favoritService.removeFromFavorit(p.id);
       this.isFavorit.set(false);

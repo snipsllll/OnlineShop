@@ -65,9 +65,17 @@
   justify-content: center;
 }
 
+.empty-icon-wrapper--login {
+  background: var(--primary-light);
+}
+
 .empty-icon {
   font-size: 3rem;
   color: #fca5a5;
+}
+
+.empty-icon--login {
+  color: var(--primary);
 }
 
 .empty-state h2 {

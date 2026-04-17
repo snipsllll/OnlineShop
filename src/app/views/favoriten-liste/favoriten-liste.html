@@ -12,7 +12,19 @@
     </div>
   </div>
 
-  @if (loading()) {
+  @if (!authService.isLoggedIn()) {
+    <div class="empty-state">
+      <div class="empty-icon-wrapper empty-icon-wrapper--login">
+        <span class="material-symbols-outlined empty-icon empty-icon--login">lock</span>
+      </div>
+      <h2>Anmeldung erforderlich</h2>
+      <p>Melde dich an, um deine Favoriten zu sehen und zu verwalten.</p>
+      <button class="btn-primary" (click)="openLogin()">
+        <span class="material-symbols-outlined">login</span>
+        Jetzt anmelden
+      </button>
+    </div>
+  } @else if (loading()) {
     <div class="loading-state">
       <div class="spinner"></div>
       <p>Favoriten werden geladen...</p>

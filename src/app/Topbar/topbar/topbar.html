@@ -17,11 +17,11 @@
           <span class="topbar__cart-badge">{{ cartCount() }}</span>
         }
       </button>
-      <button class="topbar__icon-btn topbar__desktop-only" (click)="goAccount()" title="Konto">
-        <span class="material-symbols-outlined">person</span>
-      </button>
       @if (authService.isLoggedIn()) {
-        <button class="topbar__btn-login topbar__desktop-only" (click)="logout()">Abmelden</button>
+        <button class="topbar__user-chip topbar__desktop-only" (click)="goAccount()">
+          <span class="material-symbols-outlined">account_circle</span>
+          <span class="topbar__user-name">{{ authService.displayName() ?? 'Konto' }}</span>
+        </button>
       } @else {
         <button class="topbar__btn-login topbar__desktop-only" (click)="openLogin()">Anmelden</button>
       }
@@ -33,6 +33,12 @@
 
   @if (menuOpen()) {
     <nav class="topbar__mobile-menu">
+      @if (authService.isLoggedIn() && authService.displayName()) {
+        <div class="topbar__mobile-user">
+          <span class="material-symbols-outlined">account_circle</span>
+          <span>{{ authService.displayName() }}</span>
+        </div>
+      }
       <div class="topbar__mobile-nav">
         <button class="topbar__mobile-link" (click)="goHome()">
           <span class="material-symbols-outlined">home</span>
