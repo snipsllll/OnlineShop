@@ -132,10 +132,21 @@
                 <span class="material-symbols-outlined">payments</span>
                 Zahlungsmethode
               </h3>
-              <div class="paypal-placeholder">
-                <div class="paypal-logo">PayPal</div>
-                <p class="paypal-info">Zahlung erfolgt sicher über PayPal nach der Bestellaufgabe.</p>
-              </div>
+
+              @if (settings.devBannerEnabled()) {
+                <div class="dev-payment-notice">
+                  <span class="material-symbols-outlined dev-payment-notice__icon">science</span>
+                  <div>
+                    <strong>Simulierte Zahlung</strong>
+                    <p>Dies ist eine Entwicklungsumgebung. Es wird keine echte Zahlung durchgeführt – die Bestellung wird automatisch als bezahlt markiert.</p>
+                  </div>
+                </div>
+              } @else {
+                <div class="paypal-placeholder">
+                  <div class="paypal-logo">PayPal</div>
+                  <p class="paypal-info">Zahlung erfolgt sicher über PayPal nach der Bestellaufgabe.</p>
+                </div>
+              }
             </div>
 
             <button

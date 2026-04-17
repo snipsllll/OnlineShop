@@ -8,8 +8,12 @@
 
     <h1 class="success-title">Bestellung erfolgreich!</h1>
     <p class="success-message">
-      Vielen Dank für deine Bestellung. Wir haben sie erhalten und werden sie schnellstmöglich bearbeiten.
-      Du erhältst eine Bestätigung per E-Mail.
+      @if (settings.devBannerEnabled()) {
+        Deine Bestellung wurde simuliert erfasst. Dies ist eine Entwicklungsumgebung – es findet keine echte Verarbeitung statt.
+      } @else {
+        Vielen Dank für deine Bestellung. Wir haben sie erhalten und werden sie schnellstmöglich bearbeiten.
+        Du erhältst eine Bestätigung per E-Mail.
+      }
     </p>
 
     <div class="success-details">
@@ -17,10 +21,17 @@
         <span class="material-symbols-outlined">local_shipping</span>
         <span>Deine Bestellung wird bald versendet</span>
       </div>
-      <div class="detail-item">
-        <span class="material-symbols-outlined">payments</span>
-        <span>Zahlung wird über PayPal abgewickelt</span>
-      </div>
+      @if (settings.devBannerEnabled()) {
+        <div class="detail-item">
+          <span class="material-symbols-outlined">science</span>
+          <span>Simulierte Zahlung – keine echte Zahlung durchgeführt</span>
+        </div>
+      } @else {
+        <div class="detail-item">
+          <span class="material-symbols-outlined">payments</span>
+          <span>Zahlung wird über PayPal abgewickelt</span>
+        </div>
+      }
       <div class="detail-item">
         <span class="material-symbols-outlined">mail</span>
         <span>Bestätigung per E-Mail erhalten</span>

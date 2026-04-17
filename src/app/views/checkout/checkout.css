@@ -210,6 +210,36 @@ select.form-input {
   color: var(--accent);
 }
 
+.dev-payment-notice {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  background: #fef3c7;
+  border: 1.5px solid #f59e0b;
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  color: #78350f;
+}
+
+.dev-payment-notice__icon {
+  font-size: 1.3rem;
+  color: #d97706;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.dev-payment-notice strong {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 0.9rem;
+}
+
+.dev-payment-notice p {
+  margin: 0;
+  line-height: 1.5;
+}
+
 .paypal-placeholder {
   border: 2px dashed var(--border);
   border-radius: var(--radius-md);

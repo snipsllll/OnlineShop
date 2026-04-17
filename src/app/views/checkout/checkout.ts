@@ -12,6 +12,7 @@ import {ProduktService} from '../../services/produkt.service';
 import {BestellungService} from '../../services/bestellung.service';
 import {RoutingService} from '../../services/routing.service';
 import {UserService} from '../../services/user.service';
+import {ShopSettingsService} from '../../services/shop-settings.service';
 import {MyRoutes} from '../../models/enums/MyRoutes';
 
 @Component({
@@ -27,6 +28,7 @@ export class Checkout implements OnInit {
   private bestellungService = inject(BestellungService);
   private routingService = inject(RoutingService);
   private userService = inject(UserService);
+  protected settings = inject(ShopSettingsService);
 
   protected loading = signal(true);
   protected submitting = signal(false);
@@ -97,7 +99,10 @@ export class Checkout implements OnInit {
         bestelldatum: new Date(),
         lieferadresse: this.adresse as IAdresse,
         bestellungsZustand: BestellungsZustand.EINGEGANGEN,
-        zahlungsZustand: ZahlungsZustand.NOCH_AUSSTEHEND
+        // Im Dev-Modus wird die Zahlung sofort als bezahlt simuliert
+        zahlungsZustand: this.settings.devBannerEnabled()
+          ? ZahlungsZustand.BEZAHLT
+          : ZahlungsZustand.NOCH_AUSSTEHEND
       };
       await this.bestellungService.addBestellung(bestellung);
       await this.warenkorbService.clearWarenkorb();
