@@ -3,6 +3,8 @@ import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {IUser} from '../../models/interfaces/IUser';
 import {UserService} from '../../services/user.service';
+import {AuthService} from '../../services/auth.service';
+import {PermissionService} from '../../services/permission.service';
 import {DialogService} from '../../services/dialog.service';
 import {Rolle} from '../../models/enums/Rolle';
 import {AdminNav} from '../../components/admin-nav/admin-nav';
@@ -16,7 +18,11 @@ import {AdminNav} from '../../components/admin-nav/admin-nav';
 })
 export class AdminUsers implements OnInit {
   private userService = inject(UserService);
+  private authService = inject(AuthService);
+  protected perms = inject(PermissionService);
   private dialogService = inject(DialogService);
+
+  protected isOwner() { return this.authService.currentRolle() === Rolle.OWNER; }
 
   protected users = signal<IUser[]>([]);
   protected loading = signal(true);
@@ -108,11 +114,21 @@ export class AdminUsers implements OnInit {
   }
 
   getRolleLabel(r: Rolle): string {
-    return r === Rolle.ADMIN ? 'Admin' : 'Kunde';
+    switch (r) {
+      case Rolle.OWNER:       return 'Owner';
+      case Rolle.ADMIN:       return 'Admin';
+      case Rolle.MITARBEITER: return 'Mitarbeiter';
+      default:                return 'Kunde';
+    }
   }
 
   getRolleClass(r: Rolle): string {
-    return r === Rolle.ADMIN ? 'badge--error' : 'badge--neutral';
+    switch (r) {
+      case Rolle.OWNER:       return 'badge--owner';
+      case Rolle.ADMIN:       return 'badge--error';
+      case Rolle.MITARBEITER: return 'badge--mitarbeiter';
+      default:                return 'badge--neutral';
+    }
   }
 
   displayName(u: IUser): string {

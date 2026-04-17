@@ -149,6 +149,14 @@
   white-space: nowrap;
 }
 
+.topbar__admin-btn {
+  color: #7c3aed;
+}
+.topbar__admin-btn:hover {
+  background: #f5f3ff;
+  color: #6d28d9;
+}
+
 /* Hamburger – hidden on desktop */
 .topbar__hamburger {
   display: none;
@@ -234,6 +242,13 @@
   .topbar__mobile-link .material-symbols-outlined {
     font-size: 22px;
     color: var(--text-secondary);
+  }
+
+  .topbar__mobile-link--admin {
+    color: #7c3aed;
+  }
+  .topbar__mobile-link--admin .material-symbols-outlined {
+    color: #7c3aed;
   }
 
   .topbar__mobile-link--primary {

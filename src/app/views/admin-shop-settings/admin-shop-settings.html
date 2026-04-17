@@ -13,46 +13,6 @@
 
   <div class="settings-layout">
 
-    <!-- Dev Banner -->
-    <div class="card settings-card">
-      <h2 class="card-title">
-        <span class="material-symbols-outlined">construction</span>
-        Entwicklungsbanner
-      </h2>
-      <p class="card-desc">
-        Zeigt allen Besuchern einen Banner an, der darauf hinweist, dass sich der Shop noch in der Entwicklung befindet und kein realer Kauf möglich ist.
-      </p>
-
-      <div class="toggle-row">
-        <div class="toggle-info">
-          <span class="toggle-label">Banner anzeigen</span>
-          <span class="toggle-sub" [class.toggle-sub--active]="devBannerEnabled">
-            {{ devBannerEnabled ? 'Aktiv — wird allen Besuchern angezeigt' : 'Inaktiv — kein Banner sichtbar' }}
-          </span>
-        </div>
-        <label class="toggle-switch">
-          <input type="checkbox" [(ngModel)]="devBannerEnabled" />
-          <span class="toggle-slider"></span>
-        </label>
-      </div>
-
-      @if (devBannerEnabled) {
-        <div class="banner-preview">
-          <p class="preview-label">Vorschau:</p>
-          <div class="banner-preview__box">
-            <span class="material-symbols-outlined">construction</span>
-            <span>
-              <strong>Entwicklungsversion</strong> &mdash;
-              Diese Website befindet sich aktuell in der Entwicklung.
-              Es handelt sich <strong>nicht</strong> um einen Live-Shop &mdash;
-              Bestellungen und Käufe haben keine reale Wirkung.
-              <strong>Führen Sie KEINE Zahlungen aus!</strong>
-            </span>
-          </div>
-        </div>
-      }
-    </div>
-
     <!-- Shop Name -->
     <div class="card settings-card">
       <h2 class="card-title">
@@ -79,6 +39,84 @@
         <span class="name-preview__text">{{ shopName || 'OnlineShop' }}</span>
       </div>
     </div>
+
+    <!-- Mitarbeiter-Rechte -->
+    @if (settings.mitarbeiterRoleEnabled()) {
+    <div class="card settings-card">
+      <h2 class="card-title">
+        <span class="material-symbols-outlined">badge</span>
+        Mitarbeiter-Rechte
+      </h2>
+      <p class="card-desc">Lege fest, welche Bereiche Mitarbeiter verwalten dürfen. Nur Berechtigungen, die Admins selbst besitzen, können vergeben werden.</p>
+
+      <div class="perm-toggles">
+        <div class="perm-toggle-row">
+          <div class="toggle-info">
+            <span class="toggle-label">Produkte verwalten</span>
+            <span class="toggle-sub">
+              @if (!settings.adminPerms().canManageProducts) {
+                <span class="perm-blocked">Admin hat diese Berechtigung nicht</span>
+              } @else {
+                Produkte anlegen, bearbeiten und löschen
+              }
+            </span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" [(ngModel)]="mitarbeiterPermsLocal.canManageProducts" [disabled]="!settings.adminPerms().canManageProducts" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="perm-toggle-row">
+          <div class="toggle-info">
+            <span class="toggle-label">Bestellungen verwalten</span>
+            <span class="toggle-sub">
+              @if (!settings.adminPerms().canManageOrders) {
+                <span class="perm-blocked">Admin hat diese Berechtigung nicht</span>
+              } @else {
+                Bestellungen einsehen und Status ändern
+              }
+            </span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" [(ngModel)]="mitarbeiterPermsLocal.canManageOrders" [disabled]="!settings.adminPerms().canManageOrders" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="perm-toggle-row">
+          <div class="toggle-info">
+            <span class="toggle-label">Benutzerliste einsehen</span>
+            <span class="toggle-sub">
+              @if (!settings.adminPerms().canViewUsers) {
+                <span class="perm-blocked">Admin hat diese Berechtigung nicht</span>
+              } @else {
+                Registrierte Kunden und Mitarbeiter anzeigen
+              }
+            </span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" [(ngModel)]="mitarbeiterPermsLocal.canViewUsers" [disabled]="!settings.adminPerms().canViewUsers" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="save-section" style="margin-top: 20px;">
+        @if (mitarbeiterSaveSuccess()) {
+          <div class="success-toast"><span class="material-symbols-outlined">check_circle</span>Gespeichert!</div>
+        }
+        @if (mitarbeiterSaveError()) {
+          <div class="error-toast"><span class="material-symbols-outlined">error</span>Speichern fehlgeschlagen.</div>
+        }
+        <button class="btn-primary save-btn" (click)="saveMitarbeiterPerms()" [disabled]="mitarbeiterSaving()">
+          @if (mitarbeiterSaving()) {
+            <div class="spinner spinner--sm"></div>Wird gespeichert...
+          } @else {
+            <span class="material-symbols-outlined">save</span>Speichern
+          }
+        </button>
+      </div>
+    </div>
+    }
 
     <!-- Save -->
     <div class="save-section">

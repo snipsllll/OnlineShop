@@ -426,6 +426,32 @@
   color: var(--error);
 }
 
+.role-option--mitarbeiter:hover {
+  border-color: #059669;
+  color: #059669;
+}
+
+.role-option--mitarbeiter.role-option--active {
+  border-color: #059669;
+  background: #ecfdf5;
+  color: #065f46;
+}
+
+.role-option--owner:hover {
+  border-color: #7c3aed;
+  color: #7c3aed;
+}
+
+.role-option--owner.role-option--active {
+  border-color: #7c3aed;
+  background: #f5f3ff;
+  color: #7c3aed;
+}
+
+.role-options {
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+}
+
 /* Footer */
 .edit-panel__footer {
   padding: 14px 20px;

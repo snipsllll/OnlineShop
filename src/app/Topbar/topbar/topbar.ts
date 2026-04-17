@@ -7,6 +7,7 @@ import {WarenkorbService} from '../../services/warenkorb.service';
 import {AuthService} from '../../services/auth.service';
 import {MyRoutes} from '../../models/enums/MyRoutes';
 import {ShopSettingsService} from '../../services/shop-settings.service';
+import {Rolle} from '../../models/enums/Rolle';
 
 @Component({
   selector: 'app-topbar',
@@ -45,11 +46,17 @@ export class Topbar {
   toggleMenu() { this.menuOpen.update(v => !v); }
   closeMenu() { this.menuOpen.set(false); }
 
+  get isAdmin(): boolean {
+    const r = this.authService.currentRolle();
+    return r === Rolle.ADMIN || r === Rolle.OWNER || r === Rolle.MITARBEITER;
+  }
+
   goHome() { this.routingService.route(MyRoutes.PRODUKTE_OVERVIEW); this.closeMenu(); }
   goFavorites() { this.routingService.route(MyRoutes.FAVORITEN_LISTE); this.closeMenu(); }
   goCart() { this.routingService.route(MyRoutes.WARENKORB); this.closeMenu(); }
   goAccount() { this.routingService.route(MyRoutes.ACCOUNT_SETTINGS); this.closeMenu(); }
   goOrders() { this.routingService.route(MyRoutes.BESTELLUNGEN_OVERVIEW); }
+  goAdminPanel() { this.routingService.route(MyRoutes.ADMIN_DASHBOARD); this.closeMenu(); }
   openLogin() { this.dialogService.openLogin(); this.closeMenu(); }
   async logout() {
     await this.authService.logout();

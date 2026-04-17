@@ -15,38 +15,56 @@
         <span class="material-symbols-outlined">dashboard</span>
         <span>Dashboard</span>
       </button>
-      <button
-        class="admin-nav__tab"
-        [class.admin-nav__tab--active]="isActive('products')"
-        (click)="goProducts()"
-      >
-        <span class="material-symbols-outlined">inventory_2</span>
-        <span>Produkte</span>
-      </button>
-      <button
-        class="admin-nav__tab"
-        [class.admin-nav__tab--active]="isActive('orders')"
-        (click)="goOrders()"
-      >
-        <span class="material-symbols-outlined">receipt_long</span>
-        <span>Bestellungen</span>
-      </button>
-      <button
-        class="admin-nav__tab"
-        [class.admin-nav__tab--active]="isActive('users')"
-        (click)="goUsers()"
-      >
-        <span class="material-symbols-outlined">group</span>
-        <span>Benutzer</span>
-      </button>
-      <button
-        class="admin-nav__tab"
-        [class.admin-nav__tab--active]="isActive('settings')"
-        (click)="goSettings()"
-      >
-        <span class="material-symbols-outlined">settings</span>
-        <span>Einstellungen</span>
-      </button>
+      @if (perms.canManageProducts()) {
+        <button
+          class="admin-nav__tab"
+          [class.admin-nav__tab--active]="isActive('products')"
+          (click)="goProducts()"
+        >
+          <span class="material-symbols-outlined">inventory_2</span>
+          <span>Produkte</span>
+        </button>
+      }
+      @if (perms.canManageOrders()) {
+        <button
+          class="admin-nav__tab"
+          [class.admin-nav__tab--active]="isActive('orders')"
+          (click)="goOrders()"
+        >
+          <span class="material-symbols-outlined">receipt_long</span>
+          <span>Bestellungen</span>
+        </button>
+      }
+      @if (perms.canViewUsers()) {
+        <button
+          class="admin-nav__tab"
+          [class.admin-nav__tab--active]="isActive('users')"
+          (click)="goUsers()"
+        >
+          <span class="material-symbols-outlined">group</span>
+          <span>Benutzer</span>
+        </button>
+      }
+      @if (perms.canManageShopSettings()) {
+        <button
+          class="admin-nav__tab"
+          [class.admin-nav__tab--active]="isActive('settings')"
+          (click)="goSettings()"
+        >
+          <span class="material-symbols-outlined">settings</span>
+          <span>Einstellungen</span>
+        </button>
+      }
+      @if (isOwner()) {
+        <button
+          class="admin-nav__tab admin-nav__tab--owner"
+          [class.admin-nav__tab--active]="isActive('owner-settings')"
+          (click)="goOwnerSettings()"
+        >
+          <span class="material-symbols-outlined">shield_person</span>
+          <span>Owner</span>
+        </button>
+      }
     </div>
 
     <div class="admin-nav__end">

@@ -95,6 +95,22 @@
   font-size: 18px;
 }
 
+/* Owner tab */
+.admin-nav__tab--owner {
+  color: #7c3aed;
+}
+.admin-nav__tab--owner:hover {
+  background: #f5f3ff;
+  color: #6d28d9;
+}
+.admin-nav__tab--owner.admin-nav__tab--active {
+  color: #7c3aed;
+  background: #f5f3ff;
+}
+.admin-nav__tab--owner.admin-nav__tab--active::after {
+  background: #7c3aed;
+}
+
 /* End / shop button */
 .admin-nav__end {
   flex-shrink: 0;

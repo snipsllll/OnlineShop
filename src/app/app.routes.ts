@@ -2,6 +2,7 @@ import {Routes} from '@angular/router';
 import {AboutUs} from './views/about-us/about-us';
 import {AdminDashboard} from './views/admin-dashboard/admin-dashboard';
 import {AdminShopSettings} from './views/admin-shop-settings/admin-shop-settings';
+import {AdminOwnerSettings} from './views/admin-owner-settings/admin-owner-settings';
 import {AdminUsers} from './views/admin-users/admin-users';
 import {AccountSettings} from './views/account-settings/account-settings';
 import {AdminBestellungDetails} from './views/admin-bestellung-details/admin-bestellung-details';
@@ -28,6 +29,7 @@ export const routes: Routes = [
   {path: `${MyRoutes.ABOUT_US}`, component: AboutUs},
   {path: `${MyRoutes.ADMIN_DASHBOARD}`, component: AdminDashboard},
   {path: `${MyRoutes.ADMIN_SHOP_SETTINGS}`, component: AdminShopSettings},
+  {path: `${MyRoutes.ADMIN_OWNER_SETTINGS}`, component: AdminOwnerSettings},
   {path: `${MyRoutes.ADMIN_USERS}`, component: AdminUsers},
   {path: `${MyRoutes.DATENSCHUTZ}`, component: Datenschutz},
   {path: `${MyRoutes.AGB}`, component: Agb},

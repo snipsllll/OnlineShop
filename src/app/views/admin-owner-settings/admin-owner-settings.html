@@ -1,0 +1,278 @@
+<app-admin-nav />
+<div class="page-container">
+
+  <div class="page-header">
+    <div class="header-left">
+      <h1 class="page-title">
+        <span class="material-symbols-outlined title-icon">shield_person</span>
+        Owner-Einstellungen
+      </h1>
+      <p class="page-subtitle">Exklusive Einstellungen – nur für den Owner sichtbar</p>
+    </div>
+  </div>
+
+  <div class="settings-layout">
+
+    <!-- Dev Banner -->
+    <div class="card settings-card">
+      <h2 class="card-title">
+        <span class="material-symbols-outlined">construction</span>
+        Entwicklungsbanner
+      </h2>
+      <p class="card-desc">
+        Zeigt allen Besuchern einen Banner an, der darauf hinweist, dass sich der Shop noch in der Entwicklung befindet und kein realer Kauf möglich ist.
+      </p>
+
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <span class="toggle-label">Banner anzeigen</span>
+          <span class="toggle-sub" [class.toggle-sub--active]="devBannerEnabled">
+            {{ devBannerEnabled ? 'Aktiv — wird allen Besuchern angezeigt' : 'Inaktiv — kein Banner sichtbar' }}
+          </span>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" [(ngModel)]="devBannerEnabled" />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      @if (devBannerEnabled) {
+        <div class="banner-preview">
+          <p class="preview-label">Vorschau:</p>
+          <div class="banner-preview__box">
+            <span class="material-symbols-outlined">construction</span>
+            <span>
+              <strong>Entwicklungsversion</strong> &mdash;
+              Diese Website befindet sich aktuell in der Entwicklung.
+              Es handelt sich <strong>nicht</strong> um einen Live-Shop &mdash;
+              Bestellungen und Käufe haben keine reale Wirkung.
+              <strong>Führen Sie KEINE Zahlungen aus!</strong>
+            </span>
+          </div>
+        </div>
+      }
+
+      <div class="banner-save-row">
+        @if (bannerSaveSuccess()) {
+          <div class="success-toast">
+            <span class="material-symbols-outlined">check_circle</span>
+            Gespeichert!
+          </div>
+        }
+        @if (bannerSaveError()) {
+          <div class="error-toast">
+            <span class="material-symbols-outlined">error</span>
+            Speichern fehlgeschlagen.
+          </div>
+        }
+        <button class="btn-primary save-btn" (click)="saveBanner()" [disabled]="bannerSaving()">
+          @if (bannerSaving()) {
+            <div class="spinner spinner--sm"></div>
+            Wird gespeichert...
+          } @else {
+            <span class="material-symbols-outlined">save</span>
+            Speichern
+          }
+        </button>
+      </div>
+    </div>
+
+    <!-- Mitarbeiter-Rolle -->
+    <div class="card settings-card">
+      <h2 class="card-title">
+        <span class="material-symbols-outlined">badge</span>
+        Mitarbeiter-Rolle
+      </h2>
+      <p class="card-desc">Legt fest, ob die Rolle „Mitarbeiter" im Shop existiert. Wird die Rolle deaktiviert, werden Mitarbeiter bis auf Weiteres wie Kunden behandelt – ihre Rolle in der Datenbank bleibt unverändert.</p>
+
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <span class="toggle-label">Mitarbeiter-Rolle aktiv</span>
+          <span class="toggle-sub" [class.toggle-sub--active]="!mitarbeiterRoleEnabledLocal">
+            {{ mitarbeiterRoleEnabledLocal ? 'Aktiv — Mitarbeiter haben eigene Berechtigungen' : 'Inaktiv — Mitarbeiter werden wie Kunden behandelt' }}
+          </span>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" [(ngModel)]="mitarbeiterRoleEnabledLocal" />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      @if (!mitarbeiterRoleEnabledLocal && mitarbeiterUserCount() > 0) {
+        <div class="mitarbeiter-warning">
+          <span class="material-symbols-outlined">warning</span>
+          <span>
+            <strong>{{ mitarbeiterUserCount() }} {{ mitarbeiterUserCount() === 1 ? 'Nutzer hat' : 'Nutzer haben' }}</strong>
+            aktuell die Rolle „Mitarbeiter". {{ mitarbeiterUserCount() === 1 ? 'Dieser Nutzer wird' : 'Diese Nutzer werden' }}
+            nach dem Speichern bis auf Weiteres wie Kunden behandelt.
+          </span>
+        </div>
+      }
+
+      <div class="banner-save-row">
+        @if (mitarbeiterRoleSaveSuccess()) {
+          <div class="success-toast"><span class="material-symbols-outlined">check_circle</span>Gespeichert!</div>
+        }
+        @if (mitarbeiterRoleSaveError()) {
+          <div class="error-toast"><span class="material-symbols-outlined">error</span>Speichern fehlgeschlagen.</div>
+        }
+        <button class="btn-primary save-btn" (click)="saveMitarbeiterRoleEnabled()" [disabled]="mitarbeiterRoleSaving()">
+          @if (mitarbeiterRoleSaving()) {
+            <div class="spinner spinner--sm"></div>Wird gespeichert...
+          } @else {
+            <span class="material-symbols-outlined">save</span>
+            {{ !mitarbeiterRoleEnabledLocal && mitarbeiterUserCount() > 0 ? 'Trotzdem speichern' : 'Speichern' }}
+          }
+        </button>
+      </div>
+    </div>
+
+    <!-- Admin-Rechte -->
+    <div class="card settings-card">
+      <h2 class="card-title">
+        <span class="material-symbols-outlined">admin_panel_settings</span>
+        Admin-Rechte
+      </h2>
+      <p class="card-desc">Lege fest, welche Bereiche Admins verwalten dürfen. Mitarbeiter-Rechte werden automatisch angepasst, wenn eine Berechtigung hier entfernt wird.</p>
+
+      <div class="perm-toggles">
+        <div class="perm-toggle-row">
+          <div class="toggle-info">
+            <span class="toggle-label">Produkte verwalten</span>
+            <span class="toggle-sub">Produkte anlegen, bearbeiten und löschen</span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" [(ngModel)]="adminPermsLocal.canManageProducts" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="perm-toggle-row">
+          <div class="toggle-info">
+            <span class="toggle-label">Bestellungen verwalten</span>
+            <span class="toggle-sub">Bestellungen einsehen und Status ändern</span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" [(ngModel)]="adminPermsLocal.canManageOrders" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="perm-toggle-row">
+          <div class="toggle-info">
+            <span class="toggle-label">Benutzerliste einsehen</span>
+            <span class="toggle-sub">Registrierte Kunden und Mitarbeiter anzeigen</span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" [(ngModel)]="adminPermsLocal.canViewUsers" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="perm-toggle-row">
+          <div class="toggle-info">
+            <span class="toggle-label">Shop-Einstellungen</span>
+            <span class="toggle-sub">Shop-Namen und Mitarbeiter-Rechte konfigurieren</span>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" [(ngModel)]="adminPermsLocal.canManageShopSettings" />
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+      </div>
+
+      <div class="banner-save-row">
+        @if (adminPermsSaveSuccess()) {
+          <div class="success-toast"><span class="material-symbols-outlined">check_circle</span>Gespeichert!</div>
+        }
+        @if (adminPermsSaveError()) {
+          <div class="error-toast"><span class="material-symbols-outlined">error</span>Speichern fehlgeschlagen.</div>
+        }
+        <button class="btn-primary save-btn" (click)="saveAdminPerms()" [disabled]="adminPermsSaving()">
+          @if (adminPermsSaving()) {
+            <div class="spinner spinner--sm"></div>Wird gespeichert...
+          } @else {
+            <span class="material-symbols-outlined">save</span>Speichern
+          }
+        </button>
+      </div>
+    </div>
+
+    <!-- Privilegierte Konten -->
+    <div class="card settings-card">
+      <h2 class="card-title">
+        <span class="material-symbols-outlined">manage_accounts</span>
+        Privilegierte Konten
+      </h2>
+      <p class="card-desc">
+        Alle Benutzer mit erhöhten Berechtigungen (Owner &amp; Admin). Rollen können im
+        <button class="inline-link" (click)="goToUsers()">Benutzer-Tab</button>
+        geändert werden.
+      </p>
+
+      @if (loading()) {
+        <div class="loading-state">
+          <div class="spinner spinner--sm"></div>
+          <span>Wird geladen...</span>
+        </div>
+      } @else if (elevatedUsers().length === 0) {
+        <p class="empty-hint">Keine privilegierten Konten gefunden.</p>
+      } @else {
+        <div class="elevated-list">
+          @for (u of elevatedUsers(); track u.uid) {
+            <div class="elevated-item" [class.elevated-item--owner]="u.rolle === Rolle.OWNER">
+              <span class="material-symbols-outlined elevated-icon">
+                {{ u.rolle === Rolle.OWNER ? 'shield_person' : 'admin_panel_settings' }}
+              </span>
+              <div class="elevated-info">
+                <span class="elevated-name">{{ u.vorname || u.displayName || '—' }} {{ u.nachname || '' }}</span>
+                <span class="elevated-email">{{ u.email }}</span>
+              </div>
+              <span class="badge" [class]="getRolleClass(u.rolle)">{{ getRolleLabel(u.rolle) }}</span>
+            </div>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Berechtigungsübersicht -->
+    <div class="card settings-card">
+      <h2 class="card-title">
+        <span class="material-symbols-outlined">verified_user</span>
+        Berechtigungsübersicht
+      </h2>
+      <p class="card-desc">Was darf welche Rolle in diesem Shop?</p>
+
+      <div class="perm-table">
+        <div class="perm-header">
+          <span>Berechtigung</span>
+          <span>Kunde</span>
+          <span>Mitarbeiter</span>
+          <span>Admin</span>
+          <span class="perm-owner-col">Owner</span>
+        </div>
+        @for (row of permRows; track row.label) {
+          <div class="perm-row">
+            <span class="perm-label">{{ row.label }}</span>
+            <span class="perm-cell">
+              <span class="material-symbols-outlined" [class.perm-yes]="row.kunde" [class.perm-no]="!row.kunde">
+                {{ row.kunde ? 'check' : 'close' }}
+              </span>
+            </span>
+            <span class="perm-cell">
+              <span class="material-symbols-outlined" [class.perm-yes]="row.mitarbeiter" [class.perm-no]="!row.mitarbeiter">
+                {{ row.mitarbeiter ? 'check' : 'close' }}
+              </span>
+            </span>
+            <span class="perm-cell">
+              <span class="material-symbols-outlined" [class.perm-yes]="row.admin" [class.perm-no]="!row.admin">
+                {{ row.admin ? 'check' : 'close' }}
+              </span>
+            </span>
+            <span class="perm-cell perm-owner-col">
+              <span class="material-symbols-outlined perm-yes">check</span>
+            </span>
+          </div>
+        }
+      </div>
+    </div>
+
+  </div>
+</div>

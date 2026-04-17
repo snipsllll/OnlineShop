@@ -208,6 +208,16 @@ h1, h2, h3, h4, h5, h6 {
   color: var(--text-secondary);
 }
 
+.badge--owner {
+  background: #f5f3ff;
+  color: #7c3aed;
+}
+
+.badge--mitarbeiter {
+  background: #ecfdf5;
+  color: #065f46;
+}
+
 .badge--primary {
   background: var(--primary-light);
   color: var(--primary-dark);

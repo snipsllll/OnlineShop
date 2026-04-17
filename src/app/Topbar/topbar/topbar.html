@@ -17,6 +17,11 @@
           <span class="topbar__cart-badge">{{ cartCount() }}</span>
         }
       </button>
+      @if (authService.isLoggedIn() && isAdmin) {
+        <button class="topbar__icon-btn topbar__admin-btn topbar__desktop-only" (click)="goAdminPanel()" title="Admin Panel">
+          <span class="material-symbols-outlined">admin_panel_settings</span>
+        </button>
+      }
       @if (authService.isLoggedIn()) {
         <button class="topbar__user-chip topbar__desktop-only" (click)="goAccount()">
           <span class="material-symbols-outlined">account_circle</span>
@@ -59,6 +64,12 @@
           <span class="material-symbols-outlined">person</span>
           <span>Mein Konto</span>
         </button>
+        @if (authService.isLoggedIn() && isAdmin) {
+          <button class="topbar__mobile-link topbar__mobile-link--admin" (click)="goAdminPanel()">
+            <span class="material-symbols-outlined">admin_panel_settings</span>
+            <span>Admin Panel</span>
+          </button>
+        }
         <div class="topbar__mobile-divider"></div>
         @if (authService.isLoggedIn()) {
           <button class="topbar__mobile-link topbar__mobile-link--danger" (click)="logout()">

@@ -3,10 +3,31 @@ import {doc, Firestore, getDoc, setDoc} from 'firebase/firestore';
 import {onAuthStateChanged} from 'firebase/auth';
 import {auth, db} from '../../environments/environment';
 
-export interface IShopSettings {
-  devBannerEnabled: boolean;
-  shopName: string;
+export interface IRolePerms {
+  canManageProducts: boolean;
+  canManageOrders: boolean;
+  canViewUsers: boolean;
+  canManageShopSettings: boolean;
 }
+
+export interface IMitarbeiterPerms {
+  canManageProducts: boolean;
+  canManageOrders: boolean;
+  canViewUsers: boolean;
+}
+
+const DEFAULT_ADMIN_PERMS: IRolePerms = {
+  canManageProducts: true,
+  canManageOrders: true,
+  canViewUsers: true,
+  canManageShopSettings: true,
+};
+
+const DEFAULT_MITARBEITER_PERMS: IMitarbeiterPerms = {
+  canManageProducts: false,
+  canManageOrders: false,
+  canViewUsers: false,
+};
 
 @Injectable({
   providedIn: 'root',
@@ -14,12 +35,12 @@ export interface IShopSettings {
 export class ShopSettingsService {
   readonly devBannerEnabled = signal(false);
   readonly shopName = signal('OnlineShop');
+  readonly adminPerms = signal<IRolePerms>({...DEFAULT_ADMIN_PERMS});
+  readonly mitarbeiterPerms = signal<IMitarbeiterPerms>({...DEFAULT_MITARBEITER_PERMS});
+  readonly mitarbeiterRoleEnabled = signal(true);
   readonly initialized = signal(false);
 
   constructor() {
-    // Wait for Firebase auth to be determined before querying Firestore.
-    // Without this, getDoc fires before auth is restored on page load,
-    // causing permission errors if Firestore rules require authentication.
     const unsub = onAuthStateChanged(auth, () => {
       unsub();
       this.load();
@@ -33,6 +54,9 @@ export class ShopSettingsService {
         const d = snap.data();
         this.devBannerEnabled.set(d['devBannerEnabled'] ?? false);
         this.shopName.set(d['shopName'] ?? 'OnlineShop');
+        this.adminPerms.set({...DEFAULT_ADMIN_PERMS, ...(d['adminPerms'] ?? {})});
+        this.mitarbeiterPerms.set({...DEFAULT_MITARBEITER_PERMS, ...(d['mitarbeiterPerms'] ?? {})});
+        this.mitarbeiterRoleEnabled.set(d['mitarbeiterRoleEnabled'] ?? true);
       }
     } catch (e) {
       console.error('ShopSettingsService: failed to load settings', e);
@@ -40,9 +64,53 @@ export class ShopSettingsService {
     this.initialized.set(true);
   }
 
+  private fullDoc() {
+    return {
+      devBannerEnabled: this.devBannerEnabled(),
+      shopName: this.shopName(),
+      adminPerms: this.adminPerms(),
+      mitarbeiterPerms: this.mitarbeiterPerms(),
+      mitarbeiterRoleEnabled: this.mitarbeiterRoleEnabled(),
+    };
+  }
+
   async save(devBannerEnabled: boolean, shopName: string): Promise<void> {
-    await setDoc(doc(db as Firestore, 'settings', 'shop'), { devBannerEnabled, shopName });
+    const data = {...this.fullDoc(), devBannerEnabled, shopName};
+    await setDoc(doc(db as Firestore, 'settings', 'shop'), data);
     this.devBannerEnabled.set(devBannerEnabled);
     this.shopName.set(shopName);
+  }
+
+  async saveAdminPerms(perms: IRolePerms): Promise<void> {
+    // Ensure Mitarbeiter never has more than Admin
+    const mit = this.mitarbeiterPerms();
+    const clampedMit: IMitarbeiterPerms = {
+      canManageProducts: mit.canManageProducts && perms.canManageProducts,
+      canManageOrders:   mit.canManageOrders   && perms.canManageOrders,
+      canViewUsers:      mit.canViewUsers       && perms.canViewUsers,
+    };
+    const data = {...this.fullDoc(), adminPerms: perms, mitarbeiterPerms: clampedMit};
+    await setDoc(doc(db as Firestore, 'settings', 'shop'), data);
+    this.adminPerms.set(perms);
+    this.mitarbeiterPerms.set(clampedMit);
+  }
+
+  async saveMitarbeiterRoleEnabled(enabled: boolean): Promise<void> {
+    const data = {...this.fullDoc(), mitarbeiterRoleEnabled: enabled};
+    await setDoc(doc(db as Firestore, 'settings', 'shop'), data);
+    this.mitarbeiterRoleEnabled.set(enabled);
+  }
+
+  async saveMitarbeiterPerms(perms: IMitarbeiterPerms): Promise<void> {
+    // Strip any permissions Admin doesn't have
+    const admin = this.adminPerms();
+    const clamped: IMitarbeiterPerms = {
+      canManageProducts: perms.canManageProducts && admin.canManageProducts,
+      canManageOrders:   perms.canManageOrders   && admin.canManageOrders,
+      canViewUsers:      perms.canViewUsers       && admin.canViewUsers,
+    };
+    const data = {...this.fullDoc(), mitarbeiterPerms: clamped};
+    await setDoc(doc(db as Firestore, 'settings', 'shop'), data);
+    this.mitarbeiterPerms.set(clamped);
   }
 }

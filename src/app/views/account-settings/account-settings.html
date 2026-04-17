@@ -192,20 +192,6 @@
       <!-- Sidebar -->
       <aside class="settings-sidebar">
 
-        @if (isAdmin) {
-          <div class="card sidebar-card sidebar-card--admin">
-            <h3 class="card-title">
-              <span class="material-symbols-outlined">admin_panel_settings</span>
-              Administration
-            </h3>
-            <p class="sidebar-text">Verwalte Produkte, Bestellungen und alles Weitere im Admin Panel.</p>
-            <button class="btn-primary sidebar-btn" (click)="goToAdminPanel()">
-              <span class="material-symbols-outlined">dashboard</span>
-              Zum Admin Panel
-            </button>
-          </div>
-        }
-
         <div class="card sidebar-card">
           <h3 class="card-title">
             <span class="material-symbols-outlined">support_agent</span>
@@ -230,6 +216,7 @@
           </button>
         </div>
 
+        @if (isKunde) {
         <div class="card sidebar-card sidebar-card--danger">
           <h3 class="card-title card-title--danger">
             <span class="material-symbols-outlined">delete_forever</span>
@@ -262,6 +249,7 @@
             Konto unwiderruflich löschen
           </button>
         </div>
+        }
       </aside>
     </div>
   }

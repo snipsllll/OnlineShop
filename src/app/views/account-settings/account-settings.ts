@@ -105,10 +105,9 @@ export class AccountSettings {
     );
   }
 
-  get isAdmin(): boolean {
-    return this.user()?.rolle === Rolle.ADMIN;
+  get isKunde(): boolean {
+    return this.authService.currentRolle() === Rolle.KUNDE;
   }
 
   goToOrders() { this.routingService.route(MyRoutes.BESTELLUNGEN_OVERVIEW); }
-  goToAdminPanel() { this.routingService.route(MyRoutes.ADMIN_DASHBOARD); }
 }
