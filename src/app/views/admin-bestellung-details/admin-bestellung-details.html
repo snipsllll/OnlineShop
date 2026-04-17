@@ -126,6 +126,8 @@
                 <span class="badge badge--neutral">Versandt</span>
               } @else if (bestellung()!.bestellungsZustand === BestellungsZustand.IN_BEARBEITUNG) {
                 <span class="badge badge--warning">In Bearbeitung</span>
+              } @else if (bestellung()!.bestellungsZustand === BestellungsZustand.STORNIERT) {
+                <span class="badge badge--error">Storniert</span>
               } @else {
                 <span class="badge badge--neutral">Eingegangen</span>
               }

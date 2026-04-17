@@ -43,6 +43,7 @@ export class AdminDashboard implements OnInit {
   get countInBearbeitung(): number { return this.bestellungen().filter(b => b.bestellungsZustand === BestellungsZustand.IN_BEARBEITUNG).length; }
   get countVersandt(): number { return this.bestellungen().filter(b => b.bestellungsZustand === BestellungsZustand.VERSANDT).length; }
   get countAngekommen(): number { return this.bestellungen().filter(b => b.bestellungsZustand === BestellungsZustand.ANGEKOMMEN).length; }
+  get countStorniert(): number { return this.bestellungen().filter(b => b.bestellungsZustand === BestellungsZustand.STORNIERT).length; }
 
   get recentBestellungen(): IBestellung[] {
     return [...this.bestellungen()]
@@ -56,6 +57,7 @@ export class AdminDashboard implements OnInit {
       case BestellungsZustand.IN_BEARBEITUNG: return 'In Bearbeitung';
       case BestellungsZustand.VERSANDT:       return 'Versandt';
       case BestellungsZustand.ANGEKOMMEN:     return 'Angekommen';
+      case BestellungsZustand.STORNIERT:      return 'Storniert';
       default: return '—';
     }
   }
@@ -66,6 +68,7 @@ export class AdminDashboard implements OnInit {
       case BestellungsZustand.IN_BEARBEITUNG: return 'badge--info';
       case BestellungsZustand.VERSANDT:       return 'badge--purple';
       case BestellungsZustand.ANGEKOMMEN:     return 'badge--success';
+      case BestellungsZustand.STORNIERT:      return 'badge--error';
       default: return 'badge--neutral';
     }
   }

@@ -73,47 +73,57 @@
         <span class="material-symbols-outlined">local_shipping</span>
         Bestellstatus
       </h2>
-      <div class="progress-tracker">
-        <div class="progress-step" [class.step--done]="bestellung()!.bestellungsZustand >= BestellungsZustand.EINGEGANGEN" [class.step--active]="bestellung()!.bestellungsZustand === BestellungsZustand.EINGEGANGEN">
-          <div class="step-icon">
-            <span class="material-symbols-outlined">inbox</span>
-          </div>
-          <div class="step-info">
-            <span class="step-name">Eingegangen</span>
-            <span class="step-desc">Bestellung erhalten</span>
+      @if (bestellung()!.bestellungsZustand === BestellungsZustand.STORNIERT) {
+        <div class="cancelled-banner">
+          <span class="material-symbols-outlined">cancel</span>
+          <div>
+            <p class="cancelled-title">Bestellung storniert</p>
+            <p class="cancelled-sub">Diese Bestellung wurde storniert und wird nicht mehr bearbeitet.</p>
           </div>
         </div>
-        <div class="progress-line" [class.line--done]="bestellung()!.bestellungsZustand >= BestellungsZustand.IN_BEARBEITUNG"></div>
-        <div class="progress-step" [class.step--done]="bestellung()!.bestellungsZustand >= BestellungsZustand.IN_BEARBEITUNG" [class.step--active]="bestellung()!.bestellungsZustand === BestellungsZustand.IN_BEARBEITUNG">
-          <div class="step-icon">
-            <span class="material-symbols-outlined">inventory</span>
+      } @else {
+        <div class="progress-tracker">
+          <div class="progress-step" [class.step--done]="bestellung()!.bestellungsZustand >= BestellungsZustand.EINGEGANGEN" [class.step--active]="bestellung()!.bestellungsZustand === BestellungsZustand.EINGEGANGEN">
+            <div class="step-icon">
+              <span class="material-symbols-outlined">inbox</span>
+            </div>
+            <div class="step-info">
+              <span class="step-name">Eingegangen</span>
+              <span class="step-desc">Bestellung erhalten</span>
+            </div>
           </div>
-          <div class="step-info">
-            <span class="step-name">In Bearbeitung</span>
-            <span class="step-desc">Wird verpackt</span>
+          <div class="progress-line" [class.line--done]="bestellung()!.bestellungsZustand >= BestellungsZustand.IN_BEARBEITUNG"></div>
+          <div class="progress-step" [class.step--done]="bestellung()!.bestellungsZustand >= BestellungsZustand.IN_BEARBEITUNG" [class.step--active]="bestellung()!.bestellungsZustand === BestellungsZustand.IN_BEARBEITUNG">
+            <div class="step-icon">
+              <span class="material-symbols-outlined">inventory</span>
+            </div>
+            <div class="step-info">
+              <span class="step-name">In Bearbeitung</span>
+              <span class="step-desc">Wird verpackt</span>
+            </div>
+          </div>
+          <div class="progress-line" [class.line--done]="bestellung()!.bestellungsZustand >= BestellungsZustand.VERSANDT"></div>
+          <div class="progress-step" [class.step--done]="bestellung()!.bestellungsZustand >= BestellungsZustand.VERSANDT" [class.step--active]="bestellung()!.bestellungsZustand === BestellungsZustand.VERSANDT">
+            <div class="step-icon">
+              <span class="material-symbols-outlined">local_shipping</span>
+            </div>
+            <div class="step-info">
+              <span class="step-name">Versandt</span>
+              <span class="step-desc">Unterwegs zu dir</span>
+            </div>
+          </div>
+          <div class="progress-line" [class.line--done]="bestellung()!.bestellungsZustand >= BestellungsZustand.ANGEKOMMEN"></div>
+          <div class="progress-step" [class.step--done]="bestellung()!.bestellungsZustand >= BestellungsZustand.ANGEKOMMEN" [class.step--active]="bestellung()!.bestellungsZustand === BestellungsZustand.ANGEKOMMEN">
+            <div class="step-icon">
+              <span class="material-symbols-outlined">home</span>
+            </div>
+            <div class="step-info">
+              <span class="step-name">Angekommen</span>
+              <span class="step-desc">Erfolgreich geliefert</span>
+            </div>
           </div>
         </div>
-        <div class="progress-line" [class.line--done]="bestellung()!.bestellungsZustand >= BestellungsZustand.VERSANDT"></div>
-        <div class="progress-step" [class.step--done]="bestellung()!.bestellungsZustand >= BestellungsZustand.VERSANDT" [class.step--active]="bestellung()!.bestellungsZustand === BestellungsZustand.VERSANDT">
-          <div class="step-icon">
-            <span class="material-symbols-outlined">local_shipping</span>
-          </div>
-          <div class="step-info">
-            <span class="step-name">Versandt</span>
-            <span class="step-desc">Unterwegs zu dir</span>
-          </div>
-        </div>
-        <div class="progress-line" [class.line--done]="bestellung()!.bestellungsZustand >= BestellungsZustand.ANGEKOMMEN"></div>
-        <div class="progress-step" [class.step--done]="bestellung()!.bestellungsZustand >= BestellungsZustand.ANGEKOMMEN" [class.step--active]="bestellung()!.bestellungsZustand === BestellungsZustand.ANGEKOMMEN">
-          <div class="step-icon">
-            <span class="material-symbols-outlined">home</span>
-          </div>
-          <div class="step-info">
-            <span class="step-name">Angekommen</span>
-            <span class="step-desc">Erfolgreich geliefert</span>
-          </div>
-        </div>
-      </div>
+      }
     </div>
 
     <div class="details-layout">
@@ -211,6 +221,21 @@
             }
           </div>
         </div>
+
+        <!-- Cancel Order -->
+        @if (canCancel()) {
+          <div class="card cancel-card">
+            <h2 class="section-title section-title--danger">
+              <span class="material-symbols-outlined">cancel</span>
+              Bestellung stornieren
+            </h2>
+            <p class="cancel-info">Du kannst diese Bestellung noch stornieren, solange sie noch nicht versandt wurde.</p>
+            <button class="btn-danger cancel-order-btn" (click)="cancelBestellung()">
+              <span class="material-symbols-outlined">cancel</span>
+              Bestellung stornieren
+            </button>
+          </div>
+        }
       </div>
     </div>
   }

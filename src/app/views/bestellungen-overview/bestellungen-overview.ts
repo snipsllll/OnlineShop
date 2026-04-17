@@ -3,6 +3,7 @@ import {CommonModule} from '@angular/common';
 import {IBestellung} from '../../models/interfaces/IBestellung';
 import {BestellungService} from '../../services/bestellung.service';
 import {RoutingService} from '../../services/routing.service';
+import {DialogService} from '../../services/dialog.service';
 import {MyRoutes} from '../../models/enums/MyRoutes';
 import {BestellungsZustand} from '../../models/enums/BestellungsZustand';
 import {ZahlungsZustand} from '../../models/enums/ZahlungsZustand';
@@ -17,6 +18,7 @@ import {ZahlungsZustand} from '../../models/enums/ZahlungsZustand';
 export class BestellungenOverview implements OnInit {
   private bestellungService = inject(BestellungService);
   private routingService = inject(RoutingService);
+  private dialogService = inject(DialogService);
 
   protected bestellungen = signal<IBestellung[]>([]);
   protected loading = signal(true);
@@ -36,21 +38,41 @@ export class BestellungenOverview implements OnInit {
   goToDetails(id: string) { this.routingService.route(MyRoutes.BESTELLUNG_DETAILS, id); }
   goShopping() { this.routingService.route(MyRoutes.PRODUKTE_OVERVIEW); }
 
+  canCancel(b: IBestellung): boolean {
+    return b.bestellungsZustand === BestellungsZustand.EINGEGANGEN ||
+           b.bestellungsZustand === BestellungsZustand.IN_BEARBEITUNG;
+  }
+
+  cancelBestellung(b: IBestellung, event: MouseEvent) {
+    event.stopPropagation();
+    this.dialogService.openConfirm(
+      'Bestellung stornieren',
+      'Möchtest du diese Bestellung wirklich stornieren? Diese Aktion kann nicht rückgängig gemacht werden.',
+      async () => {
+        const updated: IBestellung = { ...b, bestellungsZustand: BestellungsZustand.STORNIERT };
+        await this.bestellungService.editBestellung(b.id, updated);
+        this.bestellungen.update(list => list.map(x => x.id === b.id ? updated : x));
+      }
+    );
+  }
+
   getZustandLabel(z: BestellungsZustand): string {
     switch(z) {
-      case BestellungsZustand.EINGEGANGEN: return 'Eingegangen';
+      case BestellungsZustand.EINGEGANGEN:    return 'Eingegangen';
       case BestellungsZustand.IN_BEARBEITUNG: return 'In Bearbeitung';
-      case BestellungsZustand.VERSANDT: return 'Versandt';
-      case BestellungsZustand.ANGEKOMMEN: return 'Angekommen';
+      case BestellungsZustand.VERSANDT:       return 'Versandt';
+      case BestellungsZustand.ANGEKOMMEN:     return 'Angekommen';
+      case BestellungsZustand.STORNIERT:      return 'Storniert';
       default: return 'Unbekannt';
     }
   }
 
   getZustandClass(z: BestellungsZustand): string {
     switch(z) {
-      case BestellungsZustand.ANGEKOMMEN: return 'badge--success';
-      case BestellungsZustand.VERSANDT: return 'badge--neutral';
+      case BestellungsZustand.ANGEKOMMEN:     return 'badge--success';
+      case BestellungsZustand.VERSANDT:       return 'badge--neutral';
       case BestellungsZustand.IN_BEARBEITUNG: return 'badge--warning';
+      case BestellungsZustand.STORNIERT:      return 'badge--error';
       default: return 'badge--neutral';
     }
   }

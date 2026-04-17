@@ -9,11 +9,12 @@ import {Confirm} from './dialogs/confirm/confirm';
 import {Message} from './dialogs/message/message';
 import {Contact} from './dialogs/contact/contact';
 import {Footer} from './components/footer/footer';
+import {DevBanner} from './components/dev-banner/dev-banner';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, Topbar, Login, Register, Confirm, Message, Contact, Footer],
+  imports: [CommonModule, RouterOutlet, Topbar, Login, Register, Confirm, Message, Contact, Footer, DevBanner],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

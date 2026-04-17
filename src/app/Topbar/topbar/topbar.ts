@@ -6,6 +6,7 @@ import {DialogService} from '../../services/dialog.service';
 import {WarenkorbService} from '../../services/warenkorb.service';
 import {AuthService} from '../../services/auth.service';
 import {MyRoutes} from '../../models/enums/MyRoutes';
+import {ShopSettingsService} from '../../services/shop-settings.service';
 
 @Component({
   selector: 'app-topbar',
@@ -19,6 +20,7 @@ export class Topbar {
   protected dialogService = inject(DialogService);
   private warenkorbService = inject(WarenkorbService);
   protected authService = inject(AuthService);
+  protected shopSettings = inject(ShopSettingsService);
   private elementRef = inject(ElementRef);
 
   protected cartCount = signal(0);

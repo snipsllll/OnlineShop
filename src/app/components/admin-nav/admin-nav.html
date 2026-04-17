@@ -31,6 +31,22 @@
         <span class="material-symbols-outlined">receipt_long</span>
         <span>Bestellungen</span>
       </button>
+      <button
+        class="admin-nav__tab"
+        [class.admin-nav__tab--active]="isActive('users')"
+        (click)="goUsers()"
+      >
+        <span class="material-symbols-outlined">group</span>
+        <span>Benutzer</span>
+      </button>
+      <button
+        class="admin-nav__tab"
+        [class.admin-nav__tab--active]="isActive('settings')"
+        (click)="goSettings()"
+      >
+        <span class="material-symbols-outlined">settings</span>
+        <span>Einstellungen</span>
+      </button>
     </div>
 
     <div class="admin-nav__end">

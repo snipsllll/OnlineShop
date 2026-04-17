@@ -84,10 +84,18 @@
               <span class="material-symbols-outlined">location_on</span>
               {{ bestellung.lieferadresse.strasse }} {{ bestellung.lieferadresse.hausnummer }}, {{ bestellung.lieferadresse.plz }} {{ bestellung.lieferadresse.ort }}
             </div>
-            <button class="details-btn btn-secondary" (click)="goToDetails(bestellung.id); $event.stopPropagation()">
-              <span class="material-symbols-outlined">open_in_new</span>
-              Details
-            </button>
+            <div class="footer-actions">
+              @if (canCancel(bestellung)) {
+                <button class="cancel-btn btn-danger" (click)="cancelBestellung(bestellung, $event)">
+                  <span class="material-symbols-outlined">cancel</span>
+                  Stornieren
+                </button>
+              }
+              <button class="details-btn btn-secondary" (click)="goToDetails(bestellung.id); $event.stopPropagation()">
+                <span class="material-symbols-outlined">open_in_new</span>
+                Details
+              </button>
+            </div>
           </div>
         </div>
       }

@@ -49,6 +49,13 @@
           <span class="stat-label">Angekommen</span>
         </div>
       </div>
+      <div class="stat-card">
+        <span class="material-symbols-outlined stat-icon stat-icon--cancelled">cancel</span>
+        <div class="stat-info">
+          <span class="stat-value">{{ countByZustand(BestellungsZustand.STORNIERT) }}</span>
+          <span class="stat-label">Storniert</span>
+        </div>
+      </div>
     </div>
   }
 
@@ -62,6 +69,7 @@
         <option [value]="BestellungsZustand.IN_BEARBEITUNG">In Bearbeitung</option>
         <option [value]="BestellungsZustand.VERSANDT">Versandt</option>
         <option [value]="BestellungsZustand.ANGEKOMMEN">Angekommen</option>
+        <option [value]="BestellungsZustand.STORNIERT">Storniert</option>
       </select>
     </div>
     @if (!loading()) {

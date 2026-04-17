@@ -1,0 +1,109 @@
+<app-admin-nav />
+<div class="page-container">
+
+  <div class="page-header">
+    <div class="header-left">
+      <h1 class="page-title">
+        <span class="material-symbols-outlined title-icon">settings</span>
+        Shop-Einstellungen
+      </h1>
+      <p class="page-subtitle">Globale Einstellungen für den Shop</p>
+    </div>
+  </div>
+
+  <div class="settings-layout">
+
+    <!-- Dev Banner -->
+    <div class="card settings-card">
+      <h2 class="card-title">
+        <span class="material-symbols-outlined">construction</span>
+        Entwicklungsbanner
+      </h2>
+      <p class="card-desc">
+        Zeigt allen Besuchern einen Banner an, der darauf hinweist, dass sich der Shop noch in der Entwicklung befindet und kein realer Kauf möglich ist.
+      </p>
+
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <span class="toggle-label">Banner anzeigen</span>
+          <span class="toggle-sub" [class.toggle-sub--active]="devBannerEnabled">
+            {{ devBannerEnabled ? 'Aktiv — wird allen Besuchern angezeigt' : 'Inaktiv — kein Banner sichtbar' }}
+          </span>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" [(ngModel)]="devBannerEnabled" />
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+
+      @if (devBannerEnabled) {
+        <div class="banner-preview">
+          <p class="preview-label">Vorschau:</p>
+          <div class="banner-preview__box">
+            <span class="material-symbols-outlined">construction</span>
+            <span>
+              <strong>Entwicklungsversion</strong> &mdash;
+              Diese Website befindet sich aktuell in der Entwicklung.
+              Es handelt sich <strong>nicht</strong> um einen Live-Shop &mdash;
+              Bestellungen und Käufe haben keine reale Wirkung.
+              <strong>Führen Sie KEINE Zahlungen aus!</strong>
+            </span>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Shop Name -->
+    <div class="card settings-card">
+      <h2 class="card-title">
+        <span class="material-symbols-outlined">storefront</span>
+        Shop-Name
+      </h2>
+      <p class="card-desc">Der Name des Shops, der in der Topbar als Markenname angezeigt wird.</p>
+
+      <div class="form-group">
+        <label class="form-label" for="shopName">Shop-Name</label>
+        <input
+          id="shopName"
+          class="form-input"
+          type="text"
+          [(ngModel)]="shopName"
+          placeholder="OnlineShop"
+          maxlength="40"
+        />
+        <span class="field-hint">Maximal 40 Zeichen.</span>
+      </div>
+
+      <div class="name-preview">
+        <span class="material-symbols-outlined">shopping_bag</span>
+        <span class="name-preview__text">{{ shopName || 'OnlineShop' }}</span>
+      </div>
+    </div>
+
+    <!-- Save -->
+    <div class="save-section">
+      @if (saveSuccess()) {
+        <div class="success-toast">
+          <span class="material-symbols-outlined">check_circle</span>
+          Einstellungen erfolgreich gespeichert!
+        </div>
+      }
+      @if (saveError()) {
+        <div class="error-toast">
+          <span class="material-symbols-outlined">error</span>
+          Speichern fehlgeschlagen. Bitte überprüfe deine Berechtigungen.
+        </div>
+      }
+      <button class="btn-primary save-btn" (click)="save()" [disabled]="saving()">
+        @if (saving()) {
+          <div class="spinner spinner--sm"></div>
+          Wird gespeichert...
+        } @else {
+          <span class="material-symbols-outlined">save</span>
+          Einstellungen speichern
+        }
+      </button>
+    </div>
+
+  </div>
+</div>

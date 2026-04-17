@@ -493,6 +493,71 @@ address {
   margin: 0;
 }
 
+/* Cancelled Banner */
+.cancelled-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 16px 20px;
+  background: rgba(239, 68, 68, 0.08);
+  border: 1.5px solid var(--error);
+  border-radius: var(--radius-md);
+}
+
+.cancelled-banner > .material-symbols-outlined {
+  font-size: 2rem;
+  color: var(--error);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.cancelled-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--error);
+  margin: 0 0 4px 0;
+}
+
+.cancelled-sub {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* Cancel Card */
+.cancel-card {
+  padding: 20px 24px;
+  border: 1.5px solid var(--error) !important;
+}
+
+.section-title--danger {
+  color: var(--error) !important;
+}
+
+.section-title--danger .material-symbols-outlined {
+  color: var(--error) !important;
+}
+
+.cancel-info {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin: 0 0 16px 0;
+  line-height: 1.5;
+}
+
+.cancel-order-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+}
+
+.cancel-order-btn .material-symbols-outlined {
+  font-size: 1.1rem;
+}
+
 /* Responsive */
 @media (max-width: 900px) {
   .details-layout {

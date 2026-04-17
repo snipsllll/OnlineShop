@@ -42,6 +42,25 @@ export class BestellungDetails implements OnInit {
 
   goBack() { this.routingService.route(MyRoutes.BESTELLUNGEN_OVERVIEW); }
 
+  canCancel(): boolean {
+    const z = this.bestellung()?.bestellungsZustand;
+    return z === BestellungsZustand.EINGEGANGEN || z === BestellungsZustand.IN_BEARBEITUNG;
+  }
+
+  cancelBestellung() {
+    const b = this.bestellung();
+    if (!b || !this.canCancel()) return;
+    this.dialogService.openConfirm(
+      'Bestellung stornieren',
+      'Möchtest du diese Bestellung wirklich stornieren? Diese Aktion kann nicht rückgängig gemacht werden.',
+      async () => {
+        const updated: IBestellung = { ...b, bestellungsZustand: BestellungsZustand.STORNIERT };
+        await this.bestellungService.editBestellung(b.id, updated);
+        this.bestellung.set(updated);
+      }
+    );
+  }
+
   get total(): number {
     return this.bestellung()?.produkte.reduce((s,p) => s + p.preis * p.anzahl, 0) ?? 0;
   }
@@ -56,11 +75,22 @@ export class BestellungDetails implements OnInit {
   }
 
   getZustandLabel(z: BestellungsZustand): string {
-    const labels = ['Eingegangen', 'In Bearbeitung', 'Versandt', 'Angekommen'];
-    return labels[z] ?? 'Unbekannt';
+    switch (z) {
+      case BestellungsZustand.EINGEGANGEN:    return 'Eingegangen';
+      case BestellungsZustand.IN_BEARBEITUNG: return 'In Bearbeitung';
+      case BestellungsZustand.VERSANDT:       return 'Versandt';
+      case BestellungsZustand.ANGEKOMMEN:     return 'Angekommen';
+      case BestellungsZustand.STORNIERT:      return 'Storniert';
+      default: return 'Unbekannt';
+    }
   }
 
   getZustandClass(z: BestellungsZustand): string {
-    return z === BestellungsZustand.ANGEKOMMEN ? 'badge--success' : z === BestellungsZustand.VERSANDT ? 'badge--neutral' : 'badge--warning';
+    switch (z) {
+      case BestellungsZustand.ANGEKOMMEN:     return 'badge--success';
+      case BestellungsZustand.VERSANDT:       return 'badge--neutral';
+      case BestellungsZustand.STORNIERT:      return 'badge--error';
+      default: return 'badge--warning';
+    }
   }
 }

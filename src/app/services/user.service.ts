@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {deleteDoc, doc, Firestore, getDoc, setDoc, updateDoc} from 'firebase/firestore';
+import {collection, deleteDoc, doc, Firestore, getDoc, getDocs, setDoc, updateDoc} from 'firebase/firestore';
 import {auth, db} from '../../environments/environment';
 import {IFIreUser, IUser} from '../models/interfaces/IUser';
 import {Rolle} from '../models/enums/Rolle';
@@ -99,6 +99,11 @@ export class UserService {
       console.error(`Error updating user with UID ${user.uid} in Firestore:`, error);
       throw error;
     }
+  }
+
+  async getAllUsers(): Promise<IUser[]> {
+    const snap = await getDocs(collection(db as Firestore, 'users'));
+    return snap.docs.map(d => this.getIUserFromFireUser({id: d.id, ...d.data() as IFIreUser}));
   }
 
   async deleteUser(uid: string): Promise<void> {

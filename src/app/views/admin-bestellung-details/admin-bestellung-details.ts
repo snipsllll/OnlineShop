@@ -39,6 +39,7 @@ export class AdminBestellungDetails implements OnInit {
     { value: BestellungsZustand.IN_BEARBEITUNG, label: 'In Bearbeitung' },
     { value: BestellungsZustand.VERSANDT, label: 'Versandt' },
     { value: BestellungsZustand.ANGEKOMMEN, label: 'Angekommen' },
+    { value: BestellungsZustand.STORNIERT, label: 'Storniert' },
   ];
 
   readonly zahlungsOptions = [

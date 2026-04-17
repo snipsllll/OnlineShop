@@ -15,12 +15,14 @@ export class AdminNav {
   private router = inject(Router);
   private routingService = inject(RoutingService);
 
-  isActive(section: 'dashboard' | 'products' | 'orders'): boolean {
+  isActive(section: 'dashboard' | 'products' | 'orders' | 'users' | 'settings'): boolean {
     const url = this.router.url;
     switch (section) {
       case 'dashboard': return url.includes('admin-dashboard');
       case 'products':  return url.includes('admin-products') || url.includes('admin-product-details');
       case 'orders':    return url.includes('admin-bestellungen') || url.includes('admin-bestellung-details');
+      case 'users':     return url.includes('admin-users');
+      case 'settings':  return url.includes('admin-shop-settings');
       default: return false;
     }
   }
@@ -28,5 +30,7 @@ export class AdminNav {
   goDashboard()  { this.routingService.route(MyRoutes.ADMIN_DASHBOARD); }
   goProducts()   { this.routingService.route(MyRoutes.ADMIN_PRODUCTS_OVERVIEW); }
   goOrders()     { this.routingService.route(MyRoutes.ADMIN_BESTELLUNGEN_OVERVIEW); }
+  goUsers()      { this.routingService.route(MyRoutes.ADMIN_USERS); }
+  goSettings()   { this.routingService.route(MyRoutes.ADMIN_SHOP_SETTINGS); }
   goToShop()     { this.routingService.route(MyRoutes.PRODUKTE_OVERVIEW); }
 }

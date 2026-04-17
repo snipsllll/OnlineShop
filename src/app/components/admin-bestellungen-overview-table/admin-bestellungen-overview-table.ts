@@ -25,14 +25,16 @@ export class AdminBestellungenOverviewTable {
       [BestellungsZustand.IN_BEARBEITUNG]: 'In Bearbeitung',
       [BestellungsZustand.VERSANDT]: 'Versandt',
       [BestellungsZustand.ANGEKOMMEN]: 'Angekommen',
+      [BestellungsZustand.STORNIERT]: 'Storniert',
     };
     return labels[z] ?? 'Unbekannt';
   }
 
   getZustandClass(z: BestellungsZustand): string {
-    if (z === BestellungsZustand.ANGEKOMMEN) return 'badge--success';
-    if (z === BestellungsZustand.VERSANDT) return 'badge--neutral';
+    if (z === BestellungsZustand.ANGEKOMMEN)     return 'badge--success';
+    if (z === BestellungsZustand.VERSANDT)        return 'badge--neutral';
     if (z === BestellungsZustand.IN_BEARBEITUNG) return 'badge--warning';
+    if (z === BestellungsZustand.STORNIERT)       return 'badge--error';
     return 'badge--neutral';
   }
 

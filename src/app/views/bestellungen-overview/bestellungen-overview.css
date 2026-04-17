@@ -253,7 +253,15 @@
   flex-shrink: 0;
 }
 
-.details-btn {
+.footer-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.details-btn,
+.cancel-btn {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -262,7 +270,8 @@
   flex-shrink: 0;
 }
 
-.details-btn .material-symbols-outlined {
+.details-btn .material-symbols-outlined,
+.cancel-btn .material-symbols-outlined {
   font-size: 0.95rem;
 }
 

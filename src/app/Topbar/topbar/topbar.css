@@ -1,12 +1,11 @@
 .topbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
+  position: sticky;
+  top: var(--dev-banner-height, 0px);
+  z-index: 100;
+  width: 100%;
   height: var(--topbar-height);
   background: var(--surface);
   box-shadow: var(--shadow-sm);
-  z-index: 100;
   border-bottom: 1px solid var(--border);
 }
 
