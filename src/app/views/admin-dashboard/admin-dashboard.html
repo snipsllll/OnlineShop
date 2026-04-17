@@ -43,44 +43,15 @@
         <span class="material-symbols-outlined stat-card__arrow">arrow_forward</span>
       </div>
 
-      <div class="stat-card stat-card--orange">
+      <div class="stat-card stat-card--orange" (click)="goOrders()">
         <div class="stat-card__icon">
-          <span class="material-symbols-outlined">new_releases</span>
+          <span class="material-symbols-outlined">mark_email_unread</span>
         </div>
         <div class="stat-card__body">
-          <span class="stat-card__value">{{ countNeu }}</span>
-          <span class="stat-card__label">Neu / Eingegangen</span>
+          <span class="stat-card__value">{{ countUnviewed }}</span>
+          <span class="stat-card__label">Neue Bestellungen</span>
         </div>
-      </div>
-
-      <div class="stat-card stat-card--indigo">
-        <div class="stat-card__icon">
-          <span class="material-symbols-outlined">autorenew</span>
-        </div>
-        <div class="stat-card__body">
-          <span class="stat-card__value">{{ countInBearbeitung }}</span>
-          <span class="stat-card__label">In Bearbeitung</span>
-        </div>
-      </div>
-
-      <div class="stat-card stat-card--purple">
-        <div class="stat-card__icon">
-          <span class="material-symbols-outlined">local_shipping</span>
-        </div>
-        <div class="stat-card__body">
-          <span class="stat-card__value">{{ countVersandt }}</span>
-          <span class="stat-card__label">Versandt</span>
-        </div>
-      </div>
-
-      <div class="stat-card stat-card--green">
-        <div class="stat-card__icon">
-          <span class="material-symbols-outlined">check_circle</span>
-        </div>
-        <div class="stat-card__body">
-          <span class="stat-card__value">{{ countAngekommen }}</span>
-          <span class="stat-card__label">Angekommen</span>
-        </div>
+        <span class="material-symbols-outlined stat-card__arrow">arrow_forward</span>
       </div>
     </div>
 

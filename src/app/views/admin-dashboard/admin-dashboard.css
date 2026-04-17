@@ -68,12 +68,14 @@
 
 /* Clickable stat cards */
 .stat-card--blue,
-.stat-card--gray {
+.stat-card--gray,
+.stat-card--orange {
   cursor: pointer;
 }
 
 .stat-card--blue:hover,
-.stat-card--gray:hover {
+.stat-card--gray:hover,
+.stat-card--orange:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow-md);
 }

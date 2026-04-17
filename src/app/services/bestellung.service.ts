@@ -48,6 +48,11 @@ export class BestellungService {
     }
   }
 
+  async markAsViewed(id: string): Promise<void> {
+    const ref = doc(db as Firestore, 'orders', id);
+    await updateDoc(ref, {isNew: false});
+  }
+
   async deleteBestellung(id: string): Promise<void> {
     const bestellungDocRef = doc(db as Firestore, 'orders', id);
     await deleteDoc(bestellungDocRef);

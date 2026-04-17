@@ -57,6 +57,9 @@ export class AdminBestellungDetails implements OnInit {
       if (b) {
         this.selectedZustand = b.bestellungsZustand;
         this.selectedZahlungsZustand = b.zahlungsZustand;
+        if (b.isNew) {
+          await this.bestellungService.markAsViewed(id);
+        }
       }
     } finally {
       this.loading.set(false);

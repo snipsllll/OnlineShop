@@ -39,11 +39,7 @@ export class AdminDashboard implements OnInit {
   }
 
   get countGesamt(): number { return this.bestellungen().length; }
-  get countNeu(): number { return this.bestellungen().filter(b => b.bestellungsZustand === BestellungsZustand.EINGEGANGEN).length; }
-  get countInBearbeitung(): number { return this.bestellungen().filter(b => b.bestellungsZustand === BestellungsZustand.IN_BEARBEITUNG).length; }
-  get countVersandt(): number { return this.bestellungen().filter(b => b.bestellungsZustand === BestellungsZustand.VERSANDT).length; }
-  get countAngekommen(): number { return this.bestellungen().filter(b => b.bestellungsZustand === BestellungsZustand.ANGEKOMMEN).length; }
-  get countStorniert(): number { return this.bestellungen().filter(b => b.bestellungsZustand === BestellungsZustand.STORNIERT).length; }
+  get countUnviewed(): number { return this.bestellungen().filter(b => b.isNew === true).length; }
 
   get recentBestellungen(): IBestellung[] {
     return [...this.bestellungen()]

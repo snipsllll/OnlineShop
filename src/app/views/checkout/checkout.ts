@@ -102,7 +102,8 @@ export class Checkout implements OnInit {
         // Im Dev-Modus wird die Zahlung sofort als bezahlt simuliert
         zahlungsZustand: this.settings.devBannerEnabled()
           ? ZahlungsZustand.BEZAHLT
-          : ZahlungsZustand.NOCH_AUSSTEHEND
+          : ZahlungsZustand.NOCH_AUSSTEHEND,
+        isNew: true,
       };
       await this.bestellungService.addBestellung(bestellung);
       await this.warenkorbService.clearWarenkorb();

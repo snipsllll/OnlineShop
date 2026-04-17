@@ -154,6 +154,7 @@ export class AdminBestellungenOverview implements OnInit {
   }
 
   isNewOrder(b: IBestellung): boolean { return this.zustand(b) === BestellungsZustand.EINGEGANGEN; }
+  isUnviewed(b: IBestellung): boolean { return b.isNew === true; }
   isCancelled(b: IBestellung): boolean { return this.zustand(b) === BestellungsZustand.STORNIERT; }
   isPaid(b: IBestellung): boolean { return Number(b.zahlungsZustand) === ZahlungsZustand.BEZAHLT; }
 

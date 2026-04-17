@@ -122,6 +122,9 @@
                 <span class="order-id" [title]="b.id">#{{ b.id.slice(0, 8) }}</span>
               </div>
               <div class="order-badges">
+                @if (isUnviewed(b)) {
+                  <span class="badge badge--neue">Neu</span>
+                }
                 <span class="badge" [ngClass]="getZustandClass(b)">{{ getZustandLabel(b) }}</span>
                 @if (isPaid(b)) {
                   <span class="badge badge--success pay-badge">
