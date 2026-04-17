@@ -27,7 +27,7 @@ export class BestellungenOverview implements OnInit {
     this.loading.set(true);
     try {
       const all = await this.bestellungService.getBestellungen();
-      this.bestellungen.set(all.sort((a,b) => new Date(b.bestelldatum).getTime() - new Date(a.bestelldatum).getTime()));
+      this.bestellungen.set(all.sort((a, b) => this.toMs(b.bestelldatum) - this.toMs(a.bestelldatum)));
     } finally {
       this.loading.set(false);
     }
@@ -55,8 +55,15 @@ export class BestellungenOverview implements OnInit {
     }
   }
 
-  formatDate(d: Date): string {
-    return new Date(d).toLocaleDateString('de-DE', { day:'2-digit', month:'2-digit', year:'numeric' });
+  formatDate(d: any): string {
+    const date = typeof d?.toDate === 'function' ? d.toDate() : new Date(d);
+    return date.toLocaleDateString('de-DE', { day:'2-digit', month:'2-digit', year:'numeric' });
+  }
+
+  private toMs(d: any): number {
+    if (!d) return 0;
+    if (typeof d.toDate === 'function') return d.toDate().getTime();
+    return new Date(d).getTime();
   }
 
   formatPrice(p: number): string {

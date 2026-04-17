@@ -79,14 +79,15 @@ export class AdminBestellungDetails implements OnInit {
   goBack() { this.routingService.route(MyRoutes.ADMIN_BESTELLUNGEN_OVERVIEW); }
 
   get total(): number {
-    return this.bestellung()?.produkte.reduce((s,p) => s + p.preis * p.anzahl, 0) ?? 0;
+    return (this.bestellung()?.produkte ?? []).reduce((s, p) => s + (p.preis ?? 0) * (p.anzahl ?? 0), 0);
   }
 
   formatPrice(p: number): string {
-    return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(p);
+    return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(p ?? 0);
   }
 
-  formatDate(d: Date): string {
-    return new Date(d).toLocaleDateString('de-DE', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
+  formatDate(d: any): string {
+    const date = typeof d?.toDate === 'function' ? d.toDate() : new Date(d);
+    return date.toLocaleDateString('de-DE', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
   }
 }

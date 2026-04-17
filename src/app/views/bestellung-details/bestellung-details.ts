@@ -4,6 +4,7 @@ import {ActivatedRoute} from '@angular/router';
 import {IBestellung} from '../../models/interfaces/IBestellung';
 import {BestellungService} from '../../services/bestellung.service';
 import {RoutingService} from '../../services/routing.service';
+import {DialogService} from '../../services/dialog.service';
 import {MyRoutes} from '../../models/enums/MyRoutes';
 import {RouteParams} from '../../models/enums/RouteParams';
 import {BestellungsZustand} from '../../models/enums/BestellungsZustand';
@@ -20,6 +21,7 @@ export class BestellungDetails implements OnInit {
   private route = inject(ActivatedRoute);
   private bestellungService = inject(BestellungService);
   private routingService = inject(RoutingService);
+  protected dialogService = inject(DialogService);
 
   protected bestellung = signal<IBestellung | null>(null);
   protected loading = signal(true);
@@ -48,8 +50,9 @@ export class BestellungDetails implements OnInit {
     return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(p);
   }
 
-  formatDate(d: Date): string {
-    return new Date(d).toLocaleDateString('de-DE', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
+  formatDate(d: any): string {
+    const date = typeof d?.toDate === 'function' ? d.toDate() : new Date(d);
+    return date.toLocaleDateString('de-DE', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
   }
 
   getZustandLabel(z: BestellungsZustand): string {

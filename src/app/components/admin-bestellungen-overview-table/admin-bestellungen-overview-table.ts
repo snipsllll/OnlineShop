@@ -36,16 +36,17 @@ export class AdminBestellungenOverviewTable {
     return 'badge--neutral';
   }
 
-  formatDate(d: Date): string {
-    return new Date(d).toLocaleDateString('de-DE', { day:'2-digit', month:'2-digit', year:'numeric' });
+  formatDate(d: any): string {
+    const date = typeof d?.toDate === 'function' ? d.toDate() : new Date(d);
+    return date.toLocaleDateString('de-DE', { day:'2-digit', month:'2-digit', year:'numeric' });
   }
 
   formatPrice(p: number): string {
-    return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(p);
+    return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(p ?? 0);
   }
 
   getOrderTotal(b: IBestellung): number {
-    return b.produkte.reduce((s, p) => s + p.preis * p.anzahl, 0);
+    return (b.produkte ?? []).reduce((s, p) => s + (p.preis ?? 0) * (p.anzahl ?? 0), 0);
   }
 
   onDetails(id: string) { this.detailsClicked.emit(id); }

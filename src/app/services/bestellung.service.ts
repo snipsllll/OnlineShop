@@ -14,13 +14,13 @@ export class BestellungService {
 
   async getBestellungen(): Promise<IBestellung[]> {
     const querySnapshot = await getDocs(this.ordersCollection);
-    return querySnapshot.docs.map(doc => ({id: doc.id, ...doc.data()} as IBestellung));
+    return querySnapshot.docs.map(doc => ({...doc.data(), id: doc.id} as IBestellung));
   }
 
   async getBestellung(id: string): Promise<IBestellung | undefined> {
     const bestellungDocRef = doc(db as Firestore, 'orders', id);
     const bestellungDocSnap = await getDoc(bestellungDocRef);
-    return bestellungDocSnap.exists() ? {id: bestellungDocSnap.id, ...bestellungDocSnap.data()} as IBestellung : undefined;
+    return bestellungDocSnap.exists() ? {...bestellungDocSnap.data(), id: bestellungDocSnap.id} as IBestellung : undefined;
   }
 
   async addBestellung(bestellung: IBestellung): Promise<string> {

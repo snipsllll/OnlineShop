@@ -15,13 +15,13 @@ export class ProduktService {
 
   async getProdukte(): Promise<IProdukt[]> {
     const querySnapshot = await getDocs(this.productsCollection);
-    return querySnapshot.docs.map(doc => ({id: doc.id, ...doc.data()} as IProdukt));
+    return querySnapshot.docs.map(doc => ({...doc.data(), id: doc.id} as IProdukt));
   }
 
   async getProdukt(id: string): Promise<IProdukt | undefined> {
     const produktDocRef = doc(db as Firestore, 'products', id);
     const produktDocSnap = await getDoc(produktDocRef);
-    return produktDocSnap.exists() ? {id: produktDocSnap.id, ...produktDocSnap.data()} as IProdukt : undefined;
+    return produktDocSnap.exists() ? {...produktDocSnap.data(), id: produktDocSnap.id} as IProdukt : undefined;
   }
 
   async addProdukt(produkt: IProdukt): Promise<string> {

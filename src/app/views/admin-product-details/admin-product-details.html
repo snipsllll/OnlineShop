@@ -143,22 +143,25 @@
             </ul>
           }
 
-          <div class="add-image-row">
-            <input
-              class="form-input add-image-input"
-              type="text"
-              placeholder="Bild-URL oder Pfad eingeben"
-              [(ngModel)]="newImagePath"
-              (keyup.enter)="addImage()"
-            />
-            <button
-              class="btn-secondary add-image-btn"
-              (click)="addImage()"
-              [disabled]="!newImagePath.trim()"
-            >
-              <span class="material-symbols-outlined">add</span>
-              Hinzufügen
-            </button>
+          <input #fileInput type="file" accept="image/*" multiple hidden (change)="onFileSelected($event)" />
+
+          <div
+            class="upload-zone"
+            [class.upload-zone--dragover]="isDragOver()"
+            [class.upload-zone--uploading]="uploading()"
+            (dragover)="onDragOver($event)"
+            (dragleave)="onDragLeave($event)"
+            (drop)="onDrop($event)"
+            (click)="openFilePicker()"
+          >
+            @if (uploading()) {
+              <div class="spinner spinner-sm"></div>
+              <span>Wird hochgeladen...</span>
+            } @else {
+              <span class="material-symbols-outlined upload-zone__icon">upload</span>
+              <span class="upload-zone__text">Bilder hierher ziehen oder klicken</span>
+              <span class="upload-zone__hint">JPG, PNG, WEBP – mehrere Dateien möglich</span>
+            }
           </div>
         </div>
 

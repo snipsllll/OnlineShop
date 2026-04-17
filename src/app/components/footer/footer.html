@@ -1,0 +1,56 @@
+<footer class="footer">
+  <div class="footer__inner">
+
+    <div class="footer__brand">
+      <span class="material-symbols-outlined footer__logo-icon">shopping_bag</span>
+      <span class="footer__logo-text">OnlineShop</span>
+      <p class="footer__tagline">Dein vertrauensvoller Online-Shop für hochwertige Produkte.</p>
+    </div>
+
+    <div class="footer__section">
+      <h4 class="footer__heading">Rechtliches</h4>
+      <ul class="footer__links">
+        <li><button class="footer__link" (click)="goAbout()">Impressum</button></li>
+        <li><button class="footer__link" (click)="goAbout()">Datenschutzerklärung</button></li>
+        <li><button class="footer__link" (click)="goAbout()">AGB</button></li>
+        <li><button class="footer__link" (click)="goAbout()">Widerrufsrecht</button></li>
+      </ul>
+    </div>
+
+    <div class="footer__section">
+      <h4 class="footer__heading">Support</h4>
+      <ul class="footer__links">
+        <li>
+          <button class="footer__link" (click)="openContact()">
+            <span class="material-symbols-outlined">support_agent</span>
+            Kontakt & Hilfe
+          </button>
+        </li>
+        <li>
+          <a class="footer__link" href="mailto:tuemmers.support@gmail.com">
+            <span class="material-symbols-outlined">mail</span>
+            tuemmers.support&#64;gmail.com
+          </a>
+        </li>
+        <li>
+          <span class="footer__info">
+            <span class="material-symbols-outlined">schedule</span>
+            Mo–Fr, 9–18 Uhr
+          </span>
+        </li>
+      </ul>
+    </div>
+
+  </div>
+
+  <div class="footer__bottom">
+    <span>© {{ year }} OnlineShop. Alle Rechte vorbehalten.</span>
+    <span class="footer__bottom-links">
+      <button class="footer__link-sm" (click)="openContact()">Kontakt</button>
+      <span class="footer__sep">·</span>
+      <button class="footer__link-sm" (click)="goAbout()">Impressum</button>
+      <span class="footer__sep">·</span>
+      <button class="footer__link-sm" (click)="goAbout()">Datenschutz</button>
+    </span>
+  </div>
+</footer>

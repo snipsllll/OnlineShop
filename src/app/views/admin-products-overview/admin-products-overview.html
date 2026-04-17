@@ -8,12 +8,41 @@
       <p class="page-subtitle">Verwalte alle Produkte im Shop</p>
     </div>
     <div class="header-right">
+      <input #importInput type="file" accept=".json" hidden (change)="onImportFileSelected($event)" />
+      <button class="btn-secondary" (click)="openImportPicker()" [disabled]="importing()">
+        <span class="material-symbols-outlined btn-icon">upload_file</span>
+        Importieren
+      </button>
+      <button class="btn-secondary" (click)="exportProdukte()" [disabled]="loading() || produkte().length === 0">
+        <span class="material-symbols-outlined btn-icon">download</span>
+        Exportieren
+      </button>
       <button class="btn-primary" (click)="addProdukt()">
         <span class="material-symbols-outlined btn-icon">add</span>
         Neues Produkt
       </button>
     </div>
   </div>
+
+  @if (importing()) {
+    <div class="import-banner import-banner--loading">
+      <div class="spinner spinner-sm"></div>
+      Produkte werden importiert…
+    </div>
+  }
+
+  @if (importResult(); as result) {
+    <div class="import-banner" [class.import-banner--success]="result.failed === 0" [class.import-banner--warn]="result.failed > 0">
+      <span class="material-symbols-outlined">{{ result.failed === 0 ? 'check_circle' : 'warning' }}</span>
+      {{ result.success }} Produkt(e) erfolgreich importiert
+      @if (result.failed > 0) {
+        — {{ result.failed }} fehlgeschlagen (Pflichtfelder fehlten)
+      }
+      <button class="import-banner__close" (click)="importResult.set(null)">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+  }
 
   <div class="toolbar-row">
     <div class="search-wrapper">

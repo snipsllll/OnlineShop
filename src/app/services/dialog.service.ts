@@ -6,6 +6,7 @@ export class DialogService {
   registerOpen = signal(false);
   confirmOpen = signal(false);
   messageOpen = signal(false);
+  contactOpen = signal(false);
 
   confirmMessage = signal('');
   confirmTitle = signal('');
@@ -31,6 +32,9 @@ export class DialogService {
     if (this.confirmCallback) this.confirmCallback();
     this.closeConfirm();
   }
+
+  openContact() { this.contactOpen.set(true); }
+  closeContact() { this.contactOpen.set(false); }
 
   openMessage(title: string, text: string) {
     this.messageTitle.set(title);

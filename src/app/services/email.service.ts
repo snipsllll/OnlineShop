@@ -1,46 +1,32 @@
-import {Injectable, OnInit} from '@angular/core';
+import {Injectable} from '@angular/core';
 import emailjs from 'emailjs-com';
-import {IEmailWrapper} from '../models/interfaces/IEmailWrapper';
-import {UserService} from './user.service';
+
+export interface ISupportMail {
+  name: string;
+  email: string;
+  betreff: string;
+  nachricht: string;
+}
 
 @Injectable({
   providedIn: 'root',
 })
-export class EmailService implements OnInit {
+export class EmailService {
   private serviceId = 'service_fkiil5g';
   private contactUsTemplateId = 'template_fm360uc';
+  private userId = 'h5bAZeOKLHbXoFgJa';
 
-  constructor(private userService: UserService) {
+  async sendSupportMail(data: ISupportMail): Promise<void> {
+    emailjs.init(this.userId);
+    const templateParams = {
+      name: data.name,
+      email: data.email,
+      title: data.betreff,
+      message: data.nachricht,
+    };
+    const response = await emailjs.send(this.serviceId, this.contactUsTemplateId, templateParams);
+    if (response.status !== 200) {
+      throw new Error('E-Mail konnte nicht gesendet werden.');
+    }
   }
-
-  ngOnInit() {
-    emailjs.init('h5bAZeOKLHbXoFgJa');
-  }
-
-  sendContactUsMail(contents: IEmailWrapper) {
-    emailjs.init('h5bAZeOKLHbXoFgJa');
-
-    this.userService.getCurrentUser().then(user => {
-      const templateParams = {
-        name: user.vorname + ' ' + user.nachname,
-        email: contents.fromMail,
-        message: contents.content,
-        title: contents.header
-      };
-
-      emailjs
-        .send(this.serviceId, this.contactUsTemplateId, templateParams)
-        .then(
-          (response) => {
-            console.log(response.status, response.text);
-          },
-          (error) => {
-            console.error('Fehler beim Senden der Email', error);
-          }
-        );
-    })
-
-
-  }
-
 }

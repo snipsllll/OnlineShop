@@ -11,13 +11,10 @@ export class RoutingService {
   private topbarService = inject(TopbarService);
 
   public route(myRoute: MyRoutes, param?: string): void {
-    let route = myRoute.toString();
+    const segments: string[] = [myRoute.toString()];
+    if (param != null) segments.push(param);
 
-    if (param) {
-      route += "/" + param;
-    }
-
-    this.router.navigate([route]).then(x => {
+    this.router.navigate(segments).then(() => {
       this.topbarService.setTopbarItems(myRoute);
     });
   }

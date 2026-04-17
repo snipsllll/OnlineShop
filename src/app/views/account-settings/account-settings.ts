@@ -80,6 +80,20 @@ export class AccountSettings implements OnInit {
     this.routingService.route(MyRoutes.PRODUKTE_OVERVIEW);
   }
 
+  deleteAccount() {
+    this.dialogService.openConfirm(
+      'Konto löschen',
+      'Möchtest du dein Konto wirklich dauerhaft löschen? Diese Aktion kann nicht rückgängig gemacht werden.',
+      async () => {
+        const u = this.user();
+        if (!u) return;
+        await this.userService.deleteUser(u.uid);
+        await this.authService.logout();
+        this.routingService.route(MyRoutes.PRODUKTE_OVERVIEW);
+      }
+    );
+  }
+
   get isAdmin(): boolean {
     return this.user()?.rolle === Rolle.ADMIN;
   }

@@ -212,6 +212,18 @@
 
         <div class="card sidebar-card">
           <h3 class="card-title">
+            <span class="material-symbols-outlined">support_agent</span>
+            Support
+          </h3>
+          <p class="sidebar-text">Fragen oder Probleme? Unser Support-Team hilft dir gerne weiter.</p>
+          <button class="btn-secondary sidebar-btn" (click)="dialogService.openContact()">
+            <span class="material-symbols-outlined">mail</span>
+            Nachricht senden
+          </button>
+        </div>
+
+        <div class="card sidebar-card">
+          <h3 class="card-title">
             <span class="material-symbols-outlined">list_alt</span>
             Bestellungen
           </h3>
@@ -224,13 +236,34 @@
 
         <div class="card sidebar-card sidebar-card--danger">
           <h3 class="card-title card-title--danger">
-            <span class="material-symbols-outlined">logout</span>
-            Abmelden
+            <span class="material-symbols-outlined">delete_forever</span>
+            Konto löschen
           </h3>
-          <p class="sidebar-text">Möchtest du dich aus deinem Konto abmelden?</p>
-          <button class="btn-danger sidebar-btn" (click)="logout()">
-            <span class="material-symbols-outlined">logout</span>
-            Abmelden
+          <ul class="delete-warnings">
+            <li>
+              <span class="material-symbols-outlined">cancel</span>
+              Alle offenen, unbezahlten Bestellungen werden storniert
+            </li>
+            <li>
+              <span class="material-symbols-outlined">mail_off</span>
+              Kein Kontakt per E-Mail mehr möglich
+            </li>
+            <li>
+              <span class="material-symbols-outlined">inventory_2</span>
+              Deine Bestellhistorie geht verloren
+            </li>
+            <li>
+              <span class="material-symbols-outlined">heart_broken</span>
+              Deine Favoritenliste wird gelöscht
+            </li>
+            <li>
+              <span class="material-symbols-outlined">warning</span>
+              Diese Aktion kann nicht rückgängig gemacht werden
+            </li>
+          </ul>
+          <button class="btn-danger sidebar-btn" (click)="deleteAccount()">
+            <span class="material-symbols-outlined">delete_forever</span>
+            Konto unwiderruflich löschen
           </button>
         </div>
       </aside>

@@ -283,6 +283,31 @@ select.form-input {
   border-color: #fecaca;
 }
 
+.delete-warnings {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 16px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.delete-warnings li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.delete-warnings .material-symbols-outlined {
+  font-size: 16px;
+  color: var(--error);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
 .sidebar-text {
   font-size: 0.875rem;
   color: var(--text-secondary);

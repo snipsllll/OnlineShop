@@ -4,6 +4,24 @@
   min-height: calc(100vh - var(--topbar-height));
 }
 
+/* Top Bar */
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.help-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.875rem;
+  padding: 8px 14px;
+}
+
 /* Back Button */
 .back-btn {
   display: inline-flex;
@@ -16,7 +34,7 @@
   font-weight: 500;
   cursor: pointer;
   padding: 6px 0;
-  margin-bottom: 24px;
+  margin-bottom: 0;
   transition: color var(--transition);
 }
 

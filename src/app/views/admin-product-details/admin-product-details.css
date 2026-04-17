@@ -284,24 +284,47 @@
   font-size: 18px;
 }
 
-/* Add image row */
-.add-image-row {
+/* Upload zone */
+.upload-zone {
   display: flex;
-  gap: 8px;
+  flex-direction: column;
   align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 24px 16px;
+  border: 2px dashed var(--border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: border-color var(--transition), background var(--transition);
+  text-align: center;
+  color: var(--text-muted);
+  user-select: none;
 }
 
-.add-image-input {
-  flex: 1;
-  min-width: 0;
+.upload-zone:hover,
+.upload-zone--dragover {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  color: var(--primary);
 }
 
-.add-image-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  white-space: nowrap;
-  flex-shrink: 0;
+.upload-zone--uploading {
+  pointer-events: none;
+  opacity: 0.7;
+}
+
+.upload-zone__icon {
+  font-size: 32px;
+}
+
+.upload-zone__text {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.upload-zone__hint {
+  font-size: 0.75rem;
+  color: var(--text-muted);
 }
 
 /* Actions card */

@@ -1,10 +1,16 @@
 <div class="page-container details-page">
 
   <!-- Back Button -->
-  <button class="back-btn" (click)="goBack()">
-    <span class="material-symbols-outlined">arrow_back</span>
-    Zurück zu Bestellungen
-  </button>
+  <div class="top-bar">
+    <button class="back-btn" (click)="goBack()">
+      <span class="material-symbols-outlined">arrow_back</span>
+      Zurück zu Bestellungen
+    </button>
+    <button class="btn-secondary help-btn" (click)="dialogService.openContact()">
+      <span class="material-symbols-outlined">support_agent</span>
+      Hilfe zu dieser Bestellung
+    </button>
+  </div>
 
   @if (loading()) {
     <div class="loading-state">

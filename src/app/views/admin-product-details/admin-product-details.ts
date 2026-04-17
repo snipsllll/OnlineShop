@@ -1,10 +1,11 @@
-import {Component, inject, OnInit, signal} from '@angular/core';
+import {Component, ElementRef, inject, OnInit, signal, ViewChild} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {ActivatedRoute} from '@angular/router';
 import {IProdukt} from '../../models/interfaces/IProdukt';
 import {IImgRef} from '../../models/interfaces/IImgRef';
 import {ProduktService} from '../../services/produkt.service';
+import {StorageService} from '../../services/storage.service';
 import {RoutingService} from '../../services/routing.service';
 import {MyRoutes} from '../../models/enums/MyRoutes';
 import {RouteParams} from '../../models/enums/RouteParams';
@@ -17,12 +18,17 @@ import {RouteParams} from '../../models/enums/RouteParams';
   styleUrl: './admin-product-details.css',
 })
 export class AdminProductDetails implements OnInit {
+  @ViewChild('fileInput') fileInput!: ElementRef<HTMLInputElement>;
+
   private route = inject(ActivatedRoute);
   private produktService = inject(ProduktService);
+  private storageService = inject(StorageService);
   private routingService = inject(RoutingService);
 
   protected loading = signal(true);
   protected saving = signal(false);
+  protected uploading = signal(false);
+  protected isDragOver = signal(false);
   protected isNew = false;
   protected productId = '';
 
@@ -31,7 +37,6 @@ export class AdminProductDetails implements OnInit {
   protected preis = 0;
   protected lagerbestand = 0;
   protected verfuegbar = true;
-  protected newImagePath = '';
   protected imgRefs: IImgRef[] = [];
 
   async ngOnInit() {
@@ -60,10 +65,45 @@ export class AdminProductDetails implements OnInit {
     }
   }
 
-  addImage() {
-    if (this.newImagePath.trim()) {
-      this.imgRefs = [...this.imgRefs, { id: '', path: this.newImagePath.trim(), position: this.imgRefs.length }];
-      this.newImagePath = '';
+  openFilePicker() {
+    this.fileInput.nativeElement.click();
+  }
+
+  onFileSelected(event: Event) {
+    const files = (event.target as HTMLInputElement).files;
+    if (files) this.uploadFiles(Array.from(files));
+    (event.target as HTMLInputElement).value = '';
+  }
+
+  onDragOver(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragOver.set(true);
+  }
+
+  onDragLeave(event: DragEvent) {
+    event.preventDefault();
+    this.isDragOver.set(false);
+  }
+
+  onDrop(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragOver.set(false);
+    const files = event.dataTransfer?.files;
+    if (files) this.uploadFiles(Array.from(files).filter(f => f.type.startsWith('image/')));
+  }
+
+  private async uploadFiles(files: File[]) {
+    if (!files.length) return;
+    this.uploading.set(true);
+    try {
+      for (const file of files) {
+        const base64 = await this.storageService.imageToBase64(file);
+        this.imgRefs = [...this.imgRefs, { id: '', path: base64, position: this.imgRefs.length }];
+      }
+    } finally {
+      this.uploading.set(false);
     }
   }
 

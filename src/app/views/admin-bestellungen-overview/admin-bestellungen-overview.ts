@@ -29,7 +29,7 @@ export class AdminBestellungenOverview implements OnInit {
     this.loading.set(true);
     try {
       const all = await this.bestellungService.getBestellungen();
-      this.bestellungen.set(all.sort((a,b) => new Date(b.bestelldatum).getTime() - new Date(a.bestelldatum).getTime()));
+      this.bestellungen.set(all.sort((a, b) => this.toMs(b.bestelldatum) - this.toMs(a.bestelldatum)));
     } finally {
       this.loading.set(false);
     }
@@ -51,7 +51,13 @@ export class AdminBestellungenOverview implements OnInit {
   }
 
   countByZustand(z: BestellungsZustand): number {
-    return this.bestellungen().filter(b => b.bestellungsZustand === z).length;
+    return this.bestellungen().filter(b => b.bestellungsZustand === z || Number(b.bestellungsZustand) === z).length;
+  }
+
+  private toMs(d: any): number {
+    if (!d) return 0;
+    if (typeof d.toDate === 'function') return d.toDate().getTime();
+    return new Date(d).getTime();
   }
 
   protected readonly BestellungsZustand = BestellungsZustand;
