@@ -1,0 +1,265 @@
+<app-admin-nav />
+<div class="page-container">
+
+  <div class="page-header">
+    <div class="header-left">
+      <h1 class="page-title">
+        <span class="material-symbols-outlined title-icon">group</span>
+        Benutzer
+      </h1>
+      <p class="page-subtitle">Alle registrierten Benutzer verwalten</p>
+    </div>
+    @if (!loading()) {
+      <span class="badge badge--neutral">{{ users().length }} {{ users().length === 1 ? 'Benutzer' : 'Benutzer' }}</span>
+    }
+  </div>
+
+  <!-- Search -->
+  <div class="toolbar-row">
+    <div class="search-wrapper">
+      <span class="material-symbols-outlined search-icon">search</span>
+      <input
+        class="search-input"
+        type="text"
+        placeholder="Nach Name, E-Mail oder ID suchen..."
+        [(ngModel)]="searchText"
+      />
+      @if (searchText) {
+        <button class="search-clear" (click)="searchText = ''">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      }
+    </div>
+    @if (!loading()) {
+      <span class="result-count">{{ filteredUsers.length }} Ergebnis{{ filteredUsers.length !== 1 ? 'se' : '' }}</span>
+    }
+  </div>
+
+  @if (loading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Benutzer werden geladen...</p>
+    </div>
+  } @else {
+    <div class="content-layout" [class.content-layout--with-panel]="selectedUser()">
+
+      <!-- User Table -->
+      <div class="card table-card">
+        @if (filteredUsers.length === 0) {
+          <div class="empty-state">
+            <span class="material-symbols-outlined empty-icon">person_off</span>
+            <p class="empty-title">Keine Benutzer gefunden</p>
+          </div>
+        } @else {
+          <div class="table-scroll">
+            <table class="users-table">
+              <thead>
+                <tr>
+                  <th>Benutzer</th>
+                  <th>E-Mail</th>
+                  <th>Rolle</th>
+                  <th class="col-actions"></th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (u of filteredUsers; track u.uid) {
+                  <tr
+                    class="user-row"
+                    [class.user-row--selected]="selectedUser()?.uid === u.uid"
+                    (click)="selectUser(u)"
+                  >
+                    <td>
+                      <div class="user-cell">
+                        <div class="user-avatar">
+                          <span class="material-symbols-outlined">account_circle</span>
+                        </div>
+                        <div>
+                          <div class="user-name">{{ displayName(u) }}</div>
+                          <div class="user-id">#{{ u.uid.slice(0, 8) }}&hellip;</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td class="user-email">{{ u.email }}</td>
+                    <td>
+                      <span class="badge" [class]="getRolleClass(u.rolle)">
+                        {{ getRolleLabel(u.rolle) }}
+                      </span>
+                    </td>
+                    <td class="col-actions">
+                      <div class="row-action-btns">
+                        @if (canEditThisUser(u)) {
+                          <button class="btn-secondary btn-sm edit-row-btn" (click)="selectUser(u); $event.stopPropagation()">
+                            <span class="material-symbols-outlined">edit</span>
+                            <span>Bearbeiten</span>
+                          </button>
+                        }
+                        @if (canDeleteThisUser(u)) {
+                          <button class="btn-danger btn-sm delete-row-btn" (click)="deleteUser(u); $event.stopPropagation()" title="Benutzer löschen" [disabled]="deleting()">
+                            <span class="material-symbols-outlined">delete</span>
+                          </button>
+                        }
+                      </div>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      </div>
+
+      <!-- Edit Panel -->
+      @if (selectedUser(); as u) { @if (canEditThisUser(u)) {
+        <div class="edit-panel card">
+          <div class="edit-panel__header">
+            <div class="edit-panel__title">
+              <span class="material-symbols-outlined">manage_accounts</span>
+              Benutzer bearbeiten
+            </div>
+            <button class="close-btn" (click)="closeEdit()" title="Schließen">
+              <span class="material-symbols-outlined">close</span>
+            </button>
+          </div>
+
+          <div class="edit-panel__user-info">
+            <div class="info-avatar">
+              <span class="material-symbols-outlined">account_circle</span>
+            </div>
+            <div>
+              <div class="info-email">{{ u.email }}</div>
+              <div class="info-uid">UID: {{ u.uid }}</div>
+            </div>
+          </div>
+
+          <div class="edit-panel__body">
+
+            <!-- Rolle -->
+            <div class="form-section">
+              <h3 class="form-section-title">Rolle</h3>
+              @if (isSelf(u) && !isOwner()) {
+                <p class="self-role-hint">
+                  <span class="material-symbols-outlined">lock</span>
+                  Du kannst deine eigene Rolle nicht ändern.
+                </p>
+              } @else {
+                <div class="role-options">
+                  <label class="role-option" [class.role-option--active]="editRolle === Rolle.KUNDE">
+                    <input type="radio" [(ngModel)]="editRolle" [value]="Rolle.KUNDE" />
+                    <span class="material-symbols-outlined">person</span>
+                    <span>Kunde</span>
+                  </label>
+                  @if (perms.assignableRoles().includes(Rolle.MITARBEITER)) {
+                    <label class="role-option role-option--mitarbeiter" [class.role-option--active]="editRolle === Rolle.MITARBEITER">
+                      <input type="radio" [(ngModel)]="editRolle" [value]="Rolle.MITARBEITER" />
+                      <span class="material-symbols-outlined">badge</span>
+                      <span>Mitarbeiter</span>
+                    </label>
+                  }
+                  @if (perms.assignableRoles().includes(Rolle.ADMIN)) {
+                    <label class="role-option role-option--admin" [class.role-option--active]="editRolle === Rolle.ADMIN">
+                      <input type="radio" [(ngModel)]="editRolle" [value]="Rolle.ADMIN" />
+                      <span class="material-symbols-outlined">admin_panel_settings</span>
+                      <span>Admin</span>
+                    </label>
+                  }
+                  @if (perms.assignableRoles().includes(Rolle.OWNER)) {
+                    <label class="role-option role-option--owner" [class.role-option--active]="editRolle === Rolle.OWNER">
+                      <input type="radio" [(ngModel)]="editRolle" [value]="Rolle.OWNER" />
+                      <span class="material-symbols-outlined">shield_person</span>
+                      <span>Owner</span>
+                    </label>
+                  }
+                </div>
+              }
+            </div>
+
+            <!-- Name -->
+            <div class="form-section">
+              <h3 class="form-section-title">Persönliche Daten</h3>
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label class="form-label">Vorname</label>
+                  <input class="form-input" type="text" [(ngModel)]="editVorname" placeholder="Vorname" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Nachname</label>
+                  <input class="form-input" type="text" [(ngModel)]="editNachname" placeholder="Nachname" />
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Telefonnummer</label>
+                <input class="form-input" type="tel" [(ngModel)]="editTelefon" placeholder="+49 123 456789" />
+              </div>
+            </div>
+
+            <!-- Address -->
+            <div class="form-section">
+              <h3 class="form-section-title">Lieferadresse</h3>
+              <div class="form-row-2">
+                <div class="form-group">
+                  <label class="form-label">Straße</label>
+                  <input class="form-input" type="text" [(ngModel)]="editStrasse" placeholder="Musterstraße" />
+                </div>
+                <div class="form-group form-group--narrow">
+                  <label class="form-label">Nr.</label>
+                  <input class="form-input" type="text" [(ngModel)]="editHausnummer" placeholder="12a" />
+                </div>
+              </div>
+              <div class="form-row-2">
+                <div class="form-group form-group--narrow">
+                  <label class="form-label">PLZ</label>
+                  <input class="form-input" type="text" [(ngModel)]="editPlz" placeholder="12345" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Ort</label>
+                  <input class="form-input" type="text" [(ngModel)]="editOrt" placeholder="Berlin" />
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Land</label>
+                <select class="form-input" [(ngModel)]="editLand">
+                  <option value="Deutschland">Deutschland</option>
+                  <option value="Österreich">Österreich</option>
+                  <option value="Schweiz">Schweiz</option>
+                  <option value="Frankreich">Frankreich</option>
+                  <option value="Niederlande">Niederlande</option>
+                  <option value="Belgien">Belgien</option>
+                  <option value="Polen">Polen</option>
+                </select>
+              </div>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="edit-panel__footer">
+            @if (saveSuccess()) {
+              <div class="success-toast">
+                <span class="material-symbols-outlined">check_circle</span>
+                Gespeichert!
+              </div>
+            }
+            <button class="btn-primary save-user-btn" (click)="saveUser()" [disabled]="saving() || deleting()">
+              @if (saving()) {
+                <div class="spinner spinner--sm"></div>
+                Wird gespeichert...
+              } @else {
+                <span class="material-symbols-outlined">save</span>
+                Speichern
+              }
+            </button>
+            @if (canDeleteThisUser(u)) {
+              <button class="btn-danger delete-panel-btn" (click)="deleteUser(u)" [disabled]="deleting() || saving()">
+                @if (deleting()) {
+                  <div class="spinner spinner--sm"></div>
+                } @else {
+                  <span class="material-symbols-outlined">delete</span>
+                }
+                Konto löschen
+              </button>
+            }
+          </div>
+        </div>
+      } }
+    </div>
+  }
+</div>

@@ -1,0 +1,183 @@
+<nav class="admin-nav">
+  <div class="admin-nav__inner">
+
+    <div class="admin-nav__brand">
+      <span class="material-symbols-outlined">admin_panel_settings</span>
+      <span class="admin-nav__brand-text">Admin Panel</span>
+    </div>
+
+    <!-- Hamburger button (mobile only) -->
+    <button class="admin-nav__hamburger" (click)="toggleMenu()" [attr.aria-expanded]="menuOpen()" aria-label="Menü öffnen">
+      <span class="material-symbols-outlined">{{ menuOpen() ? 'close' : 'menu' }}</span>
+    </button>
+
+    <div class="admin-nav__tabs">
+      <button
+        class="admin-nav__tab"
+        [class.admin-nav__tab--active]="isActive('dashboard')"
+        (click)="goDashboard()"
+      >
+        <span class="material-symbols-outlined">dashboard</span>
+        <span>Dashboard</span>
+      </button>
+      @if (perms.canManageProducts()) {
+        <button
+          class="admin-nav__tab"
+          [class.admin-nav__tab--active]="isActive('products')"
+          (click)="goProducts()"
+        >
+          <span class="material-symbols-outlined">inventory_2</span>
+          <span>Produkte</span>
+        </button>
+      }
+      @if (perms.canManageOrders()) {
+        <button
+          class="admin-nav__tab"
+          [class.admin-nav__tab--active]="isActive('orders')"
+          (click)="goOrders()"
+        >
+          <span class="material-symbols-outlined">receipt_long</span>
+          <span>Bestellungen</span>
+        </button>
+      }
+      @if (perms.canViewUsers()) {
+        <button
+          class="admin-nav__tab"
+          [class.admin-nav__tab--active]="isActive('users')"
+          (click)="goUsers()"
+        >
+          <span class="material-symbols-outlined">group</span>
+          <span>Benutzer</span>
+        </button>
+      }
+      @if (perms.canManageShopSettings()) {
+        <button
+          class="admin-nav__tab"
+          [class.admin-nav__tab--active]="isActive('settings')"
+          (click)="goSettings()"
+        >
+          <span class="material-symbols-outlined">settings</span>
+          <span>Einstellungen</span>
+        </button>
+      }
+      @if (isOwner()) {
+        <button
+          class="admin-nav__tab admin-nav__tab--owner"
+          [class.admin-nav__tab--active]="isActive('owner-settings')"
+          (click)="goOwnerSettings()"
+        >
+          <span class="material-symbols-outlined">shield_person</span>
+          <span>Owner</span>
+        </button>
+        <button
+          class="admin-nav__tab admin-nav__tab--owner"
+          [class.admin-nav__tab--active]="isActive('owner-panel')"
+          (click)="goOwnerPanel()"
+        >
+          <span class="material-symbols-outlined">store</span>
+          <span>Owner Panel</span>
+        </button>
+      }
+    </div>
+
+    <div class="admin-nav__end">
+      <button class="admin-nav__shop-btn" (click)="goToShop()">
+        <span class="material-symbols-outlined">storefront</span>
+        <span class="admin-nav__shop-text">Zum Shop</span>
+      </button>
+    </div>
+
+  </div>
+</nav>
+
+<!-- Mobile slide-in drawer -->
+@if (menuOpen()) {
+  <div class="admin-nav__overlay" (click)="closeMenu()"></div>
+  <nav class="admin-nav__drawer">
+
+    <div class="admin-nav__drawer-header">
+      <span class="material-symbols-outlined">admin_panel_settings</span>
+      <span>Admin Panel</span>
+      <button class="admin-nav__drawer-close" (click)="closeMenu()" aria-label="Menü schließen">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <div class="admin-nav__drawer-body">
+      <button
+        class="admin-nav__drawer-item"
+        [class.admin-nav__drawer-item--active]="isActive('dashboard')"
+        (click)="goDashboard()"
+      >
+        <span class="material-symbols-outlined">dashboard</span>
+        <span>Dashboard</span>
+      </button>
+      @if (perms.canManageProducts()) {
+        <button
+          class="admin-nav__drawer-item"
+          [class.admin-nav__drawer-item--active]="isActive('products')"
+          (click)="goProducts()"
+        >
+          <span class="material-symbols-outlined">inventory_2</span>
+          <span>Produkte</span>
+        </button>
+      }
+      @if (perms.canManageOrders()) {
+        <button
+          class="admin-nav__drawer-item"
+          [class.admin-nav__drawer-item--active]="isActive('orders')"
+          (click)="goOrders()"
+        >
+          <span class="material-symbols-outlined">receipt_long</span>
+          <span>Bestellungen</span>
+        </button>
+      }
+      @if (perms.canViewUsers()) {
+        <button
+          class="admin-nav__drawer-item"
+          [class.admin-nav__drawer-item--active]="isActive('users')"
+          (click)="goUsers()"
+        >
+          <span class="material-symbols-outlined">group</span>
+          <span>Benutzer</span>
+        </button>
+      }
+      @if (perms.canManageShopSettings()) {
+        <button
+          class="admin-nav__drawer-item"
+          [class.admin-nav__drawer-item--active]="isActive('settings')"
+          (click)="goSettings()"
+        >
+          <span class="material-symbols-outlined">settings</span>
+          <span>Einstellungen</span>
+        </button>
+      }
+      @if (isOwner()) {
+        <button
+          class="admin-nav__drawer-item admin-nav__drawer-item--owner"
+          [class.admin-nav__drawer-item--active]="isActive('owner-settings')"
+          (click)="goOwnerSettings()"
+        >
+          <span class="material-symbols-outlined">shield_person</span>
+          <span>Owner-Einstellungen</span>
+        </button>
+        <button
+          class="admin-nav__drawer-item admin-nav__drawer-item--owner"
+          [class.admin-nav__drawer-item--active]="isActive('owner-panel')"
+          (click)="goOwnerPanel()"
+        >
+          <span class="material-symbols-outlined">store</span>
+          <span>Owner Panel</span>
+        </button>
+      }
+    </div>
+
+    <div class="admin-nav__drawer-footer">
+      <button class="admin-nav__drawer-shop-btn" (click)="goToShop()">
+        <span class="material-symbols-outlined">storefront</span>
+        <span>Zum Shop</span>
+      </button>
+    </div>
+
+  </nav>
+}

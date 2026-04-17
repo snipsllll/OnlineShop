@@ -1,1 +1,298 @@
-<p>admin-products-overview works!</p>
+<app-admin-nav />
+<div class="page-container">
+  <div class="page-header">
+    <div class="header-left">
+      <h1 class="page-title">
+        <span class="material-symbols-outlined title-icon">inventory_2</span>
+        Admin: Produkte
+      </h1>
+      <p class="page-subtitle">Verwalte alle Produkte im Shop</p>
+    </div>
+    <div class="header-right">
+      <input #importInput type="file" accept=".json" hidden (change)="onImportFileSelected($event)" />
+      <button class="btn-secondary" (click)="openImportPicker()" [disabled]="importing()">
+        <span class="material-symbols-outlined btn-icon">upload_file</span>
+        Importieren
+      </button>
+      <button class="btn-secondary" (click)="exportProdukte()" [disabled]="loading() || totalCount() === 0">
+        <span class="material-symbols-outlined btn-icon">download</span>
+        Exportieren
+      </button>
+      <button class="btn-primary" (click)="addProdukt()">
+        <span class="material-symbols-outlined btn-icon">add</span>
+        Neues Produkt
+      </button>
+    </div>
+  </div>
+
+  @if (importing()) {
+    <div class="import-banner import-banner--loading">
+      <div class="spinner spinner-sm"></div>
+      Produkte werden importiert…
+    </div>
+  }
+
+  @if (importResult(); as result) {
+    <div class="import-banner" [class.import-banner--success]="result.failed === 0" [class.import-banner--warn]="result.failed > 0">
+      <span class="material-symbols-outlined">{{ result.failed === 0 ? 'check_circle' : 'warning' }}</span>
+      {{ result.success }} Produkt(e) erfolgreich importiert
+      @if (result.failed > 0) { — {{ result.failed }} fehlgeschlagen }
+      <button class="import-banner__close" (click)="importResult.set(null)">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+  }
+
+  <div class="toolbar-row">
+    <div class="search-wrapper">
+      <span class="material-symbols-outlined search-icon">search</span>
+      <input
+        class="search-input"
+        type="text"
+        placeholder="Nach Name oder ID suchen..."
+        [ngModel]="searchText"
+        (ngModelChange)="searchText = $event"
+      />
+      @if (searchText) {
+        <button class="search-clear" (click)="searchText = ''">
+          <span class="material-symbols-outlined">close</span>
+        </button>
+      }
+    </div>
+    <div class="toolbar-right">
+      @if (!loading()) {
+        <span class="result-count">{{ displayedCount }} Produkt{{ displayedCount !== 1 ? 'e' : '' }}</span>
+      }
+      @if (hasActiveFiltersOrSort) {
+        <button class="btn-clear-filters" (click)="clearAllFilters()">
+          <span class="material-symbols-outlined">filter_alt_off</span>
+          Filter zurücksetzen
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Bulk action bar -->
+  @if (selectedCount() > 0) {
+    <div class="bulk-bar">
+      <span class="bulk-bar__count">
+        <span class="material-symbols-outlined">check_box</span>
+        {{ selectedCount() }} ausgewählt
+      </span>
+      <div class="bulk-bar__actions">
+        <button class="btn-secondary btn-sm" (click)="clearSelection()">
+          <span class="material-symbols-outlined btn-icon">deselect</span>
+          Aufheben
+        </button>
+        <button class="btn-danger btn-sm" (click)="bulkDelete()">
+          <span class="material-symbols-outlined btn-icon">delete_sweep</span>
+          {{ selectedCount() }} löschen
+        </button>
+      </div>
+    </div>
+  }
+
+  @if (loading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Produkte werden geladen...</p>
+    </div>
+  } @else {
+    <div class="card table-card">
+      @if (displayedCount === 0) {
+        <div class="empty-state">
+          <span class="material-symbols-outlined empty-icon">search_off</span>
+          <p class="empty-title">Keine Produkte gefunden</p>
+          <p class="empty-subtitle">
+            @if (hasActiveFiltersOrSort) {
+              Keine Produkte entsprechen den aktiven Filtern.
+            } @else {
+              Noch keine Produkte vorhanden.
+            }
+          </p>
+          @if (hasActiveFiltersOrSort) {
+            <button class="btn-secondary" (click)="clearAllFilters()">
+              <span class="material-symbols-outlined btn-icon">filter_alt_off</span>
+              Filter zurücksetzen
+            </button>
+          } @else {
+            <button class="btn-primary" (click)="addProdukt()">
+              <span class="material-symbols-outlined btn-icon">add</span>
+              Neues Produkt
+            </button>
+          }
+        </div>
+      } @else {
+        <div class="table-scroll">
+          <table class="products-table">
+            <thead>
+              <!-- Sort header row -->
+              <tr class="header-row">
+                <th class="col-select">
+                  <input
+                    type="checkbox"
+                    [checked]="allCurrentPageSelected"
+                    [indeterminate]="someCurrentPageSelected"
+                    (change)="toggleSelectAll()"
+                    title="Alle auf dieser Seite auswählen"
+                  />
+                </th>
+                <th class="col-image sortable" (click)="toggleSort('imgCount')">
+                  <div class="th-inner">
+                    Bild
+                    <span class="material-symbols-outlined sort-icon">{{ sortIcon('imgCount') }}</span>
+                  </div>
+                </th>
+                <th class="col-name sortable" (click)="toggleSort('bezeichnung')">
+                  <div class="th-inner">
+                    Name
+                    <span class="material-symbols-outlined sort-icon">{{ sortIcon('bezeichnung') }}</span>
+                  </div>
+                </th>
+                <th class="col-price sortable" (click)="toggleSort('preis')">
+                  <div class="th-inner">
+                    Preis
+                    <span class="material-symbols-outlined sort-icon">{{ sortIcon('preis') }}</span>
+                  </div>
+                </th>
+                <th class="col-stock sortable" (click)="toggleSort('lagerbestand')">
+                  <div class="th-inner">
+                    Lagerbestand
+                    <span class="material-symbols-outlined sort-icon">{{ sortIcon('lagerbestand') }}</span>
+                  </div>
+                </th>
+                <th class="col-status sortable" (click)="toggleSort('verfuegbar')">
+                  <div class="th-inner">
+                    Verfügbar
+                    <span class="material-symbols-outlined sort-icon">{{ sortIcon('verfuegbar') }}</span>
+                  </div>
+                </th>
+                <th class="col-actions">Aktionen</th>
+              </tr>
+              <!-- Filter row -->
+              <tr class="filter-row">
+                <td class="col-select"></td>
+                <td class="col-image">
+                  <select class="filter-select" [(ngModel)]="filterHasImage" (ngModelChange)="onFilterOrSortChange()">
+                    <option value="all">Alle</option>
+                    <option value="yes">Mit Bild</option>
+                    <option value="no">Ohne Bild</option>
+                  </select>
+                </td>
+                <td class="col-name">
+                  <input
+                    class="filter-input"
+                    type="text"
+                    placeholder="Name filtern…"
+                    [(ngModel)]="filterBezeichnung"
+                    (ngModelChange)="onFilterOrSortChange()"
+                  />
+                </td>
+                <td class="col-price">
+                  <div class="filter-range">
+                    <input class="filter-input filter-input--num" type="number" placeholder="Min" [(ngModel)]="filterPreisMin" (ngModelChange)="onFilterOrSortChange()" min="0" />
+                    <span class="filter-range__sep">–</span>
+                    <input class="filter-input filter-input--num" type="number" placeholder="Max" [(ngModel)]="filterPreisMax" (ngModelChange)="onFilterOrSortChange()" min="0" />
+                  </div>
+                </td>
+                <td class="col-stock">
+                  <div class="filter-range">
+                    <input class="filter-input filter-input--num" type="number" placeholder="Min" [(ngModel)]="filterLagerMin" (ngModelChange)="onFilterOrSortChange()" min="0" />
+                    <span class="filter-range__sep">–</span>
+                    <input class="filter-input filter-input--num" type="number" placeholder="Max" [(ngModel)]="filterLagerMax" (ngModelChange)="onFilterOrSortChange()" min="0" />
+                  </div>
+                </td>
+                <td class="col-status">
+                  <select class="filter-select" [(ngModel)]="filterVerfuegbar" (ngModelChange)="onFilterOrSortChange()">
+                    <option value="all">Alle</option>
+                    <option value="true">Verfügbar</option>
+                    <option value="false">Nicht verfügbar</option>
+                  </select>
+                </td>
+                <td class="col-actions"></td>
+              </tr>
+            </thead>
+            <tbody>
+              @for (produkt of pagedProdukte; track produkt.id) {
+                <tr class="table-row" [class.table-row--selected]="isSelected(produkt.id)">
+                  <td class="col-select">
+                    <input
+                      type="checkbox"
+                      [checked]="isSelected(produkt.id)"
+                      (change)="toggleSelect(produkt.id)"
+                    />
+                  </td>
+                  <td class="col-image">
+                    <div class="img-cell">
+                      @if (produkt.imgRefs && produkt.imgRefs.length > 0) {
+                        <div class="img-indicator has-images" [title]="produkt.imgRefs.length + ' Bild(er)'">
+                          <span class="material-symbols-outlined">image</span>
+                          <span class="img-count">{{ produkt.imgRefs.length }}</span>
+                        </div>
+                      } @else {
+                        <div class="img-indicator no-images" title="Kein Bild">
+                          <span class="material-symbols-outlined">hide_image</span>
+                        </div>
+                      }
+                    </div>
+                  </td>
+                  <td class="col-name">
+                    <div class="product-name">{{ produkt.bezeichnung }}</div>
+                    <div class="product-id" [title]="produkt.id">#{{ produkt.id.slice(0, 8) }}&hellip;</div>
+                  </td>
+                  <td class="col-price">
+                    <span class="price-value">{{ formatPrice(produkt.preis) }}</span>
+                  </td>
+                  <td class="col-stock">
+                    <span class="stock-badge" [class.stock-low]="produkt.lagerbestand <= 5" [class.stock-ok]="produkt.lagerbestand > 5">
+                      {{ produkt.lagerbestand }}
+                    </span>
+                  </td>
+                  <td class="col-status">
+                    @if (produkt.verfuegbar) {
+                      <span class="badge badge--success">Verfügbar</span>
+                    } @else {
+                      <span class="badge badge--error">Nicht verfügbar</span>
+                    }
+                  </td>
+                  <td class="col-actions">
+                    <div class="action-buttons">
+                      <button class="btn-secondary btn-sm" (click)="editProdukt(produkt.id)">
+                        <span class="material-symbols-outlined btn-icon">edit</span>
+                        Bearbeiten
+                      </button>
+                      <button class="btn-danger btn-sm" (click)="deleteProdukt(produkt.id)">
+                        <span class="material-symbols-outlined btn-icon">delete</span>
+                        Löschen
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        @if (totalPages > 1) {
+          <div class="pagination-bar">
+            <button class="page-btn page-btn--nav" (click)="goToPage(currentPage() - 1)" [disabled]="currentPage() === 1">
+              <span class="material-symbols-outlined">chevron_left</span>
+            </button>
+            @for (page of pageNumbers; track $index) {
+              @if (page === -1) {
+                <span class="page-ellipsis">…</span>
+              } @else {
+                <button class="page-btn" [class.page-btn--active]="page === currentPage()" (click)="goToPage(page)">
+                  {{ page }}
+                </button>
+              }
+            }
+            <button class="page-btn page-btn--nav" (click)="goToPage(currentPage() + 1)" [disabled]="currentPage() === totalPages">
+              <span class="material-symbols-outlined">chevron_right</span>
+            </button>
+          </div>
+        }
+      }
+    </div>
+  }
+</div>

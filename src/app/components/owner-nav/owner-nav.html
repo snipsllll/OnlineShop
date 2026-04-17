@@ -1,0 +1,67 @@
+<nav class="owner-nav">
+  <div class="owner-nav__inner">
+
+    <div class="owner-nav__brand">
+      <span class="material-symbols-outlined">shield_person</span>
+      <span class="owner-nav__brand-text">Owner Panel</span>
+    </div>
+
+    <!-- Hamburger (mobile only) -->
+    <button class="owner-nav__hamburger" (click)="toggleMenu()" [attr.aria-expanded]="menuOpen()" aria-label="Menü öffnen">
+      <span class="material-symbols-outlined">{{ menuOpen() ? 'close' : 'menu' }}</span>
+    </button>
+
+    <div class="owner-nav__tabs">
+      <button
+        class="owner-nav__tab"
+        [class.owner-nav__tab--active]="isActive('shops')"
+        (click)="goShops()"
+      >
+        <span class="material-symbols-outlined">storefront</span>
+        <span>Shops</span>
+      </button>
+    </div>
+
+    <div class="owner-nav__end">
+      <button class="owner-nav__admin-btn" (click)="goAdmin()">
+        <span class="material-symbols-outlined">admin_panel_settings</span>
+        <span class="owner-nav__admin-text">Zum Admin</span>
+      </button>
+    </div>
+
+  </div>
+</nav>
+
+<!-- Mobile slide-in drawer -->
+@if (menuOpen()) {
+  <div class="owner-nav__overlay" (click)="closeMenu()"></div>
+  <nav class="owner-nav__drawer">
+
+    <div class="owner-nav__drawer-header">
+      <span class="material-symbols-outlined">shield_person</span>
+      <span>Owner Panel</span>
+      <button class="owner-nav__drawer-close" (click)="closeMenu()" aria-label="Menü schließen">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <div class="owner-nav__drawer-body">
+      <button
+        class="owner-nav__drawer-item"
+        [class.owner-nav__drawer-item--active]="isActive('shops')"
+        (click)="goShops()"
+      >
+        <span class="material-symbols-outlined">storefront</span>
+        <span>Shops</span>
+      </button>
+    </div>
+
+    <div class="owner-nav__drawer-footer">
+      <button class="owner-nav__drawer-admin-btn" (click)="goAdmin()">
+        <span class="material-symbols-outlined">admin_panel_settings</span>
+        <span>Zum Admin</span>
+      </button>
+    </div>
+
+  </nav>
+}

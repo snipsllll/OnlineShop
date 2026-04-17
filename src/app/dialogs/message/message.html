@@ -1,1 +1,26 @@
-<p>message works!</p>
+<div class="overlay" (click)="onOverlayClick($event)">
+  <div class="modal message-modal">
+    <div class="modal__header">
+      <div class="message-modal__header-content">
+        <div class="message-modal__icon">
+          <span class="material-symbols-outlined">info</span>
+        </div>
+        <h2 class="modal__title">{{ dialogService.messageTitle() }}</h2>
+      </div>
+      <button class="modal__close" (click)="close()" title="Schließen">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <div class="modal__body">
+      <p class="message-modal__text">{{ dialogService.messageText() }}</p>
+    </div>
+
+    <div class="modal__footer">
+      <button class="btn-primary message-modal__ok-btn" (click)="close()">
+        <span class="material-symbols-outlined">check</span>
+        OK
+      </button>
+    </div>
+  </div>
+</div>

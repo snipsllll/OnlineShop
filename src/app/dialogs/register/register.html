@@ -1,1 +1,122 @@
-<p>register works!</p>
+<div class="overlay" (click)="onOverlayClick($event)">
+  <div class="modal register-modal">
+    <div class="modal__header">
+      <div class="register-modal__header-content">
+        <div class="register-modal__icon">
+          <span class="material-symbols-outlined">person_add</span>
+        </div>
+        <h2 class="modal__title">Registrieren</h2>
+      </div>
+      <button class="modal__close" (click)="dialogService.closeRegister()" title="Schließen">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <div class="modal__body">
+      @if (error) {
+        <div class="register-error">
+          <span class="material-symbols-outlined">error</span>
+          {{ error }}
+        </div>
+      }
+
+      <div class="register-modal__name-row">
+        <div class="form-group">
+          <label class="form-label" for="reg-vorname">Vorname</label>
+          <input
+            id="reg-vorname"
+            class="form-input"
+            type="text"
+            [(ngModel)]="vorname"
+            placeholder="Max"
+            autocomplete="given-name"
+          >
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="reg-nachname">Nachname</label>
+          <input
+            id="reg-nachname"
+            class="form-input"
+            type="text"
+            [(ngModel)]="nachname"
+            placeholder="Mustermann"
+            autocomplete="family-name"
+          >
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="reg-email">E-Mail-Adresse</label>
+        <input
+          id="reg-email"
+          class="form-input"
+          type="email"
+          [(ngModel)]="email"
+          placeholder="name@beispiel.de"
+          autocomplete="email"
+        >
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="reg-password">Passwort</label>
+        <div class="register-modal__password-wrap">
+          <input
+            id="reg-password"
+            class="form-input"
+            [type]="showPassword ? 'text' : 'password'"
+            [(ngModel)]="password"
+            placeholder="Mindestens 6 Zeichen"
+            autocomplete="new-password"
+          >
+          <button class="register-modal__pwd-toggle" type="button" (click)="showPassword = !showPassword" tabindex="-1">
+            <span class="material-symbols-outlined">{{ showPassword ? 'visibility_off' : 'visibility' }}</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="reg-password-repeat">Passwort wiederholen</label>
+        <div class="register-modal__password-wrap">
+          <input
+            id="reg-password-repeat"
+            class="form-input"
+            [class.is-error]="password && passwordRepeat && password !== passwordRepeat"
+            [type]="showPasswordRepeat ? 'text' : 'password'"
+            [(ngModel)]="passwordRepeat"
+            placeholder="Passwort bestätigen"
+            autocomplete="new-password"
+            (keyup.enter)="submit()"
+          >
+          <button class="register-modal__pwd-toggle" type="button" (click)="showPasswordRepeat = !showPasswordRepeat" tabindex="-1">
+            <span class="material-symbols-outlined">{{ showPasswordRepeat ? 'visibility_off' : 'visibility' }}</span>
+          </button>
+        </div>
+        @if (password && passwordRepeat && password !== passwordRepeat) {
+          <span class="form-error">
+            <span class="material-symbols-outlined" style="font-size:14px">error</span>
+            Passwörter stimmen nicht überein
+          </span>
+        }
+      </div>
+
+      <button
+        class="btn-primary register-modal__submit"
+        (click)="submit()"
+        [disabled]="loading"
+      >
+        @if (loading) {
+          <div class="spinner spinner--sm"></div>
+          Registrieren...
+        } @else {
+          <span class="material-symbols-outlined">how_to_reg</span>
+          Konto erstellen
+        }
+      </button>
+
+      <div class="register-modal__footer">
+        <span class="register-modal__footer-text">Bereits ein Konto?</span>
+        <button class="register-modal__switch-btn" (click)="switchToLogin()">Jetzt anmelden</button>
+      </div>
+    </div>
+  </div>
+</div>

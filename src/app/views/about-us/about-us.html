@@ -1,1 +1,104 @@
-<p>about-us works!</p>
+<!-- Hero Section -->
+<section class="about-hero">
+  <div class="about-hero__content">
+    <span class="about-hero__eyebrow">Über uns</span>
+    <h1 class="about-hero__title">Ihr Online-Shop für<br>Qualität & Vertrauen</h1>
+    <p class="about-hero__subtitle">
+      Seit 2020 begeistern wir unsere Kunden mit hochwertigen Produkten, fairem Service und nachhaltigen Werten.
+      Entdecken Sie, was uns besonders macht.
+    </p>
+    <button class="btn-primary about-hero__cta" (click)="goToShop()">
+      <span class="material-symbols-outlined">storefront</span>
+      Jetzt entdecken
+    </button>
+  </div>
+  <div class="about-hero__visual">
+    <div class="about-hero__shape">
+      <span class="material-symbols-outlined about-hero__icon">shopping_bag</span>
+    </div>
+    <div class="about-hero__stat">
+      <span class="about-hero__stat-num">10k+</span>
+      <span class="about-hero__stat-label">Zufriedene Kunden</span>
+    </div>
+    <div class="about-hero__stat about-hero__stat--2">
+      <span class="about-hero__stat-num">5.000+</span>
+      <span class="about-hero__stat-label">Produkte</span>
+    </div>
+    <div class="about-hero__stat about-hero__stat--3">
+      <span class="about-hero__stat-num">4 Jahre</span>
+      <span class="about-hero__stat-label">Erfahrung</span>
+    </div>
+  </div>
+</section>
+
+<!-- Mission -->
+<section class="about-mission">
+  <div class="page-container">
+    <div class="about-mission__inner">
+      <div class="about-mission__badge">
+        <span class="material-symbols-outlined">flag</span>
+        Unsere Mission
+      </div>
+      <h2 class="about-mission__title">Qualität, die begeistert</h2>
+      <p class="about-mission__text">
+        Wir glauben daran, dass Online-Shopping einfach, sicher und angenehm sein soll. Unser Ziel ist es,
+        Ihnen eine kuratierte Auswahl an hochwertigen Produkten zu bieten — mit persönlichem Service und
+        transparenten Preisen. Kein Versteckspiel, keine Kompromisse.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- Features Grid -->
+<section class="about-features">
+  <div class="page-container">
+    <div class="about-section-header">
+      <h2 class="about-section-title">Warum OnlineShop?</h2>
+      <p class="about-section-subtitle">Das macht uns anders — und besser.</p>
+    </div>
+    <div class="about-features__grid">
+      @for (feature of features; track feature.title) {
+        <div class="feature-card">
+          <div class="feature-card__icon-wrap">
+            <span class="material-symbols-outlined feature-card__icon">{{ feature.icon }}</span>
+          </div>
+          <h3 class="feature-card__title">{{ feature.title }}</h3>
+          <p class="feature-card__text">{{ feature.text }}</p>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- Team -->
+<section class="about-team">
+  <div class="page-container">
+    <div class="about-section-header">
+      <h2 class="about-section-title">Unser Team</h2>
+      <p class="about-section-subtitle">Menschen, die mit Leidenschaft für Sie da sind.</p>
+    </div>
+    <div class="about-team__grid">
+      @for (member of team; track member.name) {
+        <div class="team-card">
+          <div class="team-card__avatar">{{ member.initial }}</div>
+          <h3 class="team-card__name">{{ member.name }}</h3>
+          <p class="team-card__rolle">{{ member.rolle }}</p>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="about-cta">
+  <div class="page-container">
+    <div class="about-cta__inner">
+      <h2 class="about-cta__title">Bereit zu shoppen?</h2>
+      <p class="about-cta__text">Entdecken Sie Tausende von Produkten zu fairen Preisen.</p>
+      <button class="btn-primary about-cta__btn" (click)="goToShop()">
+        <span class="material-symbols-outlined">arrow_forward</span>
+        Zum Shop
+      </button>
+    </div>
+  </div>
+</section>

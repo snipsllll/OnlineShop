@@ -1,8 +1,9 @@
 // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore"; // <-- Neu hinzugefügt!
+import {initializeApp} from "firebase/app";
+import {getAnalytics} from "firebase/analytics";
+import {getAuth} from "firebase/auth";
+import {getFirestore} from "firebase/firestore";
+import {getFunctions} from "firebase/functions";
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -19,8 +20,17 @@ export const firebaseConfig = {
   measurementId: "G-J1BSVLTRX8"
 };
 
+export const firebaseConfig2 = {
+  apiKey: "AIzaSyC3jYlrKApK8q-S70yjAyyeuCEoE8FXUTQ",
+  authDomain: "testshop-d6691.firebaseapp.com",
+  projectId: "testshop-d6691",
+  storageBucket: "testshop-d6691.firebasestorage.app",
+  messagingSenderId: "632302980168",
+  appId: "1:632302980168:web:4e6d3b32519702ba06dc7d"
+};
+
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-export const auth = getAuth(app); // Wichtig: Diese Zeile hinzufügen und exportieren!
-export const db = getFirestore(app); // <-- Neu hinzugefügt und exportiert!
+export const auth = getAuth(app);
+export const db = getFirestore(app);
+export const functions = getFunctions(app); // region defaults to us-central1

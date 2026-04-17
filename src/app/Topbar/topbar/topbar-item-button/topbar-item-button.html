@@ -1,0 +1,10 @@
+<div class="topbar-item-button" (click)="onButtonClicked()">
+  @switch (item.type) {
+    @case (TopbarItemType.BUTTON_TEXT) {
+      <app-topbar-item-text-button [item]="item"></app-topbar-item-text-button>
+    }
+    @case (TopbarItemType.BUTTON_ICON) {
+      <app-topbar-item-icon-button [item]="item"></app-topbar-item-icon-button>
+    }
+  }
+</div>

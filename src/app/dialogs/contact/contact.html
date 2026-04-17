@@ -1,0 +1,71 @@
+<div class="overlay" (click)="onOverlayClick($event)">
+  <div class="dialog">
+    <div class="dialog-header">
+      <div class="dialog-title">
+        <span class="material-symbols-outlined">support_agent</span>
+        Support kontaktieren
+      </div>
+      <button class="close-btn" (click)="close()">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    @if (success) {
+      <div class="success-state">
+        <span class="material-symbols-outlined success-icon">check_circle</span>
+        <h3>Nachricht gesendet!</h3>
+        <p>Wir haben deine Anfrage erhalten und melden uns so schnell wie möglich bei dir unter <strong>{{ email }}</strong>.</p>
+        <button class="btn-primary" (click)="close()">Schließen</button>
+      </div>
+    } @else {
+      <div class="dialog-body">
+        <p class="support-info">
+          <span class="material-symbols-outlined">mail</span>
+          Schreib uns — wir antworten werktags innerhalb von 24 Stunden.
+        </p>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Name</label>
+            <input class="form-input" type="text" [(ngModel)]="name" placeholder="Max Mustermann" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">E-Mail</label>
+            <input class="form-input" type="email" [(ngModel)]="email" placeholder="deine@email.de" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Betreff</label>
+          <input class="form-input" type="text" [(ngModel)]="betreff" placeholder="Worum geht es?" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Nachricht</label>
+          <textarea class="form-input textarea" [(ngModel)]="nachricht" rows="5"
+            placeholder="Beschreibe dein Anliegen so genau wie möglich..."></textarea>
+        </div>
+
+        @if (error) {
+          <p class="error-msg">
+            <span class="material-symbols-outlined">error</span>
+            {{ error }}
+          </p>
+        }
+      </div>
+
+      <div class="dialog-footer">
+        <button class="btn-secondary" (click)="close()" [disabled]="loading">Abbrechen</button>
+        <button class="btn-primary" (click)="submit()" [disabled]="loading">
+          @if (loading) {
+            <div class="spinner spinner-sm"></div>
+            Wird gesendet...
+          } @else {
+            <span class="material-symbols-outlined">send</span>
+            Nachricht senden
+          }
+        </button>
+      </div>
+    }
+  </div>
+</div>

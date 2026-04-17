@@ -10,4 +10,5 @@ export interface IBestellung {
   lieferadresse: IAdresse;
   bestellungsZustand: BestellungsZustand;
   zahlungsZustand: ZahlungsZustand;
+  isNew?: boolean;
 }

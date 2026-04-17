@@ -1,0 +1,32 @@
+.message-modal {
+  max-width: 400px;
+}
+
+.message-modal__header-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.message-modal__icon {
+  width: 36px;
+  height: 36px;
+  background: var(--primary-light);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--primary);
+  flex-shrink: 0;
+}
+
+.message-modal__text {
+  font-size: 15px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.message-modal__ok-btn {
+  min-width: 100px;
+  gap: 6px;
+}

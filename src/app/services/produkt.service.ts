@@ -1,16 +1,7 @@
 // src/app/services/produkt.service.ts
-import { Injectable } from '@angular/core';
-import {
-  collection,
-  getDocs,
-  doc,
-  getDoc,
-  updateDoc,
-  deleteDoc,
-  Firestore,
-  addDoc
-} from 'firebase/firestore';
-import { db } from '../../environments/environment';
+import {Injectable} from '@angular/core';
+import {addDoc, collection, deleteDoc, doc, Firestore, getCountFromServer, getDoc, getDocs, limit, orderBy, query, QueryDocumentSnapshot, setDoc, startAfter, updateDoc} from 'firebase/firestore';
+import {db} from '../../environments/environment';
 import {IProdukt} from '../models/interfaces/IProdukt';
 
 @Injectable({
@@ -19,17 +10,18 @@ import {IProdukt} from '../models/interfaces/IProdukt';
 export class ProduktService {
   private productsCollection = collection(db as Firestore, 'products');
 
-  constructor() {}
+  constructor() {
+  }
 
   async getProdukte(): Promise<IProdukt[]> {
     const querySnapshot = await getDocs(this.productsCollection);
-    return querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as IProdukt));
+    return querySnapshot.docs.map(doc => ({...doc.data(), id: doc.id} as IProdukt));
   }
 
   async getProdukt(id: string): Promise<IProdukt | undefined> {
     const produktDocRef = doc(db as Firestore, 'products', id);
     const produktDocSnap = await getDoc(produktDocRef);
-    return produktDocSnap.exists() ? { id: produktDocSnap.id, ...produktDocSnap.data() } as IProdukt : undefined;
+    return produktDocSnap.exists() ? {...produktDocSnap.data(), id: produktDocSnap.id} as IProdukt : undefined;
   }
 
   async addProdukt(produkt: IProdukt): Promise<string> {
@@ -41,14 +33,14 @@ export class ProduktService {
     const produktDocRef = doc(db as Firestore, 'products', id);
 
     const firestoreCompatibleProdukt: { [key: string]: any } = {
-      bezeichnung: produkt.bezeichnung,
-      beschreibung: produkt.beschreibung,
-      preis: produkt.preis,
-      verfuegbar: produkt.verfuegbar,
-      lagerbestand: produkt.lagerbestand,
-      imgRefs: produkt.imgRefs.map(img => ({
-        path: img.path,
-        position: img.position
+      bezeichnung: produkt.bezeichnung ?? '',
+      beschreibung: produkt.beschreibung ?? '',
+      preis: produkt.preis ?? 0,
+      verfuegbar: produkt.verfuegbar ?? true,
+      lagerbestand: produkt.lagerbestand ?? 0,
+      imgRefs: (produkt.imgRefs ?? []).map(img => ({
+        path: img.path ?? '',
+        position: img.position ?? 0
       }))
     };
 
@@ -59,6 +51,37 @@ export class ProduktService {
       console.error(`Fehler beim Aktualisieren des Produkts mit ID ${id} in Firestore:`, error);
       throw error;
     }
+  }
+
+  async upsertProdukt(id: string, produkt: IProdukt): Promise<void> {
+    const produktDocRef = doc(db as Firestore, 'products', id);
+    await setDoc(produktDocRef, {
+      bezeichnung: produkt.bezeichnung ?? '',
+      beschreibung: produkt.beschreibung ?? '',
+      preis: produkt.preis ?? 0,
+      verfuegbar: produkt.verfuegbar ?? true,
+      lagerbestand: produkt.lagerbestand ?? 0,
+      imgRefs: (produkt.imgRefs ?? []).map(img => ({
+        path: img.path ?? '',
+        position: img.position ?? 0,
+      })),
+    });
+  }
+
+  async getProduktCount(): Promise<number> {
+    const snap = await getCountFromServer(this.productsCollection);
+    return snap.data().count;
+  }
+
+  async getProduktePage(pageSize: number, afterDoc?: QueryDocumentSnapshot): Promise<{ items: IProdukt[], lastDoc: QueryDocumentSnapshot | null }> {
+    const q = afterDoc
+      ? query(this.productsCollection, orderBy('bezeichnung'), startAfter(afterDoc), limit(pageSize))
+      : query(this.productsCollection, orderBy('bezeichnung'), limit(pageSize));
+    const snap = await getDocs(q);
+    return {
+      items: snap.docs.map(d => ({ ...d.data(), id: d.id } as IProdukt)),
+      lastDoc: snap.docs[snap.docs.length - 1] ?? null,
+    };
   }
 
   async deleteProdukt(id: string): Promise<void> {

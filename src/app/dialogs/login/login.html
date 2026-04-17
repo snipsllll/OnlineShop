@@ -1,1 +1,147 @@
-<p>login works!</p>
+<div class="overlay" (click)="onOverlayClick($event)">
+  <div class="modal login-modal">
+    <div class="modal__header">
+      <div class="login-modal__header-content">
+        <div class="login-modal__icon">
+          <span class="material-symbols-outlined">{{ mode === 'reset' ? 'lock_reset' : 'lock' }}</span>
+        </div>
+        <h2 class="modal__title">{{ mode === 'reset' ? 'Passwort zurücksetzen' : 'Anmelden' }}</h2>
+      </div>
+      <button class="modal__close" (click)="dialogService.closeLogin()" title="Schließen">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    @if (mode === 'login') {
+      <div class="modal__body">
+        @if (error) {
+          <div class="login-error">
+            <span class="material-symbols-outlined">error</span>
+            {{ error }}
+          </div>
+        }
+
+        <div class="form-group">
+          <label class="form-label" for="login-email">E-Mail-Adresse</label>
+          <input
+            id="login-email"
+            class="form-input"
+            [class.is-error]="error"
+            type="email"
+            [(ngModel)]="email"
+            placeholder="name@beispiel.de"
+            autocomplete="email"
+            (keyup.enter)="submit()"
+          >
+        </div>
+
+        <div class="form-group">
+          <div class="login-modal__label-row">
+            <label class="form-label" for="login-password">Passwort</label>
+          </div>
+          <div class="login-modal__password-wrap">
+            <input
+              id="login-password"
+              class="form-input"
+              [class.is-error]="error"
+              [type]="showPassword ? 'text' : 'password'"
+              [(ngModel)]="password"
+              placeholder="Ihr Passwort"
+              autocomplete="current-password"
+              (keyup.enter)="submit()"
+            >
+            <button class="login-modal__pwd-toggle" type="button" (click)="showPassword = !showPassword" tabindex="-1">
+              <span class="material-symbols-outlined">{{ showPassword ? 'visibility_off' : 'visibility' }}</span>
+            </button>
+          </div>
+          <div class="login-modal__label-row">
+            <button class="login-modal__forgot-link" type="button" (click)="openReset()">Passwort vergessen?</button>
+          </div>
+        </div>
+
+        <button
+          class="btn-primary login-modal__submit"
+          (click)="submit()"
+          [disabled]="loading"
+        >
+          @if (loading) {
+            <div class="spinner spinner--sm"></div>
+            Anmelden...
+          } @else {
+            <span class="material-symbols-outlined">login</span>
+            Anmelden
+          }
+        </button>
+
+        <div class="login-modal__footer">
+          <span class="login-modal__footer-text">Noch kein Konto?</span>
+          <button class="login-modal__switch-btn" (click)="switchToRegister()">Jetzt registrieren</button>
+        </div>
+      </div>
+    }
+
+    @if (mode === 'reset') {
+      <div class="modal__body">
+        @if (resetSent) {
+          <div class="login-reset-success">
+            <span class="material-symbols-outlined">mark_email_read</span>
+            <div>
+              <strong>E-Mail gesendet!</strong>
+              <p>Wir haben dir einen Link zum Zurücksetzen deines Passworts an <strong>{{ resetEmail }}</strong> geschickt. Bitte überprüfe auch deinen Spam-Ordner.</p>
+            </div>
+          </div>
+          <button class="btn-secondary login-modal__submit" (click)="backToLogin()">
+            <span class="material-symbols-outlined">arrow_back</span>
+            Zurück zur Anmeldung
+          </button>
+        } @else {
+          <p class="login-reset-desc">
+            Gib deine E-Mail-Adresse ein. Wir senden dir einen Link, mit dem du dein Passwort zurücksetzen kannst.
+          </p>
+
+          @if (resetError) {
+            <div class="login-error">
+              <span class="material-symbols-outlined">error</span>
+              {{ resetError }}
+            </div>
+          }
+
+          <div class="form-group">
+            <label class="form-label" for="reset-email">E-Mail-Adresse</label>
+            <input
+              id="reset-email"
+              class="form-input"
+              [class.is-error]="resetError"
+              type="email"
+              [(ngModel)]="resetEmail"
+              placeholder="name@beispiel.de"
+              autocomplete="email"
+              (keyup.enter)="sendReset()"
+            >
+          </div>
+
+          <button
+            class="btn-primary login-modal__submit"
+            (click)="sendReset()"
+            [disabled]="resetLoading"
+          >
+            @if (resetLoading) {
+              <div class="spinner spinner--sm"></div>
+              Wird gesendet...
+            } @else {
+              <span class="material-symbols-outlined">send</span>
+              Link senden
+            }
+          </button>
+
+          <div class="login-modal__footer">
+            <button class="login-modal__switch-btn" (click)="backToLogin()">
+              <span class="material-symbols-outlined" style="font-size: 14px; vertical-align: -2px;">arrow_back</span>
+              Zurück zur Anmeldung
+            </button>
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>

@@ -1,0 +1,27 @@
+.confirm-modal {
+  max-width: 400px;
+}
+
+.confirm-modal__header-content {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.confirm-modal__icon {
+  width: 36px;
+  height: 36px;
+  background: #fef9c3;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #d97706;
+  flex-shrink: 0;
+}
+
+.confirm-modal__message {
+  font-size: 15px;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}

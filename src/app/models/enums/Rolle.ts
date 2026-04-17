@@ -1,4 +1,6 @@
 export enum Rolle {
   "ADMIN",
-  "KUNDE"
+  "KUNDE",
+  "OWNER",
+  "MITARBEITER"
 }

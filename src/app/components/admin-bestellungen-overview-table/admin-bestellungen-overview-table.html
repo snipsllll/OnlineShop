@@ -1,0 +1,65 @@
+<div class="table-wrapper">
+  @if (bestellungen.length === 0) {
+    <div class="empty-state">
+      <span class="material-symbols-outlined empty-icon">inbox</span>
+      <p class="empty-title">Keine Bestellungen vorhanden</p>
+      <p class="empty-subtitle">Es wurden noch keine Bestellungen aufgegeben.</p>
+    </div>
+  } @else {
+    <div class="table-scroll">
+      <table class="orders-table">
+        <thead>
+          <tr>
+            <th>Bestell-ID</th>
+            <th>Datum</th>
+            <th>Artikel</th>
+            <th>Gesamtpreis</th>
+            <th>Status</th>
+            <th>Zahlungsstatus</th>
+            <th class="col-actions">Aktionen</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (bestellung of bestellungen; track bestellung.id) {
+            <tr class="table-row">
+              <td class="col-id">
+                <span class="order-id" [title]="bestellung.id">
+                  #{{ bestellung.id.slice(0, 8) }}&hellip;
+                </span>
+              </td>
+              <td class="col-date">{{ formatDate(bestellung.bestelldatum) }}</td>
+              <td class="col-count">
+                <span class="item-count">{{ bestellung.produkte.length }}</span>
+              </td>
+              <td class="col-price">{{ formatPrice(getOrderTotal(bestellung)) }}</td>
+              <td class="col-status">
+                <span class="badge" [ngClass]="getZustandClass(bestellung.bestellungsZustand)">
+                  {{ getZustandLabel(bestellung.bestellungsZustand) }}
+                </span>
+              </td>
+              <td class="col-payment">
+                @if (bestellung.zahlungsZustand === ZahlungsZustand.BEZAHLT) {
+                  <span class="badge badge--success">Bezahlt</span>
+                } @else {
+                  <span class="badge badge--error">Ausstehend</span>
+                }
+              </td>
+              <td class="col-actions">
+                <div class="action-buttons">
+                  <button class="btn-secondary btn-sm" (click)="onDetails(bestellung.id)">
+                    <span class="material-symbols-outlined btn-icon">visibility</span>
+                    Details
+                  </button>
+                  <button class="btn-danger btn-sm" (click)="onDelete(bestellung.id)">
+                    <span class="material-symbols-outlined btn-icon">delete</span>
+                    Löschen
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

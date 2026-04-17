@@ -1,1 +1,204 @@
-<p>admin-product-details works!</p>
+<app-admin-nav />
+<div class="page-container">
+  <!-- Back button -->
+  <button class="back-btn" (click)="goBack()">
+    <span class="material-symbols-outlined">arrow_back</span>
+    Zurück zur Übersicht
+  </button>
+
+  @if (loading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Produkt wird geladen...</p>
+    </div>
+  } @else {
+    <div class="page-header">
+      <div class="header-left">
+        <h1 class="page-title">
+          <span class="material-symbols-outlined title-icon">
+            {{ isNew ? 'add_box' : 'edit' }}
+          </span>
+          {{ isNew ? 'Neues Produkt' : 'Produkt bearbeiten' }}
+        </h1>
+        @if (!isNew) {
+          <p class="page-subtitle">ID: {{ productId }}</p>
+        }
+      </div>
+    </div>
+
+    <div class="details-layout">
+      <!-- Left column: form fields -->
+      <div class="form-column">
+        <div class="card form-card">
+          <h2 class="section-title">
+            <span class="material-symbols-outlined">info</span>
+            Produktinformationen
+          </h2>
+
+          <div class="form-group">
+            <label class="form-label" for="bezeichnung">Bezeichnung *</label>
+            <input
+              id="bezeichnung"
+              class="form-input"
+              type="text"
+              placeholder="z. B. Premium Lautsprecher"
+              [(ngModel)]="bezeichnung"
+              [class.input-error]="!bezeichnung.trim() && bezeichnung !== ''"
+            />
+            @if (!bezeichnung.trim() && bezeichnung !== '') {
+              <span class="form-error">Bezeichnung darf nicht leer sein.</span>
+            }
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="beschreibung">Beschreibung *</label>
+            <textarea
+              id="beschreibung"
+              class="form-input textarea"
+              placeholder="Beschreibe das Produkt ausführlich..."
+              [(ngModel)]="beschreibung"
+              rows="5"
+            ></textarea>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="preis">Preis (EUR) *</label>
+              <div class="input-wrapper">
+                <span class="input-prefix">€</span>
+                <input
+                  id="preis"
+                  class="form-input input-with-prefix"
+                  type="number"
+                  min="0.01"
+                  step="0.01"
+                  placeholder="0,00"
+                  [(ngModel)]="preis"
+                />
+              </div>
+              @if (preis <= 0) {
+                <span class="form-error">Preis muss größer als 0 sein.</span>
+              }
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="lagerbestand">Lagerbestand *</label>
+              <input
+                id="lagerbestand"
+                class="form-input"
+                type="number"
+                min="0"
+                step="1"
+                placeholder="0"
+                [(ngModel)]="lagerbestand"
+              />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Verfügbarkeit</label>
+            <div class="toggle-row">
+              <button
+                class="toggle-btn"
+                [class.toggle-on]="verfuegbar"
+                [class.toggle-off]="!verfuegbar"
+                (click)="verfuegbar = !verfuegbar"
+                type="button"
+              >
+                <span class="toggle-track">
+                  <span class="toggle-thumb"></span>
+                </span>
+                <span class="toggle-label">
+                  {{ verfuegbar ? 'Verfügbar' : 'Nicht verfügbar' }}
+                </span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right column: images -->
+      <div class="images-column">
+        <div class="card images-card">
+          <h2 class="section-title">
+            <span class="material-symbols-outlined">image</span>
+            Bilder
+          </h2>
+
+          @if (imgRefs.length === 0) {
+            <div class="images-empty">
+              <span class="material-symbols-outlined images-empty-icon">image_not_supported</span>
+              <p>Noch keine Bilder hinzugefügt.</p>
+            </div>
+          } @else {
+            <ul class="image-list">
+              @for (img of imgRefs; track img.position; let i = $index) {
+                <li class="image-item">
+                  <span class="image-position">{{ i + 1 }}</span>
+                  <span class="image-path" [title]="img.path">{{ img.path }}</span>
+                  <button class="remove-img-btn" (click)="removeImage(i)" title="Bild entfernen">
+                    <span class="material-symbols-outlined">close</span>
+                  </button>
+                </li>
+              }
+            </ul>
+          }
+
+          <input #fileInput type="file" accept="image/*" multiple hidden (change)="onFileSelected($event)" />
+
+          <div
+            class="upload-zone"
+            [class.upload-zone--dragover]="isDragOver()"
+            [class.upload-zone--uploading]="uploading()"
+            (dragover)="onDragOver($event)"
+            (dragleave)="onDragLeave($event)"
+            (drop)="onDrop($event)"
+            (click)="openFilePicker()"
+          >
+            @if (uploading()) {
+              <div class="spinner spinner-sm"></div>
+              <span>Wird hochgeladen...</span>
+            } @else {
+              <span class="material-symbols-outlined upload-zone__icon">upload</span>
+              <span class="upload-zone__text">Bilder hierher ziehen oder klicken</span>
+              <span class="upload-zone__hint">JPG, PNG, WEBP – mehrere Dateien möglich</span>
+            }
+          </div>
+        </div>
+
+        <!-- Action buttons card -->
+        <div class="card actions-card">
+          <h2 class="section-title">
+            <span class="material-symbols-outlined">save</span>
+            Aktionen
+          </h2>
+          <div class="form-actions">
+            <button
+              class="btn-primary save-btn"
+              (click)="save()"
+              [disabled]="!isValid || saving()"
+            >
+              @if (saving()) {
+                <div class="spinner spinner-sm"></div>
+                Wird gespeichert...
+              } @else {
+                <span class="material-symbols-outlined btn-icon">save</span>
+                {{ isNew ? 'Produkt erstellen' : 'Änderungen speichern' }}
+              }
+            </button>
+            <button class="btn-secondary cancel-btn" (click)="goBack()" [disabled]="saving()">
+              <span class="material-symbols-outlined btn-icon">cancel</span>
+              Abbrechen
+            </button>
+          </div>
+          @if (!isValid) {
+            <p class="validation-hint">
+              <span class="material-symbols-outlined">info</span>
+              Bitte fülle alle Pflichtfelder aus.
+            </p>
+          }
+        </div>
+      </div>
+    </div>
+  }
+</div>

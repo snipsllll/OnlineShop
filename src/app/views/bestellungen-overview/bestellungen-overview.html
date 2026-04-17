@@ -1,1 +1,105 @@
-<p>bestellungen-overview works!</p>
+<div class="page-container orders-page">
+
+  <div class="page-header">
+    <h1 class="page-title">
+      <span class="material-symbols-outlined">shopping_bag</span>
+      Meine Bestellungen
+    </h1>
+    @if (!loading() && bestellungen().length > 0) {
+      <span class="badge badge--neutral">{{ bestellungen().length }} {{ bestellungen().length === 1 ? 'Bestellung' : 'Bestellungen' }}</span>
+    }
+  </div>
+
+  @if (loading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Bestellungen werden geladen...</p>
+    </div>
+  } @else if (bestellungen().length === 0) {
+    <div class="empty-state">
+      <div class="empty-icon-wrapper">
+        <span class="material-symbols-outlined empty-icon">inbox</span>
+      </div>
+      <h2>Noch keine Bestellungen</h2>
+      <p>Du hast noch keine Bestellungen aufgegeben. Stöbere in unserem Sortiment!</p>
+      <button class="btn-primary" (click)="goShopping()">
+        <span class="material-symbols-outlined">storefront</span>
+        Jetzt einkaufen
+      </button>
+    </div>
+  } @else {
+    <div class="orders-list">
+      @for (bestellung of bestellungen(); track bestellung.id) {
+        <div class="order-card card" (click)="goToDetails(bestellung.id)">
+          <!-- Order Card Header -->
+          <div class="order-header">
+            <div class="order-meta">
+              <span class="order-id">
+                <span class="material-symbols-outlined">receipt</span>
+                #{{ bestellung.id.slice(0, 8).toUpperCase() }}
+              </span>
+              <span class="order-date">
+                <span class="material-symbols-outlined">calendar_today</span>
+                {{ formatDate(bestellung.bestelldatum) }}
+              </span>
+            </div>
+            <div class="order-badges">
+              <span class="badge" [class]="getZustandClass(bestellung.bestellungsZustand)">
+                {{ getZustandLabel(bestellung.bestellungsZustand) }}
+              </span>
+              @if (bestellung.zahlungsZustand === ZahlungsZustand.BEZAHLT) {
+                <span class="badge badge--success">Bezahlt</span>
+              } @else {
+                <span class="badge badge--warning">Zahlung ausstehend</span>
+              }
+            </div>
+          </div>
+
+          <!-- Order Content -->
+          <div class="order-body">
+            <div class="order-items-preview">
+              @for (pos of bestellung.produkte.slice(0, 3); track pos.id) {
+                <div class="item-preview">
+                  <span class="item-name">{{ pos.bezeichnung }}</span>
+                  <span class="item-qty">× {{ pos.anzahl }}</span>
+                </div>
+              }
+              @if (bestellung.produkte.length > 3) {
+                <span class="more-items">+{{ bestellung.produkte.length - 3 }} weitere Artikel</span>
+              }
+            </div>
+
+            <div class="order-summary-right">
+              <div class="order-items-count">
+                <span class="material-symbols-outlined">inventory_2</span>
+                {{ bestellung.produkte.length }} {{ bestellung.produkte.length === 1 ? 'Artikel' : 'Artikel' }}
+              </div>
+              <div class="order-total">{{ formatPrice(getOrderTotal(bestellung)) }}</div>
+            </div>
+          </div>
+
+          <!-- Order Footer -->
+          <div class="order-footer">
+            <div class="delivery-info">
+              <span class="material-symbols-outlined">location_on</span>
+              {{ bestellung.lieferadresse.strasse }} {{ bestellung.lieferadresse.hausnummer }}, {{ bestellung.lieferadresse.plz }} {{ bestellung.lieferadresse.ort }}
+            </div>
+            <div class="footer-actions">
+              @if (canCancel(bestellung)) {
+                <button class="cancel-btn btn-danger" (click)="cancelBestellung(bestellung, $event)">
+                  <span class="material-symbols-outlined">cancel</span>
+                  Stornieren
+                </button>
+              }
+              <button class="details-btn btn-secondary" (click)="goToDetails(bestellung.id); $event.stopPropagation()">
+                <span class="material-symbols-outlined">open_in_new</span>
+                Details
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+</div>
