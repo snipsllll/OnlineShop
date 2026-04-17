@@ -13,6 +13,9 @@ import {ProductDetails} from './views/product-details/product-details';
 import {AdminProductsOverview} from './views/admin-products-overview/admin-products-overview';
 import {ProductsOverview} from './views/products-overview/products-overview';
 import {Warenkorb} from './views/warenkorb/warenkorb';
+import {Datenschutz} from './views/datenschutz/datenschutz';
+import {Agb} from './views/agb/agb';
+import {Widerrufsrecht} from './views/widerrufsrecht/widerrufsrecht';
 import {RouteParams} from './models/enums/RouteParams';
 import {MyRoutes} from './models/enums/MyRoutes';
 
@@ -20,6 +23,9 @@ export const routes: Routes = [
   {path: '', redirectTo: 'home', pathMatch: 'full'},
   {path: `${MyRoutes.PRODUKTE_OVERVIEW}`, redirectTo: 'home', pathMatch: 'full'},
   {path: `${MyRoutes.ABOUT_US}`, component: AboutUs},
+  {path: `${MyRoutes.DATENSCHUTZ}`, component: Datenschutz},
+  {path: `${MyRoutes.AGB}`, component: Agb},
+  {path: `${MyRoutes.WIDERRUFSRECHT}`, component: Widerrufsrecht},
   {path: `${MyRoutes.ACCOUNT_SETTINGS}`, component: AccountSettings},
   {path: `${MyRoutes.ADMIN_BESTELLUNG_DETAILS}/:${RouteParams.BESTELLUNGS_ID}`, component: AdminBestellungDetails},
   {path: `${MyRoutes.ADMIN_BESTELLUNGEN_OVERVIEW}`, component: AdminBestellungenOverview},

@@ -40,6 +40,13 @@
             Lieferadresse
           </h2>
 
+          @if (addressPrefilled()) {
+            <div class="prefill-hint">
+              <span class="material-symbols-outlined">person</span>
+              Adresse aus deinem Profil übernommen – du kannst sie hier noch anpassen.
+            </div>
+          }
+
           <form (ngSubmit)="submitOrder()" #checkoutForm="ngForm">
             <div class="form-row">
               <div class="form-group">

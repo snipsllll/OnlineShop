@@ -1,5 +1,8 @@
 export enum MyRoutes {
   ABOUT_US = "about-us",
+  DATENSCHUTZ = "datenschutz",
+  AGB = "agb",
+  WIDERRUFSRECHT = "widerrufsrecht",
   ACCOUNT_SETTINGS = "account-settings",
   ADMIN_BESTELLUNG_DETAILS = "admin-bestellung-details",
   ADMIN_BESTELLUNGEN_OVERVIEW = "admin-bestellungen-overview",

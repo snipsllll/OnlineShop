@@ -16,5 +16,8 @@ export class Footer {
   readonly year = new Date().getFullYear();
 
   goAbout() { this.routingService.route(MyRoutes.ABOUT_US); }
+  goDatenschutz() { this.routingService.route(MyRoutes.DATENSCHUTZ); }
+  goAgb() { this.routingService.route(MyRoutes.AGB); }
+  goWiderrufsrecht() { this.routingService.route(MyRoutes.WIDERRUFSRECHT); }
   openContact() { this.dialogService.openContact(); }
 }

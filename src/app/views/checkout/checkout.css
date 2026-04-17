@@ -159,6 +159,22 @@ select.form-input {
   cursor: pointer;
 }
 
+.prefill-hint {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--primary-light);
+  color: var(--primary-dark);
+  font-size: 0.85rem;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  margin-bottom: 20px;
+}
+.prefill-hint .material-symbols-outlined {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
 .form-note {
   display: flex;
   align-items: center;

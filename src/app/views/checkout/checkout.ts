@@ -11,6 +11,7 @@ import {WarenkorbService} from '../../services/warenkorb.service';
 import {ProduktService} from '../../services/produkt.service';
 import {BestellungService} from '../../services/bestellung.service';
 import {RoutingService} from '../../services/routing.service';
+import {UserService} from '../../services/user.service';
 import {MyRoutes} from '../../models/enums/MyRoutes';
 
 @Component({
@@ -25,9 +26,11 @@ export class Checkout implements OnInit {
   private produktService = inject(ProduktService);
   private bestellungService = inject(BestellungService);
   private routingService = inject(RoutingService);
+  private userService = inject(UserService);
 
   protected loading = signal(true);
   protected submitting = signal(false);
+  protected addressPrefilled = signal(false);
   protected cartProdukte = signal<Array<{produkt: IProdukt, anzahl: number}>>([]);
 
   protected adresse: Partial<IAdresse> = { strasse: '', hausnummer: '', plz: '', ort: '', land: 'Deutschland' };
@@ -35,13 +38,33 @@ export class Checkout implements OnInit {
   async ngOnInit() {
     this.loading.set(true);
     try {
-      const wk = await this.warenkorbService.getWahrenkorb();
-      const alleProdukte = await this.produktService.getProdukte();
+      const [wk, alleProdukte] = await Promise.all([
+        this.warenkorbService.getWahrenkorb(),
+        this.produktService.getProdukte(),
+      ]);
       const items = wk.produkteMitAnzahl.map(p => {
         const produkt = alleProdukte.find(ap => ap.id === p.produktId);
         return produkt ? { produkt, anzahl: p.anzahl } : null;
       }).filter((x): x is {produkt: IProdukt, anzahl: number} => x !== null);
       this.cartProdukte.set(items);
+
+      // Adresse aus Profil vorausfüllen, falls vorhanden
+      try {
+        const user = await this.userService.getCurrentUser();
+        const a = user.adresse;
+        if (a?.strasse) {
+          this.adresse = {
+            strasse: a.strasse ?? '',
+            hausnummer: a.hausnummer ?? '',
+            plz: a.plz ?? '',
+            ort: a.ort ?? '',
+            land: a.land || 'Deutschland',
+          };
+          this.addressPrefilled.set(true);
+        }
+      } catch {
+        // Nicht eingeloggt oder keine Adresse – Formular bleibt leer
+      }
     } finally {
       this.loading.set(false);
     }

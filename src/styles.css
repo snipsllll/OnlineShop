@@ -449,6 +449,41 @@ select.form-input {
 }
 
 /* =============================================
+   MOBILE RESPONSIVE GLOBALS
+   ============================================= */
+@media (max-width: 640px) {
+  .page-container {
+    padding: 16px 12px;
+  }
+
+  /* Modals full-width on mobile */
+  .modal {
+    max-width: 100%;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    margin-bottom: 0;
+    align-self: flex-end;
+  }
+
+  .overlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  /* Buttons full-width in modal footers */
+  .modal__footer {
+    flex-direction: column-reverse;
+  }
+  .modal__footer > * {
+    width: 100%;
+  }
+
+  /* Card overflow safe */
+  .card {
+    border-radius: var(--radius-md);
+  }
+}
+
+/* =============================================
    UTILITY
    ============================================= */
 .text-center { text-align: center; }

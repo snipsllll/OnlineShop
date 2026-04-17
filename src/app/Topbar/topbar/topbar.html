@@ -15,7 +15,7 @@
     </div>
 
     <div class="topbar__right">
-      <button class="topbar__icon-btn" (click)="goFavorites()" title="Favoriten">
+      <button class="topbar__icon-btn topbar__desktop-only" (click)="goFavorites()" title="Favoriten">
         <span class="material-symbols-outlined">favorite</span>
       </button>
       <button class="topbar__icon-btn topbar__cart-btn" (click)="goCart()" title="Warenkorb">
@@ -24,14 +24,59 @@
           <span class="topbar__cart-badge">{{ cartCount() }}</span>
         }
       </button>
-      <button class="topbar__icon-btn" (click)="goAccount()" title="Konto">
+      <button class="topbar__icon-btn topbar__desktop-only" (click)="goAccount()" title="Konto">
         <span class="material-symbols-outlined">person</span>
       </button>
       @if (authService.isLoggedIn()) {
-        <button class="topbar__btn-login" (click)="logout()">Abmelden</button>
+        <button class="topbar__btn-login topbar__desktop-only" (click)="logout()">Abmelden</button>
       } @else {
-        <button class="topbar__btn-login" (click)="openLogin()">Anmelden</button>
+        <button class="topbar__btn-login topbar__desktop-only" (click)="openLogin()">Anmelden</button>
       }
+      <button class="topbar__icon-btn topbar__hamburger" (click)="toggleMenu()" [attr.aria-expanded]="menuOpen()">
+        <span class="material-symbols-outlined">{{ menuOpen() ? 'close' : 'menu' }}</span>
+      </button>
     </div>
   </div>
+
+  @if (menuOpen()) {
+    <nav class="topbar__mobile-menu">
+      <div class="topbar__mobile-search">
+        <span class="material-symbols-outlined">search</span>
+        <input type="text" [(ngModel)]="searchQuery" placeholder="Produkte suchen...">
+      </div>
+      <div class="topbar__mobile-nav">
+        <button class="topbar__mobile-link" (click)="goHome()">
+          <span class="material-symbols-outlined">home</span>
+          <span>Startseite</span>
+        </button>
+        <button class="topbar__mobile-link" (click)="goFavorites()">
+          <span class="material-symbols-outlined">favorite</span>
+          <span>Favoriten</span>
+        </button>
+        <button class="topbar__mobile-link" (click)="goCart()">
+          <span class="material-symbols-outlined">shopping_cart</span>
+          <span>Warenkorb</span>
+          @if (cartCount() > 0) {
+            <span class="topbar__mobile-badge">{{ cartCount() }}</span>
+          }
+        </button>
+        <button class="topbar__mobile-link" (click)="goAccount()">
+          <span class="material-symbols-outlined">person</span>
+          <span>Mein Konto</span>
+        </button>
+        <div class="topbar__mobile-divider"></div>
+        @if (authService.isLoggedIn()) {
+          <button class="topbar__mobile-link topbar__mobile-link--danger" (click)="logout()">
+            <span class="material-symbols-outlined">logout</span>
+            <span>Abmelden</span>
+          </button>
+        } @else {
+          <button class="topbar__mobile-link topbar__mobile-link--primary" (click)="openLogin()">
+            <span class="material-symbols-outlined">login</span>
+            <span>Anmelden</span>
+          </button>
+        }
+      </div>
+    </nav>
+  }
 </header>
