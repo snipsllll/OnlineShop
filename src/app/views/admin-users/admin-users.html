@@ -86,12 +86,19 @@
                       </span>
                     </td>
                     <td class="col-actions">
-                      @if (canEditThisUser(u)) {
-                        <button class="btn-secondary btn-sm edit-row-btn" (click)="selectUser(u); $event.stopPropagation()">
-                          <span class="material-symbols-outlined">edit</span>
-                          Bearbeiten
-                        </button>
-                      }
+                      <div class="row-action-btns">
+                        @if (canEditThisUser(u)) {
+                          <button class="btn-secondary btn-sm edit-row-btn" (click)="selectUser(u); $event.stopPropagation()">
+                            <span class="material-symbols-outlined">edit</span>
+                            <span>Bearbeiten</span>
+                          </button>
+                        }
+                        @if (canDeleteThisUser(u)) {
+                          <button class="btn-danger btn-sm delete-row-btn" (click)="deleteUser(u); $event.stopPropagation()" title="Benutzer löschen" [disabled]="deleting()">
+                            <span class="material-symbols-outlined">delete</span>
+                          </button>
+                        }
+                      </div>
                     </td>
                   </tr>
                 }
@@ -231,7 +238,7 @@
                 Gespeichert!
               </div>
             }
-            <button class="btn-primary save-user-btn" (click)="saveUser()" [disabled]="saving()">
+            <button class="btn-primary save-user-btn" (click)="saveUser()" [disabled]="saving() || deleting()">
               @if (saving()) {
                 <div class="spinner spinner--sm"></div>
                 Wird gespeichert...
@@ -240,6 +247,16 @@
                 Speichern
               }
             </button>
+            @if (canDeleteThisUser(u)) {
+              <button class="btn-danger delete-panel-btn" (click)="deleteUser(u)" [disabled]="deleting() || saving()">
+                @if (deleting()) {
+                  <div class="spinner spinner--sm"></div>
+                } @else {
+                  <span class="material-symbols-outlined">delete</span>
+                }
+                Konto löschen
+              </button>
+            }
           </div>
         </div>
       } }

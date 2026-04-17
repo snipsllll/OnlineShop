@@ -204,6 +204,13 @@
   text-align: right;
 }
 
+.row-action-btns {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
 .edit-row-btn {
   display: inline-flex;
   align-items: center;
@@ -214,6 +221,27 @@
 
 .edit-row-btn .material-symbols-outlined {
   font-size: 16px;
+}
+
+.delete-row-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 8px;
+  font-size: 0.8rem;
+}
+
+.delete-row-btn .material-symbols-outlined {
+  font-size: 16px;
+}
+
+.delete-panel-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  font-size: 0.875rem;
+  margin-left: auto;
 }
 
 /* Empty */
@@ -525,8 +553,9 @@
     max-width: 100%;
   }
 
-  /* Touch-friendly table edit button */
-  .edit-row-btn {
+  /* Touch-friendly table buttons */
+  .edit-row-btn,
+  .delete-row-btn {
     min-height: 40px;
     min-width: 40px;
     padding: 0 10px;

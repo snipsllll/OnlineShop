@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {collection, deleteDoc, doc, Firestore, getDoc, getDocs, setDoc, updateDoc} from 'firebase/firestore';
-import {auth, db} from '../../environments/environment';
+import {httpsCallable} from 'firebase/functions';
+import {auth, db, functions} from '../../environments/environment';
 import {IFIreUser, IUser} from '../models/interfaces/IUser';
 import {Rolle} from '../models/enums/Rolle';
 
@@ -106,9 +107,13 @@ export class UserService {
     return snap.docs.map(d => this.getIUserFromFireUser({id: d.id, ...d.data() as IFIreUser}));
   }
 
+  /**
+   * Deletes a user from both Firebase Auth and Firestore.
+   * Requires the caller to be an Owner — enforced server-side by the Cloud Function.
+   */
   async deleteUser(uid: string): Promise<void> {
-    const userDocRef = doc(db as Firestore, 'users', uid);
-    await deleteDoc(userDocRef);
+    const fn = httpsCallable<{ uid: string }, { success: boolean }>(functions, 'deleteUserAccount');
+    await fn({ uid });
   }
 
   private getIUserFromFireUser(user: IFIreUser): IUser {

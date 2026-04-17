@@ -31,10 +31,18 @@ export class AdminUsers implements OnInit {
     return true;
   }
 
+  protected canDeleteThisUser(u: IUser): boolean {
+    if (!this.isOwner()) return false;
+    if (this.isSelf(u)) return false;
+    if (u.rolle === Rolle.OWNER) return false;
+    return true;
+  }
+
   protected users = signal<IUser[]>([]);
   protected loading = signal(true);
   protected saving = signal(false);
   protected saveSuccess = signal(false);
+  protected deleting = signal(false);
   protected searchText = '';
   protected selectedUser = signal<IUser | null>(null);
 
@@ -122,6 +130,27 @@ export class AdminUsers implements OnInit {
     } finally {
       this.saving.set(false);
     }
+  }
+
+  deleteUser(u: IUser) {
+    const name = this.displayName(u) !== '—' ? this.displayName(u) : u.email ?? 'diesen Benutzer';
+    this.dialogService.openConfirm(
+      'Benutzer löschen',
+      `Möchtest du „${name}" wirklich löschen? Das Konto wird aus der Benutzerliste und aus der Anmeldung entfernt. Diese Aktion kann nicht rückgängig gemacht werden.`,
+      async () => {
+        this.deleting.set(true);
+        try {
+          await this.userService.deleteUser(u.uid);
+          this.users.update(list => list.filter(x => x.uid !== u.uid));
+          if (this.selectedUser()?.uid === u.uid) this.closeEdit();
+        } catch (e: any) {
+          const msg = e?.message ?? 'Löschen fehlgeschlagen.';
+          this.dialogService.openMessage('Fehler', msg);
+        } finally {
+          this.deleting.set(false);
+        }
+      }
+    );
   }
 
   getRolleLabel(r: Rolle): string {
