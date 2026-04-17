@@ -19,6 +19,15 @@ export const firebaseConfig = {
   measurementId: "G-J1BSVLTRX8"
 };
 
+export const firebaseConfig2 = {
+  apiKey: "AIzaSyC3jYlrKApK8q-S70yjAyyeuCEoE8FXUTQ",
+  authDomain: "testshop-d6691.firebaseapp.com",
+  projectId: "testshop-d6691",
+  storageBucket: "testshop-d6691.firebasestorage.app",
+  messagingSenderId: "632302980168",
+  appId: "1:632302980168:web:4e6d3b32519702ba06dc7d"
+};
+
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);

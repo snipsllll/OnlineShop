@@ -180,12 +180,14 @@
                 }
               </div>
             }
-            <button class="action-icon-btn" (click)="onDetails(b.id)" title="Details öffnen">
-              <span class="material-symbols-outlined">open_in_new</span>
-            </button>
-            <button class="action-icon-btn action-icon-btn--danger" (click)="onDelete(b)" title="Löschen">
-              <span class="material-symbols-outlined">delete</span>
-            </button>
+            <div class="action-icon-row">
+              <button class="action-icon-btn" (click)="onDetails(b.id)" title="Details öffnen">
+                <span class="material-symbols-outlined">open_in_new</span>
+              </button>
+              <button class="action-icon-btn action-icon-btn--danger" (click)="onDelete(b)" title="Löschen">
+                <span class="material-symbols-outlined">delete</span>
+              </button>
+            </div>
           </div>
 
         </div>

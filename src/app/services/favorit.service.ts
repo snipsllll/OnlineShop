@@ -14,7 +14,7 @@ export class FavoritService {
 
   public async getFavoritenIds(): Promise<string[]> {
     return this.userService.getCurrentUser().then(user => {
-      return user.favorisierteProduktIds;
+      return user.favorisierteProduktIds ?? [];
     })
   }
 
@@ -27,6 +27,7 @@ export class FavoritService {
 
   public async addToFavorit(produktId: string) {
     this.userService.getCurrentUser().then(user => {
+      user.favorisierteProduktIds ??= [];
       if (!user.favorisierteProduktIds.includes(produktId)) {
         user.favorisierteProduktIds.push(produktId);
         this.userService.updateUser(user);
@@ -36,6 +37,7 @@ export class FavoritService {
 
   public async removeFromFavorit(produktId: string) {
     this.userService.getCurrentUser().then(user => {
+      user.favorisierteProduktIds ??= [];
       if (user.favorisierteProduktIds.includes(produktId)) {
         const index = user.favorisierteProduktIds.indexOf(produktId);
         user.favorisierteProduktIds.splice(index, 1);

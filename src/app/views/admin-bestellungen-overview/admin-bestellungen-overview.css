@@ -326,7 +326,7 @@
   white-space: nowrap;
 }
 
-/* Actions column */
+/* Actions column — fixed width so layout never shifts */
 .order-actions {
   display: flex;
   flex-direction: column;
@@ -336,6 +336,8 @@
   border-left: 1px solid var(--border);
   flex-shrink: 0;
   justify-content: center;
+  width: 152px;
+  box-sizing: border-box;
 }
 
 .btn-advance {
@@ -344,23 +346,23 @@
   justify-content: center;
   gap: 6px;
   padding: 7px 12px;
-  background: var(--surface);
-  border: 1.5px solid var(--border);
+  background: none;
+  border: 1.5px solid var(--primary);
   border-radius: var(--radius-md);
-  color: var(--text-secondary);
+  color: var(--primary);
   font-size: 0.8rem;
   font-weight: 600;
   cursor: pointer;
   font-family: inherit;
-  transition: background var(--transition), border-color var(--transition), color var(--transition);
+  transition: background var(--transition), color var(--transition);
   white-space: nowrap;
+  width: 100%;
 }
 .btn-advance:hover:not(:disabled) {
-  background: var(--bg);
-  border-color: var(--primary);
-  color: var(--primary);
+  background: var(--primary);
+  color: #fff;
 }
-.btn-advance:disabled { opacity: 0.6; cursor: not-allowed; }
+.btn-advance:disabled { opacity: 0.5; cursor: not-allowed; }
 .btn-advance .material-symbols-outlined { font-size: 18px; }
 
 .btn-advance--highlight {
@@ -371,12 +373,11 @@
 .btn-advance--highlight:hover:not(:disabled) {
   background: var(--primary-dark);
   border-color: var(--primary-dark);
-  color: #fff;
 }
 .btn-advance--blocked {
-  opacity: 1 !important;
-  color: var(--text-muted);
+  opacity: 0.45 !important;
   border-color: var(--border);
+  color: var(--text-muted);
   cursor: not-allowed;
 }
 
@@ -398,6 +399,13 @@
 }
 .advance-blocked-hint .material-symbols-outlined { font-size: 13px; }
 
+/* Icon buttons row — always sits at the bottom of the actions column */
+.action-icon-row {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+}
+
 .action-icon-btn {
   display: flex;
   align-items: center;
@@ -405,19 +413,18 @@
   width: 34px;
   height: 34px;
   border-radius: var(--radius-md);
-  border: 1.5px solid var(--border);
-  background: var(--surface);
-  color: var(--text-secondary);
+  border: 1.5px solid var(--primary);
+  background: none;
+  color: var(--primary);
   cursor: pointer;
-  transition: background var(--transition), border-color var(--transition), color var(--transition);
+  transition: background var(--transition), color var(--transition);
+  flex-shrink: 0;
 }
-.action-icon-btn:hover { background: var(--bg); color: var(--text); }
+.action-icon-btn:hover {
+  background: var(--primary);
+  color: #fff;
+}
 .action-icon-btn .material-symbols-outlined { font-size: 18px; }
-.action-icon-btn--danger:hover {
-  background: #fee2e2;
-  border-color: var(--error);
-  color: var(--error);
-}
 
 /* Badge variants for new/info */
 .badge--primary { background: #dbeafe; color: #1d4ed8; }
