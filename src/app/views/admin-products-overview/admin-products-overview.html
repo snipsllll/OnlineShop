@@ -13,7 +13,7 @@
         <span class="material-symbols-outlined btn-icon">upload_file</span>
         Importieren
       </button>
-      <button class="btn-secondary" (click)="exportProdukte()" [disabled]="loading() || produkte().length === 0">
+      <button class="btn-secondary" (click)="exportProdukte()" [disabled]="loading() || totalCount() === 0">
         <span class="material-symbols-outlined btn-icon">download</span>
         Exportieren
       </button>
@@ -61,7 +61,7 @@
     </div>
     <div class="result-count">
       @if (!loading()) {
-        <span>{{ filteredProdukte.length }} Produkt{{ filteredProdukte.length !== 1 ? 'e' : '' }}</span>
+        <span>{{ displayedCount }} Produkt{{ displayedCount !== 1 ? 'e' : '' }}</span>
       }
     </div>
   </div>
@@ -73,7 +73,7 @@
     </div>
   } @else {
     <div class="card table-card">
-      @if (filteredProdukte.length === 0) {
+      @if (displayedCount === 0) {
         <div class="empty-state">
           <span class="material-symbols-outlined empty-icon">search_off</span>
           <p class="empty-title">Keine Produkte gefunden</p>
@@ -105,7 +105,7 @@
               </tr>
             </thead>
             <tbody>
-              @for (produkt of filteredProdukte; track produkt.id) {
+              @for (produkt of pagedProdukte; track produkt.id) {
                 <tr class="table-row">
                   <td class="col-image">
                     <div class="img-cell">
@@ -157,6 +157,28 @@
             </tbody>
           </table>
         </div>
+
+        @if (totalPages > 1) {
+          <div class="pagination-bar">
+            <button class="page-btn page-btn--nav" (click)="goToPage(currentPage() - 1)" [disabled]="currentPage() === 1">
+              <span class="material-symbols-outlined">chevron_left</span>
+            </button>
+
+            @for (page of pageNumbers; track $index) {
+              @if (page === -1) {
+                <span class="page-ellipsis">…</span>
+              } @else {
+                <button class="page-btn" [class.page-btn--active]="page === currentPage()" (click)="goToPage(page)">
+                  {{ page }}
+                </button>
+              }
+            }
+
+            <button class="page-btn page-btn--nav" (click)="goToPage(currentPage() + 1)" [disabled]="currentPage() === totalPages">
+              <span class="material-symbols-outlined">chevron_right</span>
+            </button>
+          </div>
+        }
       }
     </div>
   }

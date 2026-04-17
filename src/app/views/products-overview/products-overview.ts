@@ -24,6 +24,9 @@ export class ProductsOverview implements OnInit {
   protected sortBy = 'name';
   protected showOnlyAvailable = false;
 
+  protected readonly PAGE_SIZE = 24;
+  protected currentPage = signal(1);
+
   async ngOnInit() {
     await this.loadData();
   }
@@ -59,6 +62,37 @@ export class ProductsOverview implements OnInit {
       case 'preis-desc': return [...result].sort((a, b) => b.preis - a.preis);
       default: return [...result].sort((a, b) => (a.bezeichnung ?? '').localeCompare(b.bezeichnung ?? ''));
     }
+  }
+
+  get totalPages(): number {
+    return Math.max(1, Math.ceil(this.filteredProdukte.length / this.PAGE_SIZE));
+  }
+
+  get pagedProdukte(): IProdukt[] {
+    const start = (this.currentPage() - 1) * this.PAGE_SIZE;
+    return this.filteredProdukte.slice(start, start + this.PAGE_SIZE);
+  }
+
+  get pageNumbers(): number[] {
+    const total = this.totalPages;
+    const current = this.currentPage();
+    if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+    const pages: number[] = [1];
+    if (current > 3) pages.push(-1);
+    for (let i = Math.max(2, current - 1); i <= Math.min(total - 1, current + 1); i++) pages.push(i);
+    if (current < total - 2) pages.push(-1);
+    pages.push(total);
+    return pages;
+  }
+
+  goToPage(page: number) {
+    if (page < 1 || page > this.totalPages || page === this.currentPage()) return;
+    this.currentPage.set(page);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  resetPage() {
+    this.currentPage.set(1);
   }
 
   isFavorit(id: string): boolean {

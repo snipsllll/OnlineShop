@@ -17,20 +17,20 @@
       <input
         class="form-input filterbar__search-input"
         type="text"
-        [(ngModel)]="searchText"
+        [(ngModel)]="searchText" (ngModelChange)="resetPage()"
         placeholder="Produkte suchen..."
       >
     </div>
 
     <div class="filterbar__controls">
-      <select class="form-input filterbar__sort" [(ngModel)]="sortBy">
+      <select class="form-input filterbar__sort" [(ngModel)]="sortBy" (ngModelChange)="resetPage()">
         <option value="name">Name (A–Z)</option>
         <option value="preis-asc">Preis aufsteigend</option>
         <option value="preis-desc">Preis absteigend</option>
       </select>
 
       <label class="filterbar__toggle">
-        <input type="checkbox" [(ngModel)]="showOnlyAvailable" class="filterbar__checkbox">
+        <input type="checkbox" [(ngModel)]="showOnlyAvailable" (ngModelChange)="resetPage()" class="filterbar__checkbox">
         <span class="filterbar__toggle-label">Nur verfügbare</span>
       </label>
     </div>
@@ -48,7 +48,7 @@
   @if (!loading()) {
     @if (filteredProdukte.length > 0) {
       <div class="overview__grid">
-        @for (produkt of filteredProdukte; track produkt.id) {
+        @for (produkt of pagedProdukte; track produkt.id) {
           <app-product-kachel
             [produkt]="produkt"
             [isFavorit]="isFavorit(produkt.id)"
@@ -56,6 +56,26 @@
           ></app-product-kachel>
         }
       </div>
+
+      @if (totalPages > 1) {
+        <div class="pagination-bar">
+          <button class="page-btn page-btn--nav" (click)="goToPage(currentPage() - 1)" [disabled]="currentPage() === 1">
+            <span class="material-symbols-outlined">chevron_left</span>
+          </button>
+          @for (page of pageNumbers; track $index) {
+            @if (page === -1) {
+              <span class="page-ellipsis">…</span>
+            } @else {
+              <button class="page-btn" [class.page-btn--active]="page === currentPage()" (click)="goToPage(page)">
+                {{ page }}
+              </button>
+            }
+          }
+          <button class="page-btn page-btn--nav" (click)="goToPage(currentPage() + 1)" [disabled]="currentPage() === totalPages">
+            <span class="material-symbols-outlined">chevron_right</span>
+          </button>
+        </div>
+      }
     } @else {
       <div class="empty-state">
         <span class="material-symbols-outlined">search_off</span>
