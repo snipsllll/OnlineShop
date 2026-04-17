@@ -186,6 +186,48 @@
           </div>
         </button>
 
+        <!-- Gold -->
+        <button class="theme-card" [class.theme-card--active]="themeLocal === 'gold'" (click)="themeLocal = 'gold'" type="button">
+          <div class="theme-preview theme-preview--gold">
+            <div class="theme-preview__nav"></div>
+            <div class="theme-preview__content">
+              <div class="theme-preview__card">
+                <div class="theme-preview__line theme-preview__line--primary"></div>
+                <div class="theme-preview__line"></div>
+              </div>
+              <div class="theme-preview__btn"></div>
+            </div>
+          </div>
+          <div class="theme-card__body">
+            <span class="theme-card__name">Gold</span>
+            <span class="theme-card__desc">Luxuriös, edel &amp; zeitlos</span>
+            @if (themeLocal === 'gold') {
+              <span class="theme-card__check"><span class="material-symbols-outlined">check_circle</span>Aktiv</span>
+            }
+          </div>
+        </button>
+
+        <!-- Perle -->
+        <button class="theme-card" [class.theme-card--active]="themeLocal === 'pearl'" (click)="themeLocal = 'pearl'" type="button">
+          <div class="theme-preview theme-preview--pearl">
+            <div class="theme-preview__nav"></div>
+            <div class="theme-preview__content">
+              <div class="theme-preview__card">
+                <div class="theme-preview__line theme-preview__line--primary"></div>
+                <div class="theme-preview__line"></div>
+              </div>
+              <div class="theme-preview__btn"></div>
+            </div>
+          </div>
+          <div class="theme-card__body">
+            <span class="theme-card__name">Perle</span>
+            <span class="theme-card__desc">Rein, still &amp; vornehm</span>
+            @if (themeLocal === 'pearl') {
+              <span class="theme-card__check"><span class="material-symbols-outlined">check_circle</span>Aktiv</span>
+            }
+          </div>
+        </button>
+
         <!-- Nacht -->
         <button
           class="theme-card"

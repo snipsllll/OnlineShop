@@ -69,7 +69,7 @@
 
 .theme-picker {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 12px;
   margin-bottom: 4px;
 }
@@ -119,6 +119,8 @@
 .theme-preview--lavender .theme-preview__nav { background: #6d28d9; }
 .theme-preview--ice      .theme-preview__nav { background: #075985; }
 .theme-preview--autumn   .theme-preview__nav { background: #0a0700; border-bottom: 1px solid #3d2200; }
+.theme-preview--gold     .theme-preview__nav { background: #080603; border-bottom: 1px solid #c9a227; }
+.theme-preview--pearl    .theme-preview__nav { background: #4d1f44; }
 
 .theme-preview__content {
   flex: 1;
@@ -136,6 +138,8 @@
 .theme-preview--lavender .theme-preview__content { background: #faf8ff; }
 .theme-preview--ice      .theme-preview__content { background: #f5faff; }
 .theme-preview--autumn   .theme-preview__content { background: #180e00; }
+.theme-preview--gold     .theme-preview__content { background: #080603; }
+.theme-preview--pearl    .theme-preview__content { background: #f8f5f1; }
 
 .theme-preview__card {
   flex: 1;
@@ -155,6 +159,8 @@
 .theme-preview--lavender .theme-preview__card { background: #ffffff; }
 .theme-preview--ice      .theme-preview__card { background: #ffffff; box-shadow: 0 1px 4px rgba(3,105,161,0.08); }
 .theme-preview--autumn   .theme-preview__card { background: #231400; box-shadow: 0 1px 6px rgba(201,106,10,0.22); }
+.theme-preview--gold     .theme-preview__card { background: #1e1708; box-shadow: 0 1px 8px rgba(201,162,39,0.30); }
+.theme-preview--pearl    .theme-preview__card { background: #ffffff;  box-shadow: 0 1px 4px rgba(107, 45,94,0.10); }
 
 .theme-preview__line {
   height: 5px;
@@ -170,6 +176,8 @@
 .theme-preview--lavender .theme-preview__line { background: #dfd6ff; }
 .theme-preview--ice      .theme-preview__line { background: #bfdbf7; }
 .theme-preview--autumn   .theme-preview__line { background: #3d2200; }
+.theme-preview--gold     .theme-preview__line { background: #2a2015; }
+.theme-preview--pearl    .theme-preview__line { background: #e0d3da; }
 
 .theme-preview--modern   .theme-preview__line--primary { background: #3b82f6; width: 55%; }
 .theme-preview--garden   .theme-preview__line--primary { background: #5a7f47; width: 55%; }
@@ -179,6 +187,8 @@
 .theme-preview--lavender .theme-preview__line--primary { background: #7c3aed; width: 55%; }
 .theme-preview--ice      .theme-preview__line--primary { background: #0369a1; width: 55%; }
 .theme-preview--autumn   .theme-preview__line--primary { background: #c96a0a; width: 55%; }
+.theme-preview--gold     .theme-preview__line--primary { background: #c9a227; width: 55%; }
+.theme-preview--pearl    .theme-preview__line--primary { background: #6b2d5e; width: 55%; }
 
 .theme-preview__btn {
   height: 22px;
@@ -189,12 +199,14 @@
 
 .theme-preview--modern   .theme-preview__btn { background: #3b82f6; }
 .theme-preview--garden   .theme-preview__btn { background: #5a7f47; }
-.theme-preview--night    .theme-preview__btn { background: #c0392b; }
+.theme-preview--night    .theme-preview__btn { background: #c0392b; border-radius: 2px; }
 .theme-preview--ocean    .theme-preview__btn { background: #0891b2; }
 .theme-preview--sunset   .theme-preview__btn { background: #e8650f; }
 .theme-preview--lavender .theme-preview__btn { background: #7c3aed; border-radius: 8px; }
 .theme-preview--ice      .theme-preview__btn { background: #0369a1; border-radius: 2px; }
 .theme-preview--autumn   .theme-preview__btn { background: #c96a0a; }
+.theme-preview--gold     .theme-preview__btn { background: #c9a227; border-radius: 2px; }
+.theme-preview--pearl    .theme-preview__btn { background: #6b2d5e; border-radius: 8px; }
 
 /* Card text */
 .theme-card__body {
@@ -229,12 +241,17 @@
   font-size: 15px;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 900px) {
   .theme-picker {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(4, 1fr);
   }
 }
-@media (max-width: 400px) {
+@media (max-width: 640px) {
+  .theme-picker {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (max-width: 380px) {
   .theme-picker {
     grid-template-columns: 1fr;
   }

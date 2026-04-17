@@ -31,7 +31,7 @@ const DEFAULT_MITARBEITER_PERMS: IMitarbeiterPerms = {
   canViewUsers: false,
 };
 
-export type ShopTheme = 'modern' | 'garden' | 'night' | 'ocean' | 'sunset' | 'lavender' | 'ice' | 'autumn';
+export type ShopTheme = 'modern' | 'garden' | 'night' | 'ocean' | 'sunset' | 'lavender' | 'ice' | 'autumn' | 'gold' | 'pearl';
 
 @Injectable({
   providedIn: 'root',
@@ -63,7 +63,7 @@ export class ShopSettingsService {
         this.mitarbeiterPerms.set({...DEFAULT_MITARBEITER_PERMS, ...(d['mitarbeiterPerms'] ?? {})});
         this.mitarbeiterRoleEnabled.set(d['mitarbeiterRoleEnabled'] ?? true);
         const raw = d['theme'];
-        const valid: ShopTheme[] = ['modern','garden','night','ocean','sunset','lavender','ice','autumn'];
+        const valid: ShopTheme[] = ['modern','garden','night','ocean','sunset','lavender','ice','autumn','gold','pearl'];
         const t: ShopTheme = valid.includes(raw) ? raw as ShopTheme : 'modern';
         this.theme.set(t);
         this.applyTheme(t);

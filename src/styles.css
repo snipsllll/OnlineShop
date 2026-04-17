@@ -280,6 +280,111 @@
 :root[data-theme="autumn"] .overlay { background: rgba(0, 0, 0, 0.80); }
 
 /* =============================================
+   GOLD THEME  (dark luxury, warm gold, serif)
+   Activated via data-theme="gold" on <html>
+   ============================================= */
+:root[data-theme="gold"] {
+  --primary:        #c9a227;
+  --primary-dark:   #a8841e;
+  --primary-light:  #1e1708;
+  --accent:         #e8c84a;
+  --success:        #5a9e6f;
+  --error:          #e05c5c;
+  --bg:             #080603;
+  --surface:        #100d07;
+  --border:         #2a2015;
+  --text:           #f2e4b0;
+  --text-secondary: #b8a07a;
+  --text-muted:     #6b5a3e;
+  --radius-sm:      4px;
+  --radius-md:      6px;
+  --radius-lg:      10px;
+  --shadow-sm:      0 1px 6px rgba(201, 162, 39, 0.20);
+  --shadow-md:      0 4px 20px rgba(201, 162, 39, 0.18);
+  --shadow-lg:      0 8px 40px rgba(201, 162, 39, 0.26);
+}
+:root[data-theme="gold"] body {
+  font-family: 'Georgia', 'Palatino Linotype', Palatino, serif;
+}
+:root[data-theme="gold"] .btn-secondary {
+  background: #1a1408;
+  color: var(--primary);
+  border-color: var(--primary);
+}
+:root[data-theme="gold"] .btn-secondary:hover:not(:disabled) {
+  background: var(--primary-light);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+:root[data-theme="gold"] .btn-ghost {
+  background: transparent;
+  color: var(--text-secondary);
+  border-color: var(--border);
+}
+:root[data-theme="gold"] .btn-ghost:hover:not(:disabled) {
+  background: var(--surface);
+  color: var(--text);
+  border-color: var(--text-muted);
+}
+:root[data-theme="gold"] .btn-primary:hover:not(:disabled) {
+  box-shadow: 0 2px 10px rgba(201, 162, 39, 0.55);
+}
+:root[data-theme="gold"] .form-input:focus,
+:root[data-theme="gold"] .search-input:focus {
+  box-shadow: 0 0 0 3px rgba(201, 162, 39, 0.28);
+}
+:root[data-theme="gold"] .badge--neutral {
+  background: #1e1708;
+  color: var(--text-secondary);
+}
+:root[data-theme="gold"] .overlay,
+:root[data-theme="gold"] .admin-nav__overlay {
+  background: rgba(0, 0, 0, 0.82);
+}
+
+/* =============================================
+   PERLE THEME  (ivory, deep plum, serif)
+   Activated via data-theme="pearl" on <html>
+   ============================================= */
+:root[data-theme="pearl"] {
+  --primary:        #6b2d5e;
+  --primary-dark:   #4d1f44;
+  --primary-light:  #f7eff5;
+  --accent:         #c084af;
+  --success:        #2d7a4f;
+  --error:          #c0392b;
+  --bg:             #f8f5f1;
+  --surface:        #ffffff;
+  --border:         #e0d3da;
+  --text:           #1a0e16;
+  --text-secondary: #5a3f50;
+  --text-muted:     #9a8090;
+  --radius-sm:      6px;
+  --radius-md:      10px;
+  --radius-lg:      18px;
+  --shadow-sm:      0 1px 4px rgba(107, 45, 94, 0.08);
+  --shadow-md:      0 4px 16px rgba(107, 45, 94, 0.10);
+  --shadow-lg:      0 8px 32px rgba(107, 45, 94, 0.14);
+}
+:root[data-theme="pearl"] body {
+  font-family: 'Georgia', 'Palatino Linotype', Palatino, serif;
+}
+:root[data-theme="pearl"] .btn-primary:hover:not(:disabled) {
+  box-shadow: 0 2px 10px rgba(107, 45, 94, 0.38);
+}
+:root[data-theme="pearl"] .form-input:focus,
+:root[data-theme="pearl"] .search-input:focus {
+  box-shadow: 0 0 0 3px rgba(107, 45, 94, 0.18);
+}
+:root[data-theme="pearl"] .badge--neutral {
+  background: #f0e8ed;
+  color: var(--text-secondary);
+}
+:root[data-theme="pearl"] .overlay {
+  background: rgba(26, 14, 22, 0.55);
+}
+
+/* =============================================
    RESET & BASE
    ============================================= */
 *, *::before, *::after {
