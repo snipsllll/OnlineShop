@@ -55,6 +55,29 @@
       </div>
     </div>
 
+    <!-- Low Stock Alert -->
+    @if (lowStockProdukte().length > 0) {
+      <div class="low-stock-alert">
+        <div class="low-stock-alert__header">
+          <span class="material-symbols-outlined low-stock-alert__icon">warning</span>
+          <div>
+            <strong class="low-stock-alert__title">Niedriger Lagerbestand</strong>
+            <span class="low-stock-alert__subtitle">{{ lowStockProdukte().length }} {{ lowStockProdukte().length === 1 ? 'Produkt hat' : 'Produkte haben' }} einen Lagerbestand von 5 oder weniger</span>
+          </div>
+        </div>
+        <div class="low-stock-list">
+          @for (p of lowStockProdukte(); track p.id) {
+            <button class="low-stock-item" (click)="goProductDetails(p.id)">
+              <span class="low-stock-item__name">{{ p.bezeichnung }}</span>
+              <span class="low-stock-item__badge" [class.low-stock-item__badge--zero]="p.lagerbestand === 0">
+                {{ p.lagerbestand === 0 ? 'Ausverkauft' : p.lagerbestand + ' Stk.' }}
+              </span>
+            </button>
+          }
+        </div>
+      </div>
+    }
+
     <!-- Quick Actions -->
     <div class="section">
       <h2 class="section-title">Schnellzugriff</h2>

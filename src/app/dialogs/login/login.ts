@@ -21,6 +21,13 @@ export class Login {
   protected error = '';
   protected showPassword = false;
 
+  // Forgot-password mode
+  protected mode: 'login' | 'reset' = 'login';
+  protected resetEmail = '';
+  protected resetLoading = false;
+  protected resetSent = false;
+  protected resetError = '';
+
   async submit() {
     if (!this.email || !this.password) {
       this.error = 'Bitte alle Felder ausfüllen.';
@@ -34,6 +41,35 @@ export class Login {
       this.dialogService.closeLogin();
     } else {
       this.error = result.message ?? 'Anmeldung fehlgeschlagen.';
+    }
+  }
+
+  openReset() {
+    this.resetEmail = this.email; // pre-fill with what was typed
+    this.resetSent = false;
+    this.resetError = '';
+    this.mode = 'reset';
+  }
+
+  backToLogin() {
+    this.mode = 'login';
+    this.resetSent = false;
+    this.resetError = '';
+  }
+
+  async sendReset() {
+    if (!this.resetEmail) {
+      this.resetError = 'Bitte gib deine E-Mail-Adresse ein.';
+      return;
+    }
+    this.resetLoading = true;
+    this.resetError = '';
+    const result = await this.authService.sendPasswordReset(this.resetEmail);
+    this.resetLoading = false;
+    if (result.success) {
+      this.resetSent = true;
+    } else {
+      this.resetError = result.message ?? 'Fehler beim Senden der E-Mail.';
     }
   }
 

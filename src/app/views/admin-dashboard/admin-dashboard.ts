@@ -1,6 +1,7 @@
 import {Component, inject, OnInit, signal} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {IBestellung} from '../../models/interfaces/IBestellung';
+import {IProdukt} from '../../models/interfaces/IProdukt';
 import {ProduktService} from '../../services/produkt.service';
 import {BestellungService} from '../../services/bestellung.service';
 import {RoutingService} from '../../services/routing.service';
@@ -23,16 +24,23 @@ export class AdminDashboard implements OnInit {
   protected loading = signal(true);
   protected produktCount = signal(0);
   protected bestellungen = signal<IBestellung[]>([]);
+  protected lowStockProdukte = signal<IProdukt[]>([]);
 
   async ngOnInit() {
     this.loading.set(true);
     try {
-      const [count, orders] = await Promise.all([
+      const [count, orders, allProdukte] = await Promise.all([
         this.produktService.getProduktCount(),
         this.bestellungService.getBestellungen(),
+        this.produktService.getProdukte(),
       ]);
       this.produktCount.set(count);
       this.bestellungen.set(orders);
+      this.lowStockProdukte.set(
+        allProdukte
+          .filter(p => p.verfuegbar && p.lagerbestand <= 5)
+          .sort((a, b) => a.lagerbestand - b.lagerbestand)
+      );
     } finally {
       this.loading.set(false);
     }
@@ -84,4 +92,5 @@ export class AdminDashboard implements OnInit {
   goOrders()        { this.routingService.route(MyRoutes.ADMIN_BESTELLUNGEN_OVERVIEW); }
   goNewProduct()    { this.routingService.route(MyRoutes.ADMIN_PRODUCT_DETAILS, 'new'); }
   goOrderDetails(id: string) { this.routingService.route(MyRoutes.ADMIN_BESTELLUNG_DETAILS, id); }
+  goProductDetails(id: string) { this.routingService.route(MyRoutes.ADMIN_PRODUCT_DETAILS, id); }
 }

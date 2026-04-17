@@ -1,6 +1,6 @@
 .admin-nav {
   position: sticky;
-  top: calc(var(--topbar-height) + var(--dev-banner-height, 0px));
+  top: var(--topbar-height);
   z-index: 50;
   background: var(--surface);
   border-bottom: 2px solid var(--border);

@@ -1,5 +1,5 @@
 import {inject, Injectable, signal} from '@angular/core';
-import {createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signOut, User, UserCredential} from 'firebase/auth';
+import {createUserWithEmailAndPassword, onAuthStateChanged, sendPasswordResetEmail, signInWithEmailAndPassword, signOut, User, UserCredential} from 'firebase/auth';
 import {UserService} from './user.service';
 import {WarenkorbService} from './warenkorb.service';
 import {Rolle} from '../models/enums/Rolle';
@@ -61,10 +61,7 @@ export class AuthService {
       await this.userService.createNewUser(userCredential.user.uid, userCredential.user.email!, vorname, nachname);
       return {success: true};
     } catch (error: any) {
-      return {
-        success: false,
-        message: error.message
-      };
+      return {success: false, message: translateFirebaseError(error.message)};
     }
   }
 
@@ -75,10 +72,7 @@ export class AuthService {
       return {success: true};
     } catch (error: any) {
       this.justLoggedIn = false;
-      return {
-        success: false,
-        message: error.message
-      };
+      return {success: false, message: translateFirebaseError(error.message)};
     }
   }
 
@@ -88,10 +82,32 @@ export class AuthService {
       this.currentUser = null;
       return {success: true};
     } catch (error: any) {
-      return {
-        success: false,
-        message: error.message
-      };
+      return {success: false, message: translateFirebaseError(error.message)};
     }
   }
+
+  async sendPasswordReset(email: string): Promise<IActionResult> {
+    try {
+      await sendPasswordResetEmail(auth, email);
+      return {success: true};
+    } catch (error: any) {
+      return {success: false, message: translateFirebaseError(error.message)};
+    }
+  }
+}
+
+function translateFirebaseError(raw: string): string {
+  if (raw.includes('auth/invalid-credential') || raw.includes('auth/wrong-password') || raw.includes('auth/user-not-found'))
+    return 'E-Mail-Adresse oder Passwort ist falsch.';
+  if (raw.includes('auth/email-already-in-use'))
+    return 'Diese E-Mail-Adresse wird bereits verwendet.';
+  if (raw.includes('auth/weak-password'))
+    return 'Das Passwort ist zu schwach. Mindestens 6 Zeichen erforderlich.';
+  if (raw.includes('auth/invalid-email'))
+    return 'Die E-Mail-Adresse ist ungültig.';
+  if (raw.includes('auth/too-many-requests'))
+    return 'Zu viele Versuche. Bitte versuche es später erneut.';
+  if (raw.includes('auth/network-request-failed'))
+    return 'Netzwerkfehler. Bitte überprüfe deine Verbindung.';
+  return 'Ein Fehler ist aufgetreten. Bitte versuche es erneut.';
 }

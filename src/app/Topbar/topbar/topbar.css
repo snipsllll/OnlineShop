@@ -1,6 +1,6 @@
 .topbar {
   position: sticky;
-  top: var(--dev-banner-height, 0px);
+  top: 0;
   z-index: 100;
   width: 100%;
   height: var(--topbar-height);
