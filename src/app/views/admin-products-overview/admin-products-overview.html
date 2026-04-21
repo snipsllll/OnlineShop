@@ -80,6 +80,13 @@
         {{ selectedCount() }} ausgewählt
       </span>
       <div class="bulk-bar__actions">
+        <select class="bulk-kategorie-select" (change)="bulkAssignKategorie($event)" [disabled]="bulkAssigning()">
+          <option value="">Kategorie zuweisen…</option>
+          <option value="__none__">— Keine Kategorie —</option>
+          @for (k of kategorien(); track k.id) {
+            <option [value]="k.id">{{ k.name }}</option>
+          }
+        </select>
         <button class="btn-secondary btn-sm" (click)="clearSelection()">
           <span class="material-symbols-outlined btn-icon">deselect</span>
           Aufheben

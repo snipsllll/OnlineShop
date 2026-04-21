@@ -230,6 +230,23 @@
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-wrap: wrap;
+}
+
+.bulk-kategorie-select {
+  height: 34px;
+  padding: 0 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.bulk-kategorie-select:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 /* Checkbox column */

@@ -1,6 +1,6 @@
 // src/app/services/produkt.service.ts
 import {Injectable} from '@angular/core';
-import {addDoc, collection, deleteDoc, doc, Firestore, getCountFromServer, getDoc, getDocs, limit, orderBy, query, QueryDocumentSnapshot, setDoc, startAfter, updateDoc} from 'firebase/firestore';
+import {addDoc, collection, deleteDoc, deleteField, doc, Firestore, getCountFromServer, getDoc, getDocs, limit, orderBy, query, QueryDocumentSnapshot, setDoc, startAfter, updateDoc, writeBatch} from 'firebase/firestore';
 import {db} from '../../environments/environment';
 import {IProdukt} from '../models/interfaces/IProdukt';
 
@@ -41,7 +41,8 @@ export class ProduktService {
       imgRefs: (produkt.imgRefs ?? []).map(img => ({
         path: img.path ?? '',
         position: img.position ?? 0
-      }))
+      })),
+      kategorieId: produkt.kategorieId || deleteField(),
     };
 
     try {
@@ -82,6 +83,16 @@ export class ProduktService {
       items: snap.docs.map(d => ({ ...d.data(), id: d.id } as IProdukt)),
       lastDoc: snap.docs[snap.docs.length - 1] ?? null,
     };
+  }
+
+  async bulkSetKategorie(ids: string[], kategorieId: string | undefined): Promise<void> {
+    const batch = writeBatch(db as Firestore);
+    for (const id of ids) {
+      batch.update(doc(db as Firestore, 'products', id), {
+        kategorieId: kategorieId || deleteField(),
+      });
+    }
+    await batch.commit();
   }
 
   async deleteProdukt(id: string): Promise<void> {

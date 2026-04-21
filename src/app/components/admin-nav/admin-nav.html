@@ -29,6 +29,14 @@
           <span class="material-symbols-outlined">inventory_2</span>
           <span>Produkte</span>
         </button>
+        <button
+          class="admin-nav__tab"
+          [class.admin-nav__tab--active]="isActive('kategorien')"
+          (click)="goKategorien()"
+        >
+          <span class="material-symbols-outlined">category</span>
+          <span>Kategorien</span>
+        </button>
       }
       @if (perms.canManageOrders()) {
         <button
@@ -120,6 +128,14 @@
         >
           <span class="material-symbols-outlined">inventory_2</span>
           <span>Produkte</span>
+        </button>
+        <button
+          class="admin-nav__drawer-item"
+          [class.admin-nav__drawer-item--active]="isActive('kategorien')"
+          (click)="goKategorien()"
+        >
+          <span class="material-symbols-outlined">category</span>
+          <span>Kategorien</span>
         </button>
       }
       @if (perms.canManageOrders()) {

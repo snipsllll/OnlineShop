@@ -5,8 +5,10 @@ import {ActivatedRoute} from '@angular/router';
 import {IProdukt} from '../../models/interfaces/IProdukt';
 import {IImgRef} from '../../models/interfaces/IImgRef';
 import {ProduktService} from '../../services/produkt.service';
+import {KategorieService} from '../../services/kategorie.service';
 import {StorageService} from '../../services/storage.service';
 import {RoutingService} from '../../services/routing.service';
+import {IKategorie} from '../../models/interfaces/IKategorie';
 import {MyRoutes} from '../../models/enums/MyRoutes';
 import {RouteParams} from '../../models/enums/RouteParams';
 import {AdminNav} from '../../components/admin-nav/admin-nav';
@@ -23,6 +25,7 @@ export class AdminProductDetails implements OnInit {
 
   private route = inject(ActivatedRoute);
   private produktService = inject(ProduktService);
+  private kategorieService = inject(KategorieService);
   private storageService = inject(StorageService);
   private routingService = inject(RoutingService);
   private location = inject(Location);
@@ -34,12 +37,14 @@ export class AdminProductDetails implements OnInit {
   protected isNew = false;
   protected productId = '';
 
+  protected kategorien = signal<IKategorie[]>([]);
   protected bezeichnung = '';
   protected beschreibung = '';
   protected preis = 0;
   protected lagerbestand = 0;
   protected verfuegbar = true;
   protected imgRefs: IImgRef[] = [];
+  protected kategorieId = '';
 
   async ngOnInit() {
     const id = this.route.snapshot.paramMap.get(RouteParams.PRODUCT_ID);
@@ -47,21 +52,28 @@ export class AdminProductDetails implements OnInit {
     this.productId = id ?? '';
     this.loading.set(true);
     try {
-      if (!this.isNew && id) {
-        const p = await this.produktService.getProdukt(id);
-        if (p) {
-          this.bezeichnung = p.bezeichnung ?? '';
-          this.beschreibung = p.beschreibung ?? '';
-          this.preis = p.preis ?? 0;
-          this.lagerbestand = p.lagerbestand ?? 0;
-          this.verfuegbar = p.verfuegbar ?? true;
-          this.imgRefs = (p.imgRefs ?? []).map((img, i) => ({
-            id: img.id ?? '',
-            path: img.path ?? '',
-            position: img.position ?? i,
-          }));
-        }
-      }
+      const [kategorien] = await Promise.all([
+        this.kategorieService.getKategorien(),
+        (async () => {
+          if (!this.isNew && id) {
+            const p = await this.produktService.getProdukt(id);
+            if (p) {
+              this.bezeichnung = p.bezeichnung ?? '';
+              this.beschreibung = p.beschreibung ?? '';
+              this.preis = p.preis ?? 0;
+              this.lagerbestand = p.lagerbestand ?? 0;
+              this.verfuegbar = p.verfuegbar ?? true;
+              this.kategorieId = p.kategorieId ?? '';
+              this.imgRefs = (p.imgRefs ?? []).map((img, i) => ({
+                id: img.id ?? '',
+                path: img.path ?? '',
+                position: img.position ?? i,
+              }));
+            }
+          }
+        })(),
+      ]);
+      this.kategorien.set(kategorien);
     } finally {
       this.loading.set(false);
     }
@@ -123,7 +135,8 @@ export class AdminProductDetails implements OnInit {
         preis: this.preis,
         lagerbestand: this.lagerbestand,
         verfuegbar: this.verfuegbar,
-        imgRefs: this.imgRefs
+        imgRefs: this.imgRefs,
+        kategorieId: this.kategorieId || undefined,
       };
       if (this.isNew) {
         await this.produktService.addProdukt(produkt);

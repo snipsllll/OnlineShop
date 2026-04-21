@@ -3,7 +3,9 @@ import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {QueryDocumentSnapshot} from 'firebase/firestore';
 import {IProdukt} from '../../models/interfaces/IProdukt';
+import {IKategorie} from '../../models/interfaces/IKategorie';
 import {ProduktService} from '../../services/produkt.service';
+import {KategorieService} from '../../services/kategorie.service';
 import {RoutingService} from '../../services/routing.service';
 import {DialogService} from '../../services/dialog.service';
 import {MyRoutes} from '../../models/enums/MyRoutes';
@@ -22,9 +24,12 @@ export class AdminProductsOverview implements OnInit {
   @ViewChild('importInput') importInput!: ElementRef<HTMLInputElement>;
 
   private produktService = inject(ProduktService);
+  private kategorieService = inject(KategorieService);
   private routingService = inject(RoutingService);
   private dialogService = inject(DialogService);
 
+  protected kategorien = signal<IKategorie[]>([]);
+  protected bulkAssigning = signal(false);
   protected readonly PAGE_SIZE = 20;
   protected currentPage = signal(1);
   protected totalCount = signal(0);
@@ -264,16 +269,40 @@ export class AdminProductsOverview implements OnInit {
     );
   }
 
+  // ── Bulk assign category ──────────────────────────────────────────────────
+  async bulkAssignKategorie(event: Event) {
+    const select = event.target as HTMLSelectElement;
+    const value = select.value;
+    select.value = '';
+    if (!value) return;
+
+    const ids = [...this.selectedIds()];
+    const kategorieId = value === '__none__' ? undefined : value;
+    this.bulkAssigning.set(true);
+    try {
+      await this.produktService.bulkSetKategorie(ids, kategorieId);
+      const update = (p: IProdukt) =>
+        ids.includes(p.id) ? {...p, kategorieId} : p;
+      if (this._allProdukte) this._allProdukte = this._allProdukte.map(update);
+      this.pageItems.update(items => items.map(update));
+      if (this.searchActive()) this.applyAllFilters();
+    } finally {
+      this.bulkAssigning.set(false);
+    }
+  }
+
   // ── Init ──────────────────────────────────────────────────────────────────
   async ngOnInit() { await this.initialLoad(); }
 
   private async initialLoad() {
     this.loading.set(true);
     try {
-      const [count, { items, lastDoc }] = await Promise.all([
+      const [count, { items, lastDoc }, kategorien] = await Promise.all([
         this.produktService.getProduktCount(),
         this.produktService.getProduktePage(this.PAGE_SIZE),
+        this.kategorieService.getKategorien(),
       ]);
+      this.kategorien.set(kategorien);
       this.totalCount.set(count);
       this.pageItems.set(items);
       if (lastDoc) this._cursors.set(1, lastDoc);

@@ -22,6 +22,7 @@ import {Agb} from './views/agb/agb';
 import {Widerrufsrecht} from './views/widerrufsrecht/widerrufsrecht';
 import {NotFound} from './views/not-found/not-found';
 import {OwnerShops} from './views/owner-shops/owner-shops';
+import {AdminKategorien} from './views/admin-kategorien/admin-kategorien';
 import {RouteParams} from './models/enums/RouteParams';
 import {MyRoutes} from './models/enums/MyRoutes';
 import {adminGuard, authGuard, ownerGuard} from './guards/admin.guard';
@@ -57,6 +58,7 @@ export const routes: Routes = [
   {path: `${MyRoutes.ADMIN_BESTELLUNG_DETAILS}/:${RouteParams.BESTELLUNGS_ID}`, component: AdminBestellungDetails, canActivate: [adminGuard]},
   {path: `${MyRoutes.ADMIN_USERS}`, component: AdminUsers, canActivate: [adminGuard]},
   {path: `${MyRoutes.ADMIN_SHOP_SETTINGS}`, component: AdminShopSettings, canActivate: [adminGuard]},
+  {path: `${MyRoutes.ADMIN_KATEGORIEN}`, component: AdminKategorien, canActivate: [adminGuard]},
 
   // ── Owner-only routes ─────────────────────────────────────────
   {path: `${MyRoutes.ADMIN_OWNER_SETTINGS}`, component: AdminOwnerSettings, canActivate: [ownerGuard]},

@@ -20,5 +20,6 @@ export enum MyRoutes {
   PRODUKT_DETAILS = "produkt-details",
   PRODUKTE_OVERVIEW = "produkt-overview",
   WARENKORB = "warenkorb",
-  OWNER_SHOPS = "owner-shops"
+  OWNER_SHOPS = "owner-shops",
+  ADMIN_KATEGORIEN = "admin-kategorien"
 }

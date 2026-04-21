@@ -1,0 +1,103 @@
+<app-admin-nav />
+<div class="page-container kategorien-page">
+
+  <div class="page-header">
+    <h1 class="page-title">
+      <span class="material-symbols-outlined">category</span>
+      Kategorien
+    </h1>
+    @if (!loading()) {
+      <span class="badge badge--neutral">{{ kategorien().length }} {{ kategorien().length === 1 ? 'Kategorie' : 'Kategorien' }}</span>
+    }
+  </div>
+
+  <!-- Create -->
+  <div class="card create-card">
+    <h2 class="section-title">
+      <span class="material-symbols-outlined">add_circle</span>
+      Neue Kategorie
+    </h2>
+    <div class="create-form">
+      <input
+        class="form-input"
+        type="text"
+        placeholder="Name *"
+        [(ngModel)]="newName"
+      />
+      <input
+        class="form-input"
+        type="text"
+        placeholder="Beschreibung (optional)"
+        [(ngModel)]="newBeschreibung"
+      />
+      <button
+        class="btn-primary"
+        (click)="create()"
+        [disabled]="!newName.trim() || creating()"
+      >
+        @if (creating()) {
+          <div class="spinner spinner--sm"></div>
+        } @else {
+          <span class="material-symbols-outlined">add</span>
+        }
+        Erstellen
+      </button>
+    </div>
+  </div>
+
+  <!-- List -->
+  @if (loading()) {
+    <div class="loading-state">
+      <div class="spinner"></div>
+      <p>Kategorien werden geladen...</p>
+    </div>
+  } @else if (kategorien().length === 0) {
+    <div class="empty-state">
+      <span class="material-symbols-outlined empty-icon">category</span>
+      <p class="empty-state__title">Noch keine Kategorien</p>
+      <p class="empty-state__text">Erstelle deine erste Kategorie, um Produkte zu organisieren.</p>
+    </div>
+  } @else {
+    <div class="kategorien-list">
+      @for (k of kategorien(); track k.id) {
+        <div class="kategorie-card card">
+          @if (editingId() === k.id) {
+            <div class="edit-form">
+              <input class="form-input" type="text" placeholder="Name *" [(ngModel)]="editName" />
+              <input class="form-input" type="text" placeholder="Beschreibung (optional)" [(ngModel)]="editBeschreibung" />
+              <div class="edit-actions">
+                <button class="btn-primary btn-sm" (click)="saveEdit(k)" [disabled]="!editName.trim() || saving()">
+                  @if (saving()) { <div class="spinner spinner--sm"></div> } @else { <span class="material-symbols-outlined">save</span> }
+                  Speichern
+                </button>
+                <button class="btn-ghost btn-sm" (click)="cancelEdit()">Abbrechen</button>
+              </div>
+            </div>
+          } @else {
+            <div class="kategorie-info">
+              <span class="kategorie-name">{{ k.name }}</span>
+              @if (k.beschreibung) {
+                <span class="kategorie-desc">{{ k.beschreibung }}</span>
+              }
+            </div>
+            <div class="kategorie-actions">
+              <button class="btn-ghost btn-sm" (click)="startEdit(k)">
+                <span class="material-symbols-outlined">edit</span>
+                Bearbeiten
+              </button>
+              <button class="btn-danger btn-sm" (click)="deleteKategorie(k)" [disabled]="deleting() === k.id">
+                @if (deleting() === k.id) {
+                  <div class="spinner spinner--sm"></div>
+                } @else {
+                  <span class="material-symbols-outlined">delete</span>
+                }
+                Löschen
+              </button>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+
+</div>

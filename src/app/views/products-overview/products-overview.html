@@ -36,6 +36,24 @@
     </div>
   </div>
 
+  <!-- Category Chips -->
+  @if (!loading() && kategorien().length > 0) {
+    <div class="category-chips">
+      <button
+        class="category-chip"
+        [class.category-chip--active]="selectedKategorieId === null"
+        (click)="selectKategorie(null)"
+      >Alle</button>
+      @for (k of kategorien(); track k.id) {
+        <button
+          class="category-chip"
+          [class.category-chip--active]="selectedKategorieId === k.id"
+          (click)="selectKategorie(k.id)"
+        >{{ k.name }}</button>
+      }
+    </div>
+  }
+
   <!-- Loading State -->
   @if (loading()) {
     <div class="loading-state">
