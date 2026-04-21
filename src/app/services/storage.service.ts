@@ -28,7 +28,9 @@ export class StorageService {
           }
           canvas.width = width;
           canvas.height = height;
-          canvas.getContext('2d')!.drawImage(img, 0, 0, width, height);
+          const ctx = canvas.getContext('2d');
+          if (!ctx) { reject(new Error('Canvas 2D-Kontext nicht verfügbar')); return; }
+          ctx.drawImage(img, 0, 0, width, height);
           resolve(canvas.toDataURL('image/jpeg', quality));
         };
         img.onerror = reject;

@@ -125,7 +125,7 @@
                 <tr class="orders-table__row" (click)="goOrderDetails(b.id)">
                   <td class="orders-table__id">#{{ b.id.slice(0, 8).toUpperCase() }}</td>
                   <td>{{ formatDate(b.bestelldatum) }}</td>
-                  <td>{{ b.produkte?.length ?? 0 }} {{ (b.produkte?.length ?? 0) === 1 ? 'Artikel' : 'Artikel' }}</td>
+                  <td>{{ b.produkte.length }} Artikel</td>
                   <td>
                     <span class="badge {{ statusClass(b.bestellungsZustand) }}">
                       {{ statusLabel(b.bestellungsZustand) }}

@@ -190,10 +190,10 @@ export class AdminProductsOverview implements OnInit {
       const q = this.filterBezeichnung.toLowerCase();
       result = result.filter(p => (p.bezeichnung ?? '').toLowerCase().includes(q));
     }
-    if (this.filterPreisMin !== '') result = result.filter(p => p.preis >= parseFloat(this.filterPreisMin));
-    if (this.filterPreisMax !== '') result = result.filter(p => p.preis <= parseFloat(this.filterPreisMax));
-    if (this.filterLagerMin !== '') result = result.filter(p => p.lagerbestand >= parseInt(this.filterLagerMin));
-    if (this.filterLagerMax !== '') result = result.filter(p => p.lagerbestand <= parseInt(this.filterLagerMax));
+    const preisMin = parseFloat(this.filterPreisMin); if (this.filterPreisMin !== '' && !isNaN(preisMin)) result = result.filter(p => p.preis >= preisMin);
+    const preisMax = parseFloat(this.filterPreisMax); if (this.filterPreisMax !== '' && !isNaN(preisMax)) result = result.filter(p => p.preis <= preisMax);
+    const lagerMin = parseInt(this.filterLagerMin);   if (this.filterLagerMin !== '' && !isNaN(lagerMin)) result = result.filter(p => p.lagerbestand >= lagerMin);
+    const lagerMax = parseInt(this.filterLagerMax);   if (this.filterLagerMax !== '' && !isNaN(lagerMax)) result = result.filter(p => p.lagerbestand <= lagerMax);
     if (this.filterVerfuegbar !== 'all') {
       const v = this.filterVerfuegbar === 'true';
       result = result.filter(p => p.verfuegbar === v);

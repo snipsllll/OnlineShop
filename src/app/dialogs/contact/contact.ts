@@ -42,6 +42,10 @@ export class Contact implements OnInit {
       this.error = 'Bitte alle Felder ausfüllen.';
       return;
     }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.email)) {
+      this.error = 'Bitte eine gültige E-Mail-Adresse eingeben.';
+      return;
+    }
     this.loading = true;
     this.error = '';
     try {

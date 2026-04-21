@@ -33,6 +33,11 @@ export class Register {
       return;
     }
 
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(this.email)) {
+      this.error = 'Bitte eine gültige E-Mail-Adresse eingeben.';
+      return;
+    }
+
     if (this.password !== this.passwordRepeat) {
       this.error = 'Die Passwörter stimmen nicht überein.';
       return;

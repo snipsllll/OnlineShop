@@ -1,24 +1,21 @@
-import { Component, AfterViewInit } from '@angular/core';
+import { Component, AfterViewInit, Input } from '@angular/core';
 
 declare const paypal: any;
 
 @Component({
   selector: 'app-paypal-button',
   standalone: true,
-  template: `
-    <div id="paypal-button"></div>
-  `
+  template: `<div id="paypal-button"></div>`
 })
 export class PaypalButton implements AfterViewInit {
+  @Input() amount = 0;
 
   ngAfterViewInit(): void {
     paypal.Buttons({
       createOrder: (_data: any, actions: any) => {
         return actions.order.create({
           purchase_units: [{
-            amount: {
-              value: '769.99'
-            }
+            amount: { value: this.amount.toFixed(2) }
           }]
         });
       },

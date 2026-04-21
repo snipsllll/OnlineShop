@@ -93,6 +93,6 @@ export class BestellungenOverview implements OnInit {
   }
 
   getOrderTotal(b: IBestellung): number {
-    return b.produkte.reduce((s, p) => s + p.preis * p.anzahl, 0);
+    return (b.produkte ?? []).reduce((s, p) => s + p.preis * p.anzahl, 0);
   }
 }

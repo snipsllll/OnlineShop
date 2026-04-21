@@ -61,10 +61,13 @@ export class WarenkorbService {
     }
     const wk = await this.getWahrenkorb();
     wk.produkteMitAnzahl = wk.produkteMitAnzahl ?? [];
-    if (!wk.produkteMitAnzahl.find(p => p.produktId === produktId)) {
+    const existing = wk.produkteMitAnzahl.find(p => p.produktId === produktId);
+    if (existing) {
+      existing.anzahl += anzahl;
+    } else {
       wk.produkteMitAnzahl.push({ produktId, anzahl });
-      await this.updateWarenkorb(wk);
     }
+    await this.updateWarenkorb(wk);
     this.cartCount.set(wk.produkteMitAnzahl.length);
   }
 

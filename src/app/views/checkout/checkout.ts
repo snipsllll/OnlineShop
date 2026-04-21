@@ -44,7 +44,7 @@ export class Checkout implements OnInit {
         this.warenkorbService.getWahrenkorb(),
         this.produktService.getProdukte(),
       ]);
-      const items = wk.produkteMitAnzahl.map(p => {
+      const items = (wk.produkteMitAnzahl ?? []).map(p => {
         const produkt = alleProdukte.find(ap => ap.id === p.produktId);
         return produkt ? { produkt, anzahl: p.anzahl } : null;
       }).filter((x): x is {produkt: IProdukt, anzahl: number} => x !== null);

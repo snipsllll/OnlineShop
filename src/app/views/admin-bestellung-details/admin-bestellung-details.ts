@@ -72,10 +72,9 @@ export class AdminBestellungDetails implements OnInit {
     if (!b) return;
     this.saving.set(true);
     try {
-      b.bestellungsZustand = this.selectedZustand;
-      b.zahlungsZustand = this.selectedZahlungsZustand;
-      await this.bestellungService.editBestellung(b.id, b);
-      this.bestellung.set({...b});
+      const updated: IBestellung = { ...b, bestellungsZustand: this.selectedZustand, zahlungsZustand: this.selectedZahlungsZustand };
+      await this.bestellungService.editBestellung(b.id, updated);
+      this.bestellung.set(updated);
       this.dialogService.openMessage('Gespeichert', 'Status wurde erfolgreich aktualisiert.');
     } finally {
       this.saving.set(false);

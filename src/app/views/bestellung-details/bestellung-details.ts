@@ -62,7 +62,7 @@ export class BestellungDetails implements OnInit {
   }
 
   get total(): number {
-    return this.bestellung()?.produkte.reduce((s,p) => s + p.preis * p.anzahl, 0) ?? 0;
+    return (this.bestellung()?.produkte ?? []).reduce((s,p) => s + p.preis * p.anzahl, 0);
   }
 
   formatPrice(p: number): string {
