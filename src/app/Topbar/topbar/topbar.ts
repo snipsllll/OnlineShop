@@ -19,20 +19,18 @@ import {Rolle} from '../../models/enums/Rolle';
 export class Topbar {
   private routingService = inject(RoutingService);
   protected dialogService = inject(DialogService);
-  private warenkorbService = inject(WarenkorbService);
+  protected warenkorbService = inject(WarenkorbService);
   protected authService = inject(AuthService);
   protected shopSettings = inject(ShopSettingsService);
   private elementRef = inject(ElementRef);
 
-  protected cartCount = signal(0);
+  protected cartCount = this.warenkorbService.cartCount;
   protected menuOpen = signal(false);
 
   constructor() {
     effect(() => {
-      this.authService.isLoggedIn(); // track login state changes
-      this.warenkorbService.getWahrenkorb()
-        .then(wk => this.cartCount.set(wk?.produkteMitAnzahl?.length ?? 0))
-        .catch(() => this.cartCount.set(0));
+      this.authService.isLoggedIn(); // track login/logout → refresh cart count
+      this.warenkorbService.refreshCount();
     });
   }
 

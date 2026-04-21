@@ -1,4 +1,4 @@
-import {Component, Input, Output, EventEmitter, inject} from '@angular/core';
+import {Component, Input, Output, EventEmitter, inject, signal} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {IProdukt} from '../../models/interfaces/IProdukt';
 import {RoutingService} from '../../services/routing.service';
@@ -26,7 +26,8 @@ export class ProductKachel {
   private authService = inject(AuthService);
   private dialogService = inject(DialogService);
 
-  protected addingToCart = false;
+  protected addingToCart = signal(false);
+  protected addedToCart = signal(false);
 
   goToDetails() {
     this.routingService.route(MyRoutes.PRODUKT_DETAILS, this.produkt.id);
@@ -34,11 +35,13 @@ export class ProductKachel {
 
   async addToCart(event: Event) {
     event.stopPropagation();
-    this.addingToCart = true;
+    this.addingToCart.set(true);
     try {
       await this.warenkorbService.addToWarenkorb(this.produkt.id, 1);
+      this.addedToCart.set(true);
+      setTimeout(() => { this.addedToCart.set(false); }, 1500);
     } finally {
-      this.addingToCart = false;
+      this.addingToCart.set(false);
     }
   }
 

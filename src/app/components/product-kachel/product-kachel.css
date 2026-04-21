@@ -188,6 +188,21 @@
   box-shadow: none;
 }
 
+.kachel__cart-btn--added,
+.kachel__cart-btn--added:disabled {
+  background: var(--success);
+  color: white;
+  cursor: default;
+}
+
 .kachel__cart-btn .material-symbols-outlined {
   font-size: 20px;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.spinning {
+  animation: spin 0.8s linear infinite;
 }

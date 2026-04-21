@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {Injectable, signal} from '@angular/core';
 import {UserService} from './user.service';
 import {IWarenkorb} from '../models/interfaces/IWarenkorb';
 import {auth} from '../../environments/environment';
@@ -9,8 +9,20 @@ const GUEST_CART_KEY = 'guest_warenkorb';
   providedIn: 'root',
 })
 export class WarenkorbService {
+  readonly cartCount = signal(0);
 
-  constructor(private userService: UserService) {}
+  constructor(private userService: UserService) {
+    this.refreshCount();
+  }
+
+  async refreshCount(): Promise<void> {
+    try {
+      const wk = await this.getWahrenkorb();
+      this.cartCount.set(wk?.produkteMitAnzahl?.length ?? 0);
+    } catch {
+      this.cartCount.set(0);
+    }
+  }
 
   private get loggedIn(): boolean {
     return !!auth.currentUser;
@@ -44,6 +56,7 @@ export class WarenkorbService {
         wk.produkteMitAnzahl.push({ produktId, anzahl });
       }
       this.saveGuestCart(wk);
+      this.cartCount.set(wk.produkteMitAnzahl.length);
       return;
     }
     const wk = await this.getWahrenkorb();
@@ -52,6 +65,7 @@ export class WarenkorbService {
       wk.produkteMitAnzahl.push({ produktId, anzahl });
       await this.updateWarenkorb(wk);
     }
+    this.cartCount.set(wk.produkteMitAnzahl.length);
   }
 
   public async removeFromWarenkorb(produktId: string) {
@@ -59,6 +73,7 @@ export class WarenkorbService {
       const wk = this.getGuestCart();
       wk.produkteMitAnzahl = wk.produkteMitAnzahl.filter(p => p.produktId !== produktId);
       this.saveGuestCart(wk);
+      this.cartCount.set(wk.produkteMitAnzahl.length);
       return;
     }
     const wk = await this.getWahrenkorb();
@@ -68,16 +83,19 @@ export class WarenkorbService {
       wk.produkteMitAnzahl.splice(index, 1);
       await this.updateWarenkorb(wk);
     }
+    this.cartCount.set(wk.produkteMitAnzahl.length);
   }
 
   public async clearWarenkorb() {
     if (!this.loggedIn) {
       localStorage.removeItem(GUEST_CART_KEY);
+      this.cartCount.set(0);
       return;
     }
     const wk = await this.getWahrenkorb();
     wk.produkteMitAnzahl = [];
     await this.updateWarenkorb(wk);
+    this.cartCount.set(0);
   }
 
   public async changeProduktAnzahl(produktId: string, anzahl: number) {

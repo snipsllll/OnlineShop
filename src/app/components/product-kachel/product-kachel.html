@@ -29,8 +29,8 @@
     </div>
     <div class="kachel__footer">
       <span class="kachel__price">{{ priceFormatted }}</span>
-      <button class="kachel__cart-btn" (click)="addToCart($event)" [disabled]="!produkt.verfuegbar || addingToCart">
-        <span class="material-symbols-outlined">{{ addingToCart ? 'hourglass_empty' : 'add_shopping_cart' }}</span>
+      <button class="kachel__cart-btn" (click)="addToCart($event)" [disabled]="!produkt.verfuegbar || addingToCart() || addedToCart()" [class.kachel__cart-btn--added]="addedToCart()">
+        <span class="material-symbols-outlined" [class.spinning]="addingToCart()">{{ addingToCart() ? 'progress_activity' : addedToCart() ? 'check' : 'add_shopping_cart' }}</span>
       </button>
     </div>
   </div>
