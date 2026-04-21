@@ -32,11 +32,11 @@ export class AuthService {
     onAuthStateChanged(auth, async (user: User | null) => {
       this.isLoggedIn.set(!!user);
       this.currentUid.set(user?.uid ?? null);
-      this.authInitialized.set(true); // Auth-Zustand ist jetzt bekannt
       if (user) {
         // Merge guest cart into Firestore, then load display name + role
         await this.warenkorbService.mergeGuestCart().catch(() => {});
-        this.userService.getCurrentUser().then(u => {
+        try {
+          const u = await this.userService.getCurrentUser();
           this.displayName.set(u.displayName ?? u.vorname ?? null);
           const rolle = u.rolle ?? Rolle.KUNDE;
           this.currentRolle.set(rolle);
@@ -46,12 +46,16 @@ export class AuthService {
               this.router.navigate([MyRoutes.ADMIN_DASHBOARD]);
             }
           }
-        }).catch(() => { this.justLoggedIn = false; });
+        } catch {
+          this.justLoggedIn = false;
+        }
       } else {
         this.displayName.set(null);
         this.currentRolle.set(null);
         this.currentUid.set(null);
       }
+      // Set only after role is fully resolved so guards don't check too early
+      this.authInitialized.set(true);
     });
   }
 
