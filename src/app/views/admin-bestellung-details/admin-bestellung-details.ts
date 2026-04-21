@@ -1,5 +1,5 @@
 import {Component, inject, OnInit, signal} from '@angular/core';
-import {CommonModule} from '@angular/common';
+import {CommonModule, Location} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {ActivatedRoute} from '@angular/router';
 import {IBestellung} from '../../models/interfaces/IBestellung';
@@ -24,6 +24,7 @@ export class AdminBestellungDetails implements OnInit {
   private bestellungService = inject(BestellungService);
   private routingService = inject(RoutingService);
   private dialogService = inject(DialogService);
+  private location = inject(Location);
 
   protected bestellung = signal<IBestellung | null>(null);
   protected loading = signal(true);
@@ -81,7 +82,7 @@ export class AdminBestellungDetails implements OnInit {
     }
   }
 
-  goBack() { this.routingService.route(MyRoutes.ADMIN_BESTELLUNGEN_OVERVIEW); }
+  goBack() { this.location.back(); }
 
   get total(): number {
     return (this.bestellung()?.produkte ?? []).reduce((s, p) => s + (p.preis ?? 0) * (p.anzahl ?? 0), 0);

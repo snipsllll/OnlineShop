@@ -1,5 +1,5 @@
 import {Component, ElementRef, inject, OnInit, signal, ViewChild} from '@angular/core';
-import {CommonModule} from '@angular/common';
+import {CommonModule, Location} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {ActivatedRoute} from '@angular/router';
 import {IProdukt} from '../../models/interfaces/IProdukt';
@@ -25,6 +25,7 @@ export class AdminProductDetails implements OnInit {
   private produktService = inject(ProduktService);
   private storageService = inject(StorageService);
   private routingService = inject(RoutingService);
+  private location = inject(Location);
 
   protected loading = signal(true);
   protected saving = signal(false);
@@ -135,7 +136,7 @@ export class AdminProductDetails implements OnInit {
     }
   }
 
-  goBack() { this.routingService.route(MyRoutes.ADMIN_PRODUCTS_OVERVIEW); }
+  goBack() { this.location.back(); }
 
   get isValid(): boolean {
     return !!((this.bezeichnung ?? '').trim() && (this.beschreibung ?? '').trim() && this.preis > 0 && this.lagerbestand >= 0);

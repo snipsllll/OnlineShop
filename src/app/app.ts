@@ -3,6 +3,7 @@ import {CommonModule} from '@angular/common';
 import {RouterOutlet} from '@angular/router';
 import {Topbar} from './Topbar/topbar/topbar';
 import {DialogService} from './services/dialog.service';
+import {ScrollRestorationService} from './services/scroll-restoration.service';
 import {Login} from './dialogs/login/login';
 import {Register} from './dialogs/register/register';
 import {Confirm} from './dialogs/confirm/confirm';
@@ -20,4 +21,6 @@ import {DevBanner} from './components/dev-banner/dev-banner';
 })
 export class App {
   protected dialogService = inject(DialogService);
+  // Eagerly initialize so router events are captured from the start
+  private _scrollRestoration = inject(ScrollRestorationService);
 }

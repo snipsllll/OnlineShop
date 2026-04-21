@@ -1,5 +1,5 @@
 import {Component, effect, inject, OnInit, signal} from '@angular/core';
-import {CommonModule} from '@angular/common';
+import {CommonModule, Location} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {ActivatedRoute} from '@angular/router';
 import {IProdukt} from '../../models/interfaces/IProdukt';
@@ -27,6 +27,7 @@ export class ProductDetails implements OnInit {
   private authService = inject(AuthService);
   private dialogService = inject(DialogService);
   private routingService = inject(RoutingService);
+  private location = inject(Location);
 
   protected produkt = signal<IProdukt | null>(null);
   protected loading = signal(true);
@@ -105,7 +106,7 @@ export class ProductDetails implements OnInit {
     this.selectedImageIndex = index;
   }
 
-  goBack() { this.routingService.route(MyRoutes.PRODUKTE_OVERVIEW); }
+  goBack() { this.location.back(); }
   goToCart() { this.routingService.route(MyRoutes.WARENKORB); }
 
   get sortedImages() {
