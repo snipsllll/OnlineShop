@@ -6,6 +6,7 @@ import {WarenkorbService} from '../../services/warenkorb.service';
 import {FavoritService} from '../../services/favorit.service';
 import {AuthService} from '../../services/auth.service';
 import {DialogService} from '../../services/dialog.service';
+import {BreakpointService} from '../../services/breakpoint.service';
 import {MyRoutes} from '../../models/enums/MyRoutes';
 
 @Component({
@@ -25,6 +26,7 @@ export class ProductKachel {
   private favoritService = inject(FavoritService);
   private authService = inject(AuthService);
   private dialogService = inject(DialogService);
+  protected bp = inject(BreakpointService);
 
   protected addingToCart = signal(false);
   protected addedToCart = signal(false);

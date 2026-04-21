@@ -17,16 +17,20 @@
 
   <div class="kachel__body">
     <h3 class="kachel__name">{{ produkt.bezeichnung }}</h3>
-    <p class="kachel__desc">{{ produkt.beschreibung }}</p>
-    <div class="kachel__stock">
-      @if (produkt.lagerbestand > 5) {
-        <span class="badge badge--success">Auf Lager ({{ produkt.lagerbestand }})</span>
-      } @else if (produkt.lagerbestand > 0) {
-        <span class="badge badge--warning">Nur noch {{ produkt.lagerbestand }} verfügbar</span>
-      } @else {
-        <span class="badge badge--error">Ausverkauft</span>
-      }
-    </div>
+    @if (!bp.isMobile()) {
+      <p class="kachel__desc">{{ produkt.beschreibung }}</p>
+    }
+    @if (!bp.isMobile()) {
+      <div class="kachel__stock">
+        @if (produkt.lagerbestand > 5) {
+          <span class="badge badge--success">Auf Lager ({{ produkt.lagerbestand }})</span>
+        } @else if (produkt.lagerbestand > 0) {
+          <span class="badge badge--warning">Nur noch {{ produkt.lagerbestand }} verfügbar</span>
+        } @else {
+          <span class="badge badge--error">Ausverkauft</span>
+        }
+      </div>
+    }
     <div class="kachel__footer">
       <span class="kachel__price">{{ priceFormatted }}</span>
       <button class="kachel__cart-btn" (click)="addToCart($event)" [disabled]="!produkt.verfuegbar || addingToCart() || addedToCart()" [class.kachel__cart-btn--added]="addedToCart()">

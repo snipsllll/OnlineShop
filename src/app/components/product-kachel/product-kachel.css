@@ -199,6 +199,54 @@
   font-size: 20px;
 }
 
+@media (max-width: 640px) {
+  .kachel__img-wrap {
+    aspect-ratio: 1/1;
+  }
+
+  .kachel__body {
+    padding: 10px;
+    gap: 6px;
+  }
+
+  .kachel__name {
+    font-size: 13px;
+    -webkit-line-clamp: 1;
+  }
+
+  .kachel__desc,
+  .kachel__stock {
+    display: none;
+  }
+
+  .kachel__footer {
+    padding-top: 8px;
+    margin-top: 0;
+  }
+
+  .kachel__price {
+    font-size: 15px;
+  }
+
+  .kachel__cart-btn {
+    width: 32px;
+    height: 32px;
+  }
+
+  .kachel__cart-btn .material-symbols-outlined {
+    font-size: 17px;
+  }
+
+  .kachel__fav-btn {
+    width: 28px;
+    height: 28px;
+  }
+
+  .kachel__fav-btn .material-symbols-outlined {
+    font-size: 15px;
+  }
+}
+
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
