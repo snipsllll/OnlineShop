@@ -516,8 +516,30 @@
 }
 
 .img-indicator.has-images {
-  background: var(--primary-light);
-  color: var(--primary);
+  background: var(--bg);
+  overflow: hidden;
+  position: relative;
+  padding: 0;
+}
+
+.img-preview-tiny {
+  width: 44px;
+  height: 44px;
+  object-fit: cover;
+  display: block;
+}
+
+.img-extra-count {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 0.6rem;
+  font-weight: 700;
+  padding: 1px 4px;
+  border-radius: 3px;
+  line-height: 1.4;
 }
 
 .img-indicator.no-images {
@@ -528,11 +550,6 @@
 
 .img-indicator .material-symbols-outlined {
   font-size: 20px;
-}
-
-.img-count {
-  font-size: 0.65rem;
-  line-height: 1;
 }
 
 /* Product name cell */

@@ -141,17 +141,17 @@
               <p>Noch keine Bilder hinzugefügt.</p>
             </div>
           } @else {
-            <ul class="image-list">
+            <div class="img-thumb-grid">
               @for (img of imgRefs; track img.position; let i = $index) {
-                <li class="image-item">
-                  <span class="image-position">{{ i + 1 }}</span>
-                  <span class="image-path" [title]="img.path">{{ img.path }}</span>
-                  <button class="remove-img-btn" (click)="removeImage(i)" title="Bild entfernen">
+                <div class="img-thumb-item">
+                  <img class="img-thumb" [src]="img.path" [alt]="'Bild ' + (i + 1)" />
+                  <span class="img-thumb-pos">{{ i + 1 }}</span>
+                  <button class="img-thumb-remove" (click)="removeImage(i)" title="Bild entfernen">
                     <span class="material-symbols-outlined">close</span>
                   </button>
-                </li>
+                </div>
               }
-            </ul>
+            </div>
           }
 
           <input #fileInput type="file" accept="image/*" multiple hidden (change)="onFileSelected($event)" />

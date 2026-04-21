@@ -272,8 +272,10 @@
                     <div class="img-cell">
                       @if (produkt.imgRefs && produkt.imgRefs.length > 0) {
                         <div class="img-indicator has-images" [title]="produkt.imgRefs.length + ' Bild(er)'">
-                          <span class="material-symbols-outlined">image</span>
-                          <span class="img-count">{{ produkt.imgRefs.length }}</span>
+                          <img class="img-preview-tiny" [src]="produkt.imgRefs[0].path" [alt]="produkt.bezeichnung" />
+                          @if (produkt.imgRefs.length > 1) {
+                            <span class="img-extra-count">+{{ produkt.imgRefs.length - 1 }}</span>
+                          }
                         </div>
                       } @else {
                         <div class="img-indicator no-images" title="Kein Bild">
