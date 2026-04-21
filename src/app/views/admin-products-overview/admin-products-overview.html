@@ -72,6 +72,45 @@
     </div>
   </div>
 
+  <!-- Export category filter panel -->
+  @if (showExportPanel()) {
+    <div class="export-panel">
+      <div class="export-panel__header">
+        <span class="material-symbols-outlined">filter_list</span>
+        Kategorien für Export auswählen
+      </div>
+      <div class="export-panel__options">
+        <label class="export-panel__option export-panel__option--all">
+          <input
+            type="checkbox"
+            [checked]="exportAllChecked"
+            [indeterminate]="exportSomeChecked"
+            (change)="toggleExportAll()"
+          />
+          <span>Alle Kategorien</span>
+        </label>
+        <label class="export-panel__option">
+          <input type="checkbox" [checked]="isExportKatChecked('__none__')" (change)="toggleExportKat('__none__')" />
+          <span>Ohne Kategorie</span>
+        </label>
+        @for (k of kategorien(); track k.id) {
+          <label class="export-panel__option">
+            <input type="checkbox" [checked]="isExportKatChecked(k.id)" (change)="toggleExportKat(k.id)" />
+            <span>{{ k.name }}</span>
+          </label>
+        }
+      </div>
+      <div class="export-panel__actions">
+        <span class="export-panel__hint">{{ exportKatFilter().size }} von {{ kategorien().length + 1 }} ausgewählt</span>
+        <button class="btn-secondary btn-sm" (click)="showExportPanel.set(false)">Abbrechen</button>
+        <button class="btn-primary btn-sm" (click)="runExport()" [disabled]="exportKatFilter().size === 0">
+          <span class="material-symbols-outlined btn-icon">download</span>
+          Exportieren
+        </button>
+      </div>
+    </div>
+  }
+
   <!-- Bulk action bar -->
   @if (selectedCount() > 0) {
     <div class="bulk-bar">

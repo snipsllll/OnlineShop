@@ -194,6 +194,77 @@
   font-size: 17px;
 }
 
+/* Export panel */
+.export-panel {
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  padding: 16px;
+  margin-bottom: 12px;
+  animation: bulkBarIn 150ms ease;
+}
+
+.export-panel__header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 12px;
+}
+
+.export-panel__header .material-symbols-outlined {
+  font-size: 20px;
+  color: var(--primary);
+}
+
+.export-panel__options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  margin-bottom: 14px;
+}
+
+.export-panel__option {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 0.875rem;
+  color: var(--text);
+  cursor: pointer;
+  user-select: none;
+}
+
+.export-panel__option input[type="checkbox"] {
+  width: 15px;
+  height: 15px;
+  accent-color: var(--primary);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.export-panel__option--all {
+  font-weight: 600;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+  width: 100%;
+}
+
+.export-panel__actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+}
+
+.export-panel__hint {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-right: auto;
+}
+
 /* Bulk bar */
 .bulk-bar {
   display: flex;

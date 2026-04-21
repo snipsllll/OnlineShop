@@ -8,6 +8,7 @@ import {ProduktService} from '../../services/produkt.service';
 import {KategorieService} from '../../services/kategorie.service';
 import {RoutingService} from '../../services/routing.service';
 import {DialogService} from '../../services/dialog.service';
+import {AdminProductsStateService} from '../../services/admin-products-state.service';
 import {MyRoutes} from '../../models/enums/MyRoutes';
 import {AdminNav} from '../../components/admin-nav/admin-nav';
 
@@ -27,9 +28,12 @@ export class AdminProductsOverview implements OnInit {
   private kategorieService = inject(KategorieService);
   private routingService = inject(RoutingService);
   private dialogService = inject(DialogService);
+  private stateService = inject(AdminProductsStateService);
 
   protected kategorien = signal<IKategorie[]>([]);
   protected bulkAssigning = signal(false);
+  protected showExportPanel = signal(false);
+  protected exportKatFilter = signal<Set<string>>(new Set());
   protected readonly PAGE_SIZE = 20;
   protected currentPage = signal(1);
   protected totalCount = signal(0);
@@ -292,7 +296,35 @@ export class AdminProductsOverview implements OnInit {
   }
 
   // ── Init ──────────────────────────────────────────────────────────────────
-  async ngOnInit() { await this.initialLoad(); }
+  async ngOnInit() {
+    const saved = this.stateService.state;
+    if (saved) {
+      this.stateService.state = null;
+      this._searchText = saved.searchText;
+      this.filterBezeichnung = saved.filterBezeichnung;
+      this.filterPreisMin = saved.filterPreisMin;
+      this.filterPreisMax = saved.filterPreisMax;
+      this.filterLagerMin = saved.filterLagerMin;
+      this.filterLagerMax = saved.filterLagerMax;
+      this.filterVerfuegbar = saved.filterVerfuegbar;
+      this.filterHasImage = saved.filterHasImage;
+      this.sortCol.set(saved.sortCol as SortCol | null);
+      this.sortDir.set(saved.sortDir);
+
+      await this.initialLoad();
+
+      if (this.hasActiveFiltersOrSort) {
+        await this.onFilterOrSortChange();
+        if (saved.page > 1) this.currentPage.set(saved.page);
+      } else if (saved.page > 1) {
+        await this.loadPage(saved.page);
+      }
+
+      setTimeout(() => window.scrollTo({ top: saved.scrollY, behavior: 'instant' as ScrollBehavior }), 200);
+    } else {
+      await this.initialLoad();
+    }
+  }
 
   private async initialLoad() {
     this.loading.set(true);
@@ -351,8 +383,32 @@ export class AdminProductsOverview implements OnInit {
   }
 
   // ── CRUD ──────────────────────────────────────────────────────────────────
-  addProdukt() { this.routingService.route(MyRoutes.ADMIN_PRODUCT_DETAILS, 'new'); }
-  editProdukt(id: string) { this.routingService.route(MyRoutes.ADMIN_PRODUCT_DETAILS, id); }
+  addProdukt() {
+    this.saveState();
+    this.routingService.route(MyRoutes.ADMIN_PRODUCT_DETAILS, 'new');
+  }
+
+  editProdukt(id: string) {
+    this.saveState();
+    this.routingService.route(MyRoutes.ADMIN_PRODUCT_DETAILS, id);
+  }
+
+  private saveState() {
+    this.stateService.state = {
+      page: this.currentPage(),
+      searchText: this._searchText,
+      filterBezeichnung: this.filterBezeichnung,
+      filterPreisMin: this.filterPreisMin,
+      filterPreisMax: this.filterPreisMax,
+      filterLagerMin: this.filterLagerMin,
+      filterLagerMax: this.filterLagerMax,
+      filterVerfuegbar: this.filterVerfuegbar,
+      filterHasImage: this.filterHasImage,
+      sortCol: this.sortCol(),
+      sortDir: this.sortDir(),
+      scrollY: window.scrollY,
+    };
+  }
 
   deleteProdukt(id: string) {
     this.dialogService.openConfirm('Produkt löschen', 'Soll dieses Produkt wirklich gelöscht werden?', async () => {
@@ -375,17 +431,73 @@ export class AdminProductsOverview implements OnInit {
   }
 
   // ── Export ────────────────────────────────────────────────────────────────
-  async exportProdukte() {
+  exportProdukte() {
+    const kats = this.kategorien();
+    const allIds = new Set(['__none__', ...kats.map(k => k.id)]);
+    this.exportKatFilter.set(allIds);
+    if (kats.length === 0) {
+      this.runExport();
+    } else {
+      this.showExportPanel.set(true);
+    }
+  }
+
+  get exportAllChecked(): boolean {
+    const f = this.exportKatFilter();
+    return f.has('__none__') && this.kategorien().every(k => f.has(k.id));
+  }
+
+  get exportSomeChecked(): boolean {
+    return this.exportKatFilter().size > 0 && !this.exportAllChecked;
+  }
+
+  isExportKatChecked(id: string): boolean {
+    return this.exportKatFilter().has(id);
+  }
+
+  toggleExportAll() {
+    if (this.exportAllChecked) {
+      this.exportKatFilter.set(new Set());
+    } else {
+      this.exportKatFilter.set(new Set(['__none__', ...this.kategorien().map(k => k.id)]));
+    }
+  }
+
+  toggleExportKat(id: string) {
+    const next = new Set(this.exportKatFilter());
+    next.has(id) ? next.delete(id) : next.add(id);
+    this.exportKatFilter.set(next);
+  }
+
+  async runExport() {
+    this.showExportPanel.set(false);
+    const filter = this.exportKatFilter();
     const all = await this.produktService.getProdukte();
-    const data = all.map(p => ({
+    const kats = this.kategorien();
+    const isFullExport = filter.has('__none__') && kats.every(k => filter.has(k.id));
+    const produkte = isFullExport ? all : all.filter(p => {
+      const kid = p.kategorieId;
+      return kid ? filter.has(kid) : filter.has('__none__');
+    });
+    const data = produkte.map(p => ({
       id: p.id, bezeichnung: p.bezeichnung, beschreibung: p.beschreibung,
       preis: p.preis, verfuegbar: p.verfuegbar, lagerbestand: p.lagerbestand,
       imgRefs: (p.imgRefs ?? []).map(img => ({ url: img.path })),
     }));
+    const date = new Date().toISOString().slice(0, 10);
+    let suffix = '';
+    if (!isFullExport) {
+      const parts: string[] = [];
+      if (filter.has('__none__')) parts.push('ohne_kategorie');
+      for (const k of this.kategorien()) {
+        if (filter.has(k.id)) parts.push(k.name.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_äöüß]/g, ''));
+      }
+      suffix = '_' + parts.join('_');
+    }
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = url; a.download = `produkte_export_${new Date().toISOString().slice(0, 10)}.json`;
+    a.href = url; a.download = `produkte_export_${date}${suffix}.json`;
     a.click(); URL.revokeObjectURL(url);
   }
 
