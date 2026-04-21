@@ -117,12 +117,12 @@
           <button
             class="details__cart-btn btn-primary"
             (click)="addToCart()"
-            [disabled]="!produkt()!.verfuegbar || produkt()!.lagerbestand === 0 || addingToCart"
+            [disabled]="!produkt()!.verfuegbar || produkt()!.lagerbestand === 0 || addingToCart()"
           >
-            @if (addingToCart) {
+            @if (addingToCart()) {
               <div class="spinner spinner--sm"></div>
               Wird hinzugefügt...
-            } @else if (addedToCart) {
+            } @else if (addedToCart()) {
               <span class="material-symbols-outlined">check</span>
               Hinzugefügt!
             } @else {

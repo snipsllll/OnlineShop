@@ -41,11 +41,13 @@ export const routes: Routes = [
 
   // ── Auth-required customer routes ─────────────────────────────
   {path: `${MyRoutes.ACCOUNT_SETTINGS}`, component: AccountSettings, canActivate: [authGuard]},
-  {path: `${MyRoutes.FAVORITEN_LISTE}`, component: FavoritenListe, canActivate: [authGuard]},
-  {path: `${MyRoutes.CHECKOUT}`, component: Checkout, canActivate: [authGuard]},
-  {path: `${MyRoutes.PAYMENT_APPROVAL}`, component: PaymentApproval, canActivate: [authGuard]},
   {path: `${MyRoutes.BESTELLUNGEN_OVERVIEW}`, component: BestellungenOverview, canActivate: [authGuard]},
   {path: `${MyRoutes.BESTELLUNG_DETAILS}/:${RouteParams.BESTELLUNGS_ID}`, component: BestellungDetails, canActivate: [authGuard]},
+
+  // ── Public routes with optional auth ──────────────────────────
+  {path: `${MyRoutes.FAVORITEN_LISTE}`, component: FavoritenListe},
+  {path: `${MyRoutes.CHECKOUT}`, component: Checkout},
+  {path: `${MyRoutes.PAYMENT_APPROVAL}`, component: PaymentApproval},
 
   // ── Admin routes ──────────────────────────────────────────────
   {path: `${MyRoutes.ADMIN_DASHBOARD}`, component: AdminDashboard, canActivate: [adminGuard]},

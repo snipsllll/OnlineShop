@@ -39,10 +39,12 @@
     </div>
 
     <div class="action-buttons">
-      <button class="btn-primary action-btn" (click)="goToOrders()">
-        <span class="material-symbols-outlined">list_alt</span>
-        Meine Bestellungen
-      </button>
+      @if (authService.isLoggedIn()) {
+        <button class="btn-primary action-btn" (click)="goToOrders()">
+          <span class="material-symbols-outlined">list_alt</span>
+          Meine Bestellungen
+        </button>
+      }
       <button class="btn-secondary action-btn" (click)="goShopping()">
         <span class="material-symbols-outlined">storefront</span>
         Weiter einkaufen

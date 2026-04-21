@@ -13,6 +13,8 @@ import {BestellungService} from '../../services/bestellung.service';
 import {RoutingService} from '../../services/routing.service';
 import {UserService} from '../../services/user.service';
 import {ShopSettingsService} from '../../services/shop-settings.service';
+import {AuthService} from '../../services/auth.service';
+import {DialogService} from '../../services/dialog.service';
 import {MyRoutes} from '../../models/enums/MyRoutes';
 
 @Component({
@@ -28,6 +30,8 @@ export class Checkout implements OnInit {
   private bestellungService = inject(BestellungService);
   private routingService = inject(RoutingService);
   private userService = inject(UserService);
+  private authService = inject(AuthService);
+  private dialogService = inject(DialogService);
   protected settings = inject(ShopSettingsService);
 
   protected loading = signal(true);
@@ -85,6 +89,10 @@ export class Checkout implements OnInit {
   }
 
   async submitOrder() {
+    if (!this.authService.isLoggedIn()) {
+      this.dialogService.openLogin();
+      return;
+    }
     this.submitting.set(true);
     try {
       const positionen: IBestellPosition[] = this.cartProdukte().map(i => ({

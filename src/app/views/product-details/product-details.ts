@@ -33,8 +33,8 @@ export class ProductDetails implements OnInit {
   protected loading = signal(true);
   protected isFavorit = signal(false);
   protected anzahl = 1;
-  protected addingToCart = false;
-  protected addedToCart = false;
+  protected addingToCart = signal(false);
+  protected addedToCart = signal(false);
   protected selectedImageIndex = 0;
 
   constructor() {
@@ -67,13 +67,13 @@ export class ProductDetails implements OnInit {
   async addToCart() {
     const p = this.produkt();
     if (!p) return;
-    this.addingToCart = true;
+    this.addingToCart.set(true);
     try {
       await this.warenkorbService.addToWarenkorb(p.id, this.anzahl);
-      this.addedToCart = true;
-      setTimeout(() => { this.addedToCart = false; }, 2000);
+      this.addedToCart.set(true);
+      setTimeout(() => { this.addedToCart.set(false); }, 2000);
     } finally {
-      this.addingToCart = false;
+      this.addingToCart.set(false);
     }
   }
 

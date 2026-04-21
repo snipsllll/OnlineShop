@@ -53,7 +53,7 @@ export class Topbar {
   goFavorites() { this.routingService.route(MyRoutes.FAVORITEN_LISTE); this.closeMenu(); }
   goCart() { this.routingService.route(MyRoutes.WARENKORB); this.closeMenu(); }
   goAccount() { this.routingService.route(MyRoutes.ACCOUNT_SETTINGS); this.closeMenu(); }
-  goOrders() { this.routingService.route(MyRoutes.BESTELLUNGEN_OVERVIEW); }
+  goOrders() { this.routingService.route(MyRoutes.BESTELLUNGEN_OVERVIEW); this.closeMenu(); }
   goAdminPanel() { this.routingService.route(MyRoutes.ADMIN_DASHBOARD); this.closeMenu(); }
   openLogin() { this.dialogService.openLogin(); this.closeMenu(); }
   async logout() {

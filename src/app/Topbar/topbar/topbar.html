@@ -17,6 +17,11 @@
           <span class="topbar__cart-badge">{{ cartCount() }}</span>
         }
       </button>
+      @if (authService.isLoggedIn()) {
+        <button class="topbar__icon-btn topbar__desktop-only" (click)="goOrders()" title="Meine Bestellungen">
+          <span class="material-symbols-outlined">list_alt</span>
+        </button>
+      }
       @if (authService.isLoggedIn() && isAdmin) {
         <button class="topbar__icon-btn topbar__admin-btn topbar__desktop-only" (click)="goAdminPanel()" title="Admin Panel">
           <span class="material-symbols-outlined">admin_panel_settings</span>
@@ -60,10 +65,18 @@
             <span class="topbar__mobile-badge">{{ cartCount() }}</span>
           }
         </button>
-        <button class="topbar__mobile-link" (click)="goAccount()">
-          <span class="material-symbols-outlined">person</span>
-          <span>Mein Konto</span>
-        </button>
+        @if (authService.isLoggedIn()) {
+          <button class="topbar__mobile-link" (click)="goOrders()">
+            <span class="material-symbols-outlined">list_alt</span>
+            <span>Meine Bestellungen</span>
+          </button>
+        }
+        @if (authService.isLoggedIn()) {
+          <button class="topbar__mobile-link" (click)="goAccount()">
+            <span class="material-symbols-outlined">person</span>
+            <span>Mein Konto</span>
+          </button>
+        }
         @if (authService.isLoggedIn() && isAdmin) {
           <button class="topbar__mobile-link topbar__mobile-link--admin" (click)="goAdminPanel()">
             <span class="material-symbols-outlined">admin_panel_settings</span>
