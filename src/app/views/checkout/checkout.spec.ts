@@ -7,6 +7,8 @@ import { BestellungService } from '../../services/bestellung.service';
 import { RoutingService } from '../../services/routing.service';
 import { UserService } from '../../services/user.service';
 import { ShopSettingsService } from '../../services/shop-settings.service';
+import { AuthService } from '../../services/auth.service';
+import { DialogService } from '../../services/dialog.service';
 
 function buildComponent(devBannerEnabled = false) {
   const settingsMock = { devBannerEnabled: signal(devBannerEnabled) };
@@ -20,6 +22,8 @@ function buildComponent(devBannerEnabled = false) {
       { provide: RoutingService,    useValue: { route: vi.fn() } },
       { provide: UserService,       useValue: { getCurrentUser: vi.fn().mockResolvedValue({}) } },
       { provide: ShopSettingsService, useValue: settingsMock },
+      { provide: AuthService,       useValue: { isLoggedIn: signal(true) } },
+      { provide: DialogService,     useValue: { openLogin: vi.fn() } },
     ],
   });
 

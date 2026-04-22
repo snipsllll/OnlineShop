@@ -1,4 +1,4 @@
-import {Component, inject, OnInit, signal} from '@angular/core';
+import {Component, inject, OnInit, signal, ViewChild} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {IProdukt} from '../../models/interfaces/IProdukt';
@@ -18,6 +18,9 @@ import {DialogService} from '../../services/dialog.service';
 import {MyRoutes} from '../../models/enums/MyRoutes';
 import {PaypalButton} from '../../components/paypal-button/paypal-button';
 
+type CheckoutStep = 'address' | 'payment';
+type PaymentMethod = 'paypal' | 'card' | 'paylater';
+
 @Component({
   selector: 'app-checkout',
   standalone: true,
@@ -31,7 +34,7 @@ export class Checkout implements OnInit {
   private bestellungService = inject(BestellungService);
   private routingService = inject(RoutingService);
   private userService = inject(UserService);
-  private authService = inject(AuthService);
+  protected authService = inject(AuthService);
   private dialogService = inject(DialogService);
   protected settings = inject(ShopSettingsService);
 
@@ -39,8 +42,17 @@ export class Checkout implements OnInit {
   protected submitting = signal(false);
   protected addressPrefilled = signal(false);
   protected cartProdukte = signal<Array<{produkt: IProdukt, anzahl: number}>>([]);
+  protected step = signal<CheckoutStep>('address');
 
   protected adresse: Partial<IAdresse> = { strasse: '', hausnummer: '', plz: '', ort: '', land: 'Deutschland' };
+  protected paymentMethod: PaymentMethod = 'paypal';
+  protected paypalReady = signal(false);
+  protected cardReady = signal(false);
+  protected paylaterReady = signal(false);
+
+  @ViewChild('paypalFundingPaypal') private paypalFundingPaypal?: PaypalButton;
+  @ViewChild('paypalFundingCard') private paypalFundingCard?: PaypalButton;
+  @ViewChild('paypalFundingPaylater') private paypalFundingPaylater?: PaypalButton;
 
   async ngOnInit() {
     this.loading.set(true);
@@ -89,7 +101,95 @@ export class Checkout implements OnInit {
     return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(p);
   }
 
-  async submitOrder() {
+  get paymentMethodLabel(): string {
+    switch (this.paymentMethod) {
+      case 'paypal':
+        return 'PayPal';
+      case 'card':
+        return 'Kreditkarte';
+      case 'paylater':
+        return 'Später bezahlen';
+      default:
+        return this.paymentMethod;
+    }
+  }
+
+  get selectedPaymentReady(): boolean {
+    switch (this.paymentMethod) {
+      case 'paypal':
+        return this.paypalReady();
+      case 'card':
+        return this.cardReady();
+      case 'paylater':
+        return this.paylaterReady();
+      default:
+        return false;
+    }
+  }
+
+  continueToPayment() {
+    if (!this.isFormValid) return;
+    this.step.set('payment');
+  }
+
+  backToAddress() {
+    this.step.set('address');
+  }
+
+  async pay() {
+    console.log(1)
+    if (this.submitting()) return;
+    if (!this.authService.isLoggedIn()) {
+      this.dialogService.openLogin();
+      return;
+    }
+    if (!this.isFormValid) {
+      this.step.set('address');
+      return;
+    }
+
+    if (this.settings.devBannerEnabled()) {
+      await this.submitOrder({ paid: true, paymentMethod: this.paymentMethod });
+      return;
+    }
+
+    const opened = this.openSelectedPaymentDialog();
+    if (!opened) {
+      this.dialogService.openMessage(
+        'Zahlung wird geladen',
+        'Der Zahlungsdialog ist noch nicht bereit. Bitte versuche es in ein paar Sekunden erneut.'
+      );
+    }
+  }
+
+  private openSelectedPaymentDialog(): boolean {
+    switch (this.paymentMethod) {
+      case 'paypal':
+        return this.paypalFundingPaypal?.open() ?? false;
+      case 'card':
+        return this.paypalFundingCard?.open() ?? false;
+      case 'paylater':
+        return this.paypalFundingPaylater?.open() ?? false;
+      default:
+        return false;
+    }
+  }
+
+  onPaymentReady(method: PaymentMethod, ready: boolean) {
+    if (method === 'paypal') this.paypalReady.set(ready);
+    if (method === 'card') this.cardReady.set(ready);
+    if (method === 'paylater') this.paylaterReady.set(ready);
+  }
+
+  onPaymentResult(method: PaymentMethod, ok: boolean) {
+    if (!ok) {
+      this.dialogService.openMessage('Zahlung abgebrochen', 'Die Zahlung wurde abgebrochen oder ist fehlgeschlagen.');
+      return;
+    }
+    void this.submitOrder({ paid: true, paymentMethod: method });
+  }
+
+  async submitOrder(opts?: { paid?: boolean; paymentMethod?: PaymentMethod }) {
     if (!this.authService.isLoggedIn()) {
       this.dialogService.openLogin();
       return;
@@ -102,21 +202,19 @@ export class Checkout implements OnInit {
         preis: i.produkt.preis,
         anzahl: i.anzahl
       }));
+      const paid = this.settings.devBannerEnabled() ? true : !!opts?.paid;
       const bestellung: IBestellung = {
         id: '',
         produkte: positionen,
         bestelldatum: new Date(),
         lieferadresse: this.adresse as IAdresse,
         bestellungsZustand: BestellungsZustand.EINGEGANGEN,
-        // Im Dev-Modus wird die Zahlung sofort als bezahlt simuliert
-        zahlungsZustand: this.settings.devBannerEnabled()
-          ? ZahlungsZustand.BEZAHLT
-          : ZahlungsZustand.NOCH_AUSSTEHEND,
+        zahlungsZustand: paid ? ZahlungsZustand.BEZAHLT : ZahlungsZustand.NOCH_AUSSTEHEND,
         isNew: true,
       };
       await this.bestellungService.addBestellung(bestellung);
       await this.warenkorbService.clearWarenkorb();
-      this.routingService.route(MyRoutes.PAYMENT_APPROVAL);
+      this.routingService.route(MyRoutes.PAYMENT_APPROVAL, String(opts?.paymentMethod ?? this.paymentMethod));
     } finally {
       this.submitting.set(false);
     }
@@ -125,13 +223,5 @@ export class Checkout implements OnInit {
   get isFormValid(): boolean {
     const a = this.adresse;
     return !!(a.strasse && a.hausnummer && a.plz && a.ort && a.land);
-  }
-
-  onPaypalResult(eventArgs: boolean) {
-    if (eventArgs) {
-      this.submitOrder();
-    } else {
-      console.log(2)
-    }
   }
 }

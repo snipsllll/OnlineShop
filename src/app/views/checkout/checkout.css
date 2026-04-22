@@ -55,6 +55,17 @@
   box-shadow: 0 0 0 4px var(--primary-light);
 }
 
+.step--done .step-circle {
+  border-color: var(--success);
+  background: var(--success);
+  color: #fff;
+}
+
+.step--done .step-label {
+  color: var(--success);
+  font-weight: 600;
+}
+
 .step-label {
   font-size: 0.8rem;
   font-weight: 500;
@@ -72,6 +83,10 @@
   background: var(--border);
   margin: 0 4px;
   margin-bottom: 24px;
+}
+
+.step-connector--done {
+  background: var(--success);
 }
 
 /* Checkout Layout */
@@ -188,6 +203,45 @@ select.form-input {
   font-size: 1rem;
 }
 
+/* Address Summary (Step 2) */
+.address-summary {
+  border: 1px solid var(--border);
+  background: var(--bg);
+  border-radius: var(--radius-md);
+  padding: 16px;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.address-summary__title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.address-summary__title .material-symbols-outlined {
+  font-size: 1.2rem;
+  color: var(--primary);
+}
+
+.address-summary__lines {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.btn-inline {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+}
+
 /* Payment Section */
 .payment-section {
   border-top: 1px solid var(--border);
@@ -240,6 +294,65 @@ select.form-input {
   line-height: 1.5;
 }
 
+.payment-methods {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.payment-method {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 12px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  cursor: pointer;
+  user-select: none;
+  transition: border-color var(--transition), box-shadow var(--transition), transform var(--transition);
+}
+
+.payment-method input {
+  margin: 0;
+}
+
+.payment-method--active {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+.payment-method__label {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.external-payment-hint {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px;
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--bg);
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.external-payment-hint .material-symbols-outlined {
+  font-size: 1.2rem;
+  color: var(--accent);
+  margin-top: 1px;
+}
+
+.paypal-ui {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
 .paypal-placeholder {
   border: 2px dashed var(--border);
   border-radius: var(--radius-md);
@@ -276,6 +389,7 @@ select.form-input {
   font-size: 1rem;
   font-weight: 600;
   border-radius: var(--radius-md);
+  min-height: 55px;
 }
 
 .submit-btn:disabled {
@@ -290,6 +404,49 @@ select.form-input {
 .spinner--sm {
   width: 18px;
   height: 18px;
+}
+
+.pay-btn-wrap {
+  position: relative;
+  width: 100%;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.pay-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.pay-overlay--active {
+  pointer-events: auto;
+}
+
+.pay-overlay__slot {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.pay-overlay__slot--active {
+  pointer-events: auto;
+}
+
+.pay-overlay__slot app-paypal-button {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.pay-btn {
+  position: relative;
+  z-index: 2;
+}
+
+.pay-btn--passthrough {
+  pointer-events: none;
 }
 
 /* Summary Card */
@@ -472,5 +629,9 @@ select.form-input {
 
   .step-connector {
     width: 40px;
+  }
+
+  .payment-methods {
+    grid-template-columns: 1fr;
   }
 }

@@ -49,6 +49,7 @@ export const routes: Routes = [
   {path: `${MyRoutes.FAVORITEN_LISTE}`, component: FavoritenListe},
   {path: `${MyRoutes.CHECKOUT}`, component: Checkout},
   {path: `${MyRoutes.PAYMENT_APPROVAL}`, component: PaymentApproval},
+  {path: `${MyRoutes.PAYMENT_APPROVAL}/:method`, component: PaymentApproval},
 
   // ── Admin routes ──────────────────────────────────────────────
   {path: `${MyRoutes.ADMIN_DASHBOARD}`, component: AdminDashboard, canActivate: [adminGuard]},
