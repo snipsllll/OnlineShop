@@ -16,11 +16,12 @@ import {ShopSettingsService} from '../../services/shop-settings.service';
 import {AuthService} from '../../services/auth.service';
 import {DialogService} from '../../services/dialog.service';
 import {MyRoutes} from '../../models/enums/MyRoutes';
+import {PaypalButton} from '../../components/paypal-button/paypal-button';
 
 @Component({
   selector: 'app-checkout',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, PaypalButton],
   templateUrl: './checkout.html',
   styleUrl: './checkout.css',
 })
@@ -124,5 +125,13 @@ export class Checkout implements OnInit {
   get isFormValid(): boolean {
     const a = this.adresse;
     return !!(a.strasse && a.hausnummer && a.plz && a.ort && a.land);
+  }
+
+  onPaypalResult(eventArgs: boolean) {
+    if (eventArgs) {
+      this.submitOrder();
+    } else {
+      console.log(2)
+    }
   }
 }

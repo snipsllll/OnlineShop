@@ -142,6 +142,7 @@
                   </div>
                 </div>
               } @else {
+                <app-paypal-button [amount]="gesamtpreis" (onResult)="onPaypalResult($event)"></app-paypal-button>
                 <div class="paypal-placeholder">
                   <div class="paypal-logo">PayPal</div>
                   <p class="paypal-info">Zahlung erfolgt sicher über PayPal nach der Bestellaufgabe.</p>

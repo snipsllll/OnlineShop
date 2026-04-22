@@ -1,4 +1,4 @@
-import { Component, AfterViewInit, Input } from '@angular/core';
+import {Component, AfterViewInit, Input, EventEmitter, Output} from '@angular/core';
 
 declare const paypal: any;
 
@@ -9,6 +9,7 @@ declare const paypal: any;
 })
 export class PaypalButton implements AfterViewInit {
   @Input() amount = 0;
+  @Output() onResult = new EventEmitter<boolean>();
 
   ngAfterViewInit(): void {
     paypal.Buttons({
@@ -23,12 +24,13 @@ export class PaypalButton implements AfterViewInit {
       onApprove: (_data: any, actions: any) => {
         return actions.order.capture().then((details: any) => {
           console.log('Sandbox Zahlung OK', details);
-          alert('Danke ' + details.payer.name.given_name);
+          this.onResult.emit(true);
         });
       },
 
       onError: (err: any) => {
         console.error('PayPal Sandbox Fehler', err);
+        this.onResult.emit(false);
       }
     }).render('#paypal-button');
   }
