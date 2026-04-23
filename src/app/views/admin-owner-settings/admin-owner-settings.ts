@@ -76,6 +76,12 @@ export class AdminOwnerSettings implements OnInit {
   protected connSaveSuccess = signal(false);
   protected connSaveError = signal(false);
 
+  // PayPal Config (editable)
+  protected paypalConfig = { sandboxClientId: '', sandboxClientSecret: '', liveClientId: '', liveClientSecret: '' };
+  protected paypalSaving = signal(false);
+  protected paypalSaveSuccess = signal(false);
+  protected paypalSaveError = signal(false);
+
   constructor() {
     effect(() => {
       if (!this.settings.initialized()) return;
@@ -166,9 +172,10 @@ export class AdminOwnerSettings implements OnInit {
 
     this.loading.set(true);
     try {
-      const [all, connSnap] = await Promise.all([
+      const [all, connSnap, paypalSnap] = await Promise.all([
         this.userService.getAllUsers(),
         getDoc(doc(db as Firestore, 'settings', 'connections')),
+        getDoc(doc(db as Firestore, 'settings', 'paypalConfig')),
       ]);
       this.elevatedUsers.set(
         all.filter(u => u.rolle === Rolle.OWNER || u.rolle === Rolle.ADMIN)
@@ -189,6 +196,15 @@ export class AdminOwnerSettings implements OnInit {
           };
         }
       }
+      if (paypalSnap.exists()) {
+        const p = paypalSnap.data();
+        this.paypalConfig = {
+          sandboxClientId:     p['sandboxClientId']     ?? '',
+          sandboxClientSecret: p['sandboxClientSecret'] ?? '',
+          liveClientId:        p['liveClientId']        ?? '',
+          liveClientSecret:    p['liveClientSecret']    ?? '',
+        };
+      }
     } finally {
       this.loading.set(false);
     }
@@ -208,6 +224,21 @@ export class AdminOwnerSettings implements OnInit {
       setTimeout(() => this.connSaveError.set(false), 4000);
     } finally {
       this.connSaving.set(false);
+    }
+  }
+
+  async savePaypalConfig() {
+    this.paypalSaving.set(true);
+    this.paypalSaveError.set(false);
+    try {
+      await setDoc(doc(db as Firestore, 'settings', 'paypalConfig'), {...this.paypalConfig});
+      this.paypalSaveSuccess.set(true);
+      setTimeout(() => this.paypalSaveSuccess.set(false), 3000);
+    } catch {
+      this.paypalSaveError.set(true);
+      setTimeout(() => this.paypalSaveError.set(false), 4000);
+    } finally {
+      this.paypalSaving.set(false);
     }
   }
 
