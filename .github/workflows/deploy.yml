@@ -31,7 +31,7 @@ jobs:
           user: ${{ secrets.SFTP_USERNAME }}
           pass: ${{ secrets.SFTP_PASSWORD }}
           port: ${{ secrets.SFTP_PORT }}
-          localDir: ./dist/OnlineShop/browser
+          localDir: ./dist
           remoteDir: ${{ secrets.SFTP_TARGET_DIR }}
           settings: |
             mirror --reverse --delete --verbose --only-newer .
