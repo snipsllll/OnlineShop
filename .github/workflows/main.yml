@@ -11,8 +11,10 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Repo auschecken
+      - name: Repo auschecken (immer develop)
         uses: actions/checkout@v4
+        with:
+          ref: develop
 
       - name: Node installieren
         uses: actions/setup-node@v4
