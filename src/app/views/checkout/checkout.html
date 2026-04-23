@@ -15,14 +15,18 @@
         </div>
         <span class="step-label">Adresse</span>
       </div>
+
       <div class="step-connector" [class.step-connector--done]="step() === 'payment'"></div>
+
       <div class="step" [class.step--active]="step() === 'payment'">
         <div class="step-circle">
           <span class="material-symbols-outlined">payments</span>
         </div>
         <span class="step-label">Zahlung</span>
       </div>
+
       <div class="step-connector"></div>
+
       <div class="step">
         <div class="step-circle">
           <span class="material-symbols-outlined">check</span>
@@ -34,7 +38,9 @@
     <div class="checkout-layout">
       <div class="checkout-main">
         <div class="card form-card">
+
           @if (step() === 'address') {
+
             <h2 class="section-title">
               <span class="material-symbols-outlined">location_on</span>
               Lieferadresse
@@ -48,111 +54,72 @@
             }
 
             <form (ngSubmit)="continueToPayment()" #checkoutForm="ngForm">
+
               <div class="form-row">
                 <div class="form-group">
                   <label class="form-label" for="vorname">Vorname *</label>
-                  <input
-                    id="vorname"
-                    class="form-input"
-                    type="text"
-                    [(ngModel)]="adresse.vorname"
-                    name="vorname"
-                    placeholder="Max"
-                    required
-                  />
+                  <input id="vorname" class="form-input" type="text"
+                         [(ngModel)]="adresse.vorname" name="vorname" required />
                 </div>
+
                 <div class="form-group">
                   <label class="form-label" for="nachname">Nachname *</label>
-                  <input
-                    id="nachname"
-                    class="form-input"
-                    type="text"
-                    [(ngModel)]="adresse.nachname"
-                    name="nachname"
-                    placeholder="Mustermann"
-                    required
-                  />
+                  <input id="nachname" class="form-input" type="text"
+                         [(ngModel)]="adresse.nachname" name="nachname" required />
                 </div>
               </div>
 
               <div class="form-row">
                 <div class="form-group">
                   <label class="form-label" for="strasse">Straße *</label>
-                  <input
-                    id="strasse"
-                    class="form-input"
-                    type="text"
-                    [(ngModel)]="adresse.strasse"
-                    name="strasse"
-                    placeholder="Musterstraße"
-                    required
-                  />
+                  <input id="strasse" class="form-input" type="text"
+                         [(ngModel)]="adresse.strasse" name="strasse" required />
                 </div>
+
                 <div class="form-group form-group--narrow">
                   <label class="form-label" for="hausnummer">Nr. *</label>
-                  <input
-                    id="hausnummer"
-                    class="form-input"
-                    type="text"
-                    [(ngModel)]="adresse.hausnummer"
-                    name="hausnummer"
-                    placeholder="12a"
-                    required
-                  />
+                  <input id="hausnummer" class="form-input" type="text"
+                         [(ngModel)]="adresse.hausnummer" name="hausnummer" required />
                 </div>
               </div>
 
               <div class="form-row">
                 <div class="form-group form-group--narrow">
                   <label class="form-label" for="plz">PLZ *</label>
-                  <input
-                    id="plz"
-                    class="form-input"
-                    type="text"
-                    [(ngModel)]="adresse.plz"
-                    name="plz"
-                    placeholder="12345"
-                    required
-                  />
+                  <input id="plz" class="form-input" type="text"
+                         [(ngModel)]="adresse.plz" name="plz" required />
                 </div>
+
                 <div class="form-group">
                   <label class="form-label" for="ort">Ort *</label>
-                  <input
-                    id="ort"
-                    class="form-input"
-                    type="text"
-                    [(ngModel)]="adresse.ort"
-                    name="ort"
-                    placeholder="Berlin"
-                    required
-                  />
+                  <input id="ort" class="form-input" type="text"
+                         [(ngModel)]="adresse.ort" name="ort" required />
                 </div>
               </div>
 
               <div class="form-group">
                 <label class="form-label" for="land">Land *</label>
-                <select id="land" class="form-input" [(ngModel)]="adresse.land" name="land" required>
-                  <option value="Deutschland">Deutschland</option>
-                  <option value="Österreich">Österreich</option>
-                  <option value="Schweiz">Schweiz</option>
-                  <option value="Frankreich">Frankreich</option>
-                  <option value="Niederlande">Niederlande</option>
-                  <option value="Belgien">Belgien</option>
-                  <option value="Polen">Polen</option>
+                <select id="land" class="form-input"
+                        [(ngModel)]="adresse.land" name="land" required>
+                  <option>Deutschland</option>
+                  <option>Österreich</option>
+                  <option>Schweiz</option>
+                  <option>Frankreich</option>
+                  <option>Niederlande</option>
+                  <option>Belgien</option>
+                  <option>Polen</option>
                 </select>
-              </div>
-
-              <div class="form-note">
-                <span class="material-symbols-outlined">info</span>
-                Alle mit * markierten Felder sind Pflichtfelder.
               </div>
 
               <button type="submit" class="btn-primary submit-btn" [disabled]="!isFormValid">
                 <span class="material-symbols-outlined">arrow_forward</span>
                 Weiter zur Zahlung
               </button>
+
             </form>
+
           } @else {
+
             <h2 class="section-title">
               <span class="material-symbols-outlined">payments</span>
               Zahlung
@@ -163,12 +130,14 @@
                 <span class="material-symbols-outlined">location_on</span>
                 Lieferadresse
               </div>
+
               <div class="address-summary__lines">
                 <div>{{ adresse.vorname }} {{ adresse.nachname }}</div>
                 <div>{{ adresse.strasse }} {{ adresse.hausnummer }}</div>
                 <div>{{ adresse.plz }} {{ adresse.ort }}</div>
                 <div>{{ adresse.land }}</div>
               </div>
+
               <button type="button" class="btn-secondary btn-inline" (click)="backToAddress()">
                 <span class="material-symbols-outlined">edit</span>
                 Adresse bearbeiten
@@ -176,6 +145,7 @@
             </div>
 
             <div class="payment-section">
+
               <h3 class="subsection-title">
                 <span class="material-symbols-outlined">payments</span>
                 Zahlungsmethode auswählen
@@ -183,84 +153,71 @@
 
               <div class="payment-methods">
                 <label class="payment-method" [class.payment-method--active]="paymentMethod === 'paypal'">
-                  <input
-                    type="radio"
-                    name="paymentMethod"
-                    [(ngModel)]="paymentMethod"
-                    value="paypal"
-                  />
-                  <span class="payment-method__label">PayPal</span>
+                  <input type="radio" name="paymentMethod" [(ngModel)]="paymentMethod" value="paypal" />
+                  <span>PayPal</span>
                 </label>
 
                 <label class="payment-method" [class.payment-method--active]="paymentMethod === 'card'">
-                  <input
-                    type="radio"
-                    name="paymentMethod"
-                    [(ngModel)]="paymentMethod"
-                    value="card"
-                  />
-                  <span class="payment-method__label">Kreditkarte</span>
+                  <input type="radio" name="paymentMethod" [(ngModel)]="paymentMethod" value="card" />
+                  <span>Kreditkarte</span>
                 </label>
 
                 <label class="payment-method" [class.payment-method--active]="paymentMethod === 'paylater'">
-                  <input
-                    type="radio"
-                    name="paymentMethod"
-                    [(ngModel)]="paymentMethod"
-                    value="paylater"
-                  />
-                  <span class="payment-method__label">Später bezahlen</span>
+                  <input type="radio" name="paymentMethod" [(ngModel)]="paymentMethod" value="paylater" />
+                  <span>Später bezahlen</span>
                 </label>
               </div>
 
               @if (settings.devBannerEnabled()) {
                 <div class="dev-payment-notice">
-                  <span class="material-symbols-outlined dev-payment-notice__icon">science</span>
+                  <span class="material-symbols-outlined">science</span>
                   <div>
-                    <strong>Simulierte Zahlung</strong>
-                    <p>Dies ist eine Entwicklungsumgebung. Es wird keine echte Zahlung durchgeführt.</p>
+                    <strong>Sandbox-Modus</strong>
+                    <p>Zahlungen laufen über die PayPal Sandbox.</p>
                   </div>
                 </div>
               }
 
-              @if (!settings.devBannerEnabled()) {
-                <div class="external-payment-hint">
-                  <span class="material-symbols-outlined">open_in_new</span>
-                  <span>Beim Klick auf „Zahlen“ öffnet sich der Zahlungsdialog für {{ paymentMethodLabel }}.</span>
-                </div>
-              }
             </div>
 
             <div class="pay-btn-wrap">
-              @if (!settings.devBannerEnabled() && authService.isLoggedIn()) {
+
+              @if (authService.isLoggedIn()) {
                 <div class="pay-overlay" [class.pay-overlay--active]="selectedPaymentReady && !submitting()">
+
                   <div class="pay-overlay__slot" [class.pay-overlay__slot--active]="paymentMethod === 'paypal'">
                     <app-paypal-button
                       #paypalFundingPaypal
                       fundingSource="paypal"
                       [amount]="gesamtpreis"
                       (onReady)="onPaymentReady('paypal', $event)"
-                      (onResult)="onPaymentResult('paypal', $event)"
-                    ></app-paypal-button>
+                      (onTransactionId)="onTransactionId($event)"
+                      (onResult)="onPaymentResult('paypal', $event)">
+                    </app-paypal-button>
                   </div>
+
                   <div class="pay-overlay__slot" [class.pay-overlay__slot--active]="paymentMethod === 'card'">
                     <app-paypal-button
                       #paypalFundingCard
                       fundingSource="card"
                       [amount]="gesamtpreis"
                       (onReady)="onPaymentReady('card', $event)"
-                      (onResult)="onPaymentResult('card', $event)"
-                    ></app-paypal-button>
+                      (onTransactionId)="onTransactionId($event)"
+                      (onResult)="onPaymentResult('card', $event)">
+                    </app-paypal-button>
                   </div>
+
                   <div class="pay-overlay__slot" [class.pay-overlay__slot--active]="paymentMethod === 'paylater'">
                     <app-paypal-button
                       #paypalFundingPaylater
                       fundingSource="paylater"
                       [amount]="gesamtpreis"
                       (onReady)="onPaymentReady('paylater', $event)"
-                      (onResult)="onPaymentResult('paylater', $event)"
-                    ></app-paypal-button>
+                      (onTransactionId)="onTransactionId($event)"
+                      (onResult)="onPaymentResult('paylater', $event)">
+                    </app-paypal-button>
                   </div>
+
                 </div>
               }
 
@@ -269,8 +226,8 @@
                 class="btn-primary submit-btn pay-btn"
                 (click)="pay()"
                 [disabled]="submitting()"
-                [class.pay-btn--passthrough]="!settings.devBannerEnabled() && authService.isLoggedIn() && selectedPaymentReady && !submitting()"
-              >
+                [class.pay-btn--passthrough]="authService.isLoggedIn() && selectedPaymentReady && !submitting()">
+
                 @if (submitting()) {
                   <div class="spinner spinner--sm"></div>
                   Zahlung wird vorbereitet...
@@ -278,67 +235,16 @@
                   <span class="material-symbols-outlined">lock</span>
                   Zahlen
                 }
+
               </button>
+
             </div>
+
           }
+
         </div>
       </div>
-
-      <!-- Order Summary -->
-      <aside class="checkout-summary">
-        <div class="card summary-card">
-          <h2 class="section-title">
-            <span class="material-symbols-outlined">receipt_long</span>
-            Deine Bestellung
-          </h2>
-
-          <div class="summary-items">
-            @for (item of cartProdukte(); track item.produkt.id) {
-              <div class="summary-item">
-                <div class="summary-item-img">
-                  @if (item.produkt.imgRefs && item.produkt.imgRefs.length > 0) {
-                    <img [src]="item.produkt.imgRefs[0].path" [alt]="item.produkt.bezeichnung" />
-                  } @else {
-                    <div class="img-fallback">
-                      <span class="material-symbols-outlined">image</span>
-                    </div>
-                  }
-                  <span class="qty-badge">{{ item.anzahl }}</span>
-                </div>
-                <div class="summary-item-info">
-                  <span class="summary-item-name">{{ item.produkt.bezeichnung }}</span>
-                  <span class="summary-item-price">{{ formatPrice(item.produkt.preis) }}</span>
-                </div>
-                <span class="summary-item-total">{{ formatPrice(item.produkt.preis * item.anzahl) }}</span>
-              </div>
-            }
-          </div>
-
-          <div class="summary-divider"></div>
-
-          <div class="summary-totals">
-            <div class="total-row">
-              <span>Zwischensumme</span>
-              <span>{{ gesamtpreisFormatted }}</span>
-            </div>
-            <div class="total-row">
-              <span>Versand</span>
-              <span class="free-label">Kostenlos</span>
-            </div>
-            <div class="summary-divider"></div>
-            <div class="total-row total-row--final">
-              <span>Gesamt</span>
-              <span class="final-price">{{ gesamtpreisFormatted }}</span>
-            </div>
-            <p class="vat-note">Inkl. MwSt.</p>
-          </div>
-
-          <div class="security-note">
-            <span class="material-symbols-outlined">verified_user</span>
-            <span>SSL-verschlüsselte Übertragung</span>
-          </div>
-        </div>
-      </aside>
     </div>
   }
+
 </div>

@@ -4,11 +4,6 @@ declare const paypal: any;
 
 export type PaypalFundingSource = 'paypal' | 'card' | 'paylater';
 
-export interface PaypalResult {
-  success: boolean;
-  transactionId?: string;
-}
-
 @Component({
   selector: 'app-paypal-button',
   standalone: true,
@@ -18,7 +13,8 @@ export class PaypalButton implements AfterViewInit {
   @ViewChild('container', { static: true }) container!: ElementRef<HTMLDivElement>;
   @Input() amount = 0;
   @Input() fundingSource?: PaypalFundingSource;
-  @Output() onResult = new EventEmitter<PaypalResult>();
+  @Output() onResult = new EventEmitter<boolean>();
+  @Output() onTransactionId = new EventEmitter<string>();
   @Output() onReady = new EventEmitter<boolean>();
 
   private buttons: any | null = null;
@@ -44,17 +40,18 @@ export class PaypalButton implements AfterViewInit {
       onApprove: (_data: any, actions: any) => {
         return actions.order.capture().then((details: any) => {
           const transactionId = details?.purchase_units?.[0]?.payments?.captures?.[0]?.id;
-          this.onResult.emit({ success: true, transactionId });
+          if (transactionId) this.onTransactionId.emit(transactionId);
+          this.onResult.emit(true);
         });
       },
 
       onCancel: () => {
-        this.onResult.emit({ success: false });
+        this.onResult.emit(false);
       },
 
       onError: (err: any) => {
         console.error('PayPal Fehler', err);
-        this.onResult.emit({ success: false });
+        this.onResult.emit(false);
       }
     });
 
