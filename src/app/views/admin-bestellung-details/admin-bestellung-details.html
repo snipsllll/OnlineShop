@@ -248,7 +248,7 @@
               </div>
               <a
                 class="transaction-link"
-                [href]="'https://www.paypal.com/activity/payment/' + bestellung()!.paypalTransactionId"
+                [href]="getPaypalTransactionUrl()"
                 target="_blank"
                 rel="noopener noreferrer"
               >

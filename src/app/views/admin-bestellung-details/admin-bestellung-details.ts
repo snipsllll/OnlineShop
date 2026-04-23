@@ -8,6 +8,7 @@ import {BestellungService} from '../../services/bestellung.service';
 import {UserService} from '../../services/user.service';
 import {RoutingService} from '../../services/routing.service';
 import {DialogService} from '../../services/dialog.service';
+import {ShopSettingsService} from '../../services/shop-settings.service';
 import {MyRoutes} from '../../models/enums/MyRoutes';
 import {RouteParams} from '../../models/enums/RouteParams';
 import {BestellungsZustand} from '../../models/enums/BestellungsZustand';
@@ -27,6 +28,7 @@ export class AdminBestellungDetails implements OnInit {
   private userService = inject(UserService);
   private routingService = inject(RoutingService);
   private dialogService = inject(DialogService);
+  private settings = inject(ShopSettingsService);
   private location = inject(Location);
 
   protected bestellung = signal<IBestellung | null>(null);
@@ -90,6 +92,14 @@ export class AdminBestellungDetails implements OnInit {
   }
 
   goBack() { this.location.back(); }
+
+  getPaypalTransactionUrl(): string {
+    const id = this.bestellung()?.paypalTransactionId ?? '';
+    const base = this.settings.devBannerEnabled()
+      ? 'https://www.sandbox.paypal.com/activity/payment/'
+      : 'https://www.paypal.com/activity/payment/';
+    return base + id;
+  }
 
   getContactMailto(): string {
     const email = this.bestellungUser()?.email ?? '';

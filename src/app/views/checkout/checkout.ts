@@ -16,7 +16,7 @@ import {ShopSettingsService} from '../../services/shop-settings.service';
 import {AuthService} from '../../services/auth.service';
 import {DialogService} from '../../services/dialog.service';
 import {MyRoutes} from '../../models/enums/MyRoutes';
-import {PaypalButton, PaypalResult} from '../../components/paypal-button/paypal-button';
+import {PaypalButton} from '../../components/paypal-button/paypal-button';
 
 type CheckoutStep = 'address' | 'payment';
 type PaymentMethod = 'paypal' | 'card' | 'paylater';
@@ -150,11 +150,6 @@ export class Checkout implements OnInit {
       return;
     }
 
-    if (this.settings.devBannerEnabled()) {
-      await this.submitOrder({ paid: true, paymentMethod: this.paymentMethod });
-      return;
-    }
-
     const opened = this.openSelectedPaymentDialog();
     if (!opened) {
       this.dialogService.openMessage(
@@ -183,12 +178,21 @@ export class Checkout implements OnInit {
     if (method === 'paylater') this.paylaterReady.set(ready);
   }
 
-  onPaymentResult(method: PaymentMethod, result: PaypalResult) {
-    if (!result.success) {
+  private pendingTransactionId: string | undefined;
+
+  onTransactionId(transactionId: string) {
+    this.pendingTransactionId = transactionId;
+  }
+
+  onPaymentResult(method: PaymentMethod, ok: boolean) {
+    if (!ok) {
+      this.pendingTransactionId = undefined;
       this.dialogService.openMessage('Zahlung abgebrochen', 'Die Zahlung wurde abgebrochen oder ist fehlgeschlagen.');
       return;
     }
-    void this.submitOrder({ paid: true, paymentMethod: method, transactionId: result.transactionId });
+    const transactionId = this.pendingTransactionId;
+    this.pendingTransactionId = undefined;
+    void this.submitOrder({ paid: true, paymentMethod: method, transactionId });
   }
 
   async submitOrder(opts?: { paid?: boolean; paymentMethod?: PaymentMethod; transactionId?: string }) {
@@ -204,7 +208,7 @@ export class Checkout implements OnInit {
         preis: i.produkt.preis,
         anzahl: i.anzahl
       }));
-      const paid = this.settings.devBannerEnabled() ? true : !!opts?.paid;
+      const paid = !!opts?.paid;
       const bestellung: IBestellung = {
         id: '',
         userId: this.authService.currentUid()!,
