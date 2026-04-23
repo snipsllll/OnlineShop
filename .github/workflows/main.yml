@@ -1,0 +1,37 @@
+name: Build & Deploy Angular App Develop
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Repo auschecken
+        uses: actions/checkout@v4
+
+      - name: Node installieren
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Dependencies installieren
+        run: npm ci
+
+      - name: Angular Build
+        run: npm run build -- --configuration production
+
+      - name: Deploy via SFTP
+        uses: pressidium/lftp-mirror-action@v1
+        with:
+          host: ${{ secrets.SFTP_SERVER }}
+          user: ${{ secrets.SFTP_USERNAME }}
+          pass: ${{ secrets.SFTP_PASSWORD }}
+          port: ${{ secrets.SFTP_PORT }}
+          localDir: ./dist
+          remoteDir: ${{ secrets.SFTP_TARGET_DIR_DEVELOP }}
+          settings: |
+            mirror --reverse --delete --verbose --only-newer .
