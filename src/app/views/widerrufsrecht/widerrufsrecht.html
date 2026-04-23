@@ -14,16 +14,18 @@
       <p>Die Widerrufsfrist beträgt vierzehn Tage ab dem Tag, an dem Sie oder ein von Ihnen benannter Dritter, der nicht der Beförderer ist, die Waren in Besitz genommen haben bzw. hat.</p>
       <p>Um Ihr Widerrufsrecht auszuüben, müssen Sie uns</p>
       <p>
-        <strong>[Ihr Name / Firmenname]</strong><br>
-        [Straße und Hausnummer]<br>
-        [PLZ und Ort]<br>
-        E-Mail: tuemmers.support&#64;gmail.com
+        <strong>{{ settings.firmenDaten().firmenname || '[Firmenname]' }}</strong><br>
+        {{ settings.firmenDaten().strasse || '[Straße und Hausnummer]' }}<br>
+        {{ (settings.firmenDaten().plz + ' ' + settings.firmenDaten().ort).trim() || '[PLZ und Ort]' }}<br>
+        E-Mail: {{ settings.firmenDaten().email || '[E-Mail]' }}
       </p>
       <p>mittels einer eindeutigen Erklärung (z. B. ein per Post versandter Brief oder eine E-Mail) über Ihren Entschluss, diesen Vertrag zu widerrufen, informieren. Sie können dafür das beigefügte Muster-Widerrufsformular verwenden, das jedoch nicht vorgeschrieben ist.</p>
       <p>Zur Wahrung der Widerrufsfrist reicht es aus, dass Sie die Mitteilung über die Ausübung des Widerrufsrechts vor Ablauf der Widerrufsfrist absenden.</p>
-      <div class="legal-highlight">
-        <p>⚠ Bitte ersetze die Platzhalter durch deine tatsächlichen Angaben.</p>
-      </div>
+      @if (!settings.firmenDaten().firmenname) {
+        <div class="legal-highlight">
+          <p>⚠ Bitte trage die Firmendaten in den Owner-Einstellungen ein – sie erscheinen dann automatisch hier.</p>
+        </div>
+      }
     </div>
 
     <div class="legal-section">
@@ -49,7 +51,7 @@
       <h2>Muster-Widerrufsformular</h2>
       <p>Wenn Sie den Vertrag widerrufen wollen, füllen Sie bitte dieses Formular aus und senden Sie es zurück:</p>
       <p style="border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px; font-size: 0.875rem; line-height: 1.8; color: var(--text-secondary);">
-        An [Ihr Name / Firmenname], [Adresse], E-Mail: tuemmers.support&#64;gmail.com<br><br>
+        An {{ settings.firmenDaten().firmenname || '[Firmenname]' }}, {{ settings.firmenDaten().strasse || '[Straße]' }}, {{ (settings.firmenDaten().plz + ' ' + settings.firmenDaten().ort).trim() || '[PLZ Ort]' }}, E-Mail: {{ settings.firmenDaten().email || '[E-Mail]' }}<br><br>
         Hiermit widerrufe(n) ich/wir (*) den von mir/uns (*) abgeschlossenen Vertrag über den Kauf der folgenden Waren (*):<br><br>
         Bestellt am (*) / erhalten am (*):<br>
         Name des/der Verbraucher(s):<br>

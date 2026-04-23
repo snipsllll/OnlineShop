@@ -339,6 +339,64 @@
       </div>
     </div>
 
+    <!-- Rechtliche Angaben -->
+    <div class="card settings-card">
+      <h2 class="card-title">
+        <span class="material-symbols-outlined">gavel</span>
+        Rechtliche Angaben
+      </h2>
+      <p class="card-desc">Diese Angaben erscheinen automatisch in den AGB, der Datenschutzerklärung und der Widerrufsbelehrung.</p>
+
+      <div class="conn-fields">
+        <div class="conn-field-row">
+          <div class="form-group conn-field-group">
+            <label class="form-label" for="firma-name">Firmenname / Name</label>
+            <input id="firma-name" class="form-input" type="text" [(ngModel)]="firmaLocal.firmenname" placeholder="Muster GmbH" />
+          </div>
+          <div class="form-group conn-field-group">
+            <label class="form-label" for="firma-email">E-Mail</label>
+            <input id="firma-email" class="form-input" type="email" [(ngModel)]="firmaLocal.email" placeholder="kontakt@beispiel.de" />
+          </div>
+        </div>
+        <div class="conn-field-row">
+          <div class="form-group conn-field-group">
+            <label class="form-label" for="firma-strasse">Straße und Hausnummer</label>
+            <input id="firma-strasse" class="form-input" type="text" [(ngModel)]="firmaLocal.strasse" placeholder="Musterstraße 1" />
+          </div>
+          <div class="form-group conn-field-group">
+            <label class="form-label" for="firma-telefon">Telefon</label>
+            <input id="firma-telefon" class="form-input" type="text" [(ngModel)]="firmaLocal.telefon" placeholder="+49 123 456789" />
+          </div>
+        </div>
+        <div class="conn-field-row">
+          <div class="form-group conn-field-group">
+            <label class="form-label" for="firma-plz">PLZ</label>
+            <input id="firma-plz" class="form-input" type="text" [(ngModel)]="firmaLocal.plz" placeholder="12345" />
+          </div>
+          <div class="form-group conn-field-group">
+            <label class="form-label" for="firma-ort">Ort</label>
+            <input id="firma-ort" class="form-input" type="text" [(ngModel)]="firmaLocal.ort" placeholder="Musterstadt" />
+          </div>
+        </div>
+      </div>
+
+      <div class="banner-save-row">
+        @if (firmaSaveSuccess()) {
+          <div class="success-toast"><span class="material-symbols-outlined">check_circle</span>Gespeichert!</div>
+        }
+        @if (firmaSaveError()) {
+          <div class="error-toast"><span class="material-symbols-outlined">error</span>Speichern fehlgeschlagen.</div>
+        }
+        <button class="btn-primary save-btn" (click)="saveFirma()" [disabled]="firmaSaving()">
+          @if (firmaSaving()) {
+            <div class="spinner spinner--sm"></div>Wird gespeichert...
+          } @else {
+            <span class="material-symbols-outlined">save</span>Speichern
+          }
+        </button>
+      </div>
+    </div>
+
     <!-- Mitarbeiter-Rolle -->
     <div class="card settings-card">
       <h2 class="card-title">
