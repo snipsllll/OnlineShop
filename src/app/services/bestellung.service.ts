@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import {addDoc, collection, deleteDoc, doc, Firestore, getDoc, getDocs, updateDoc} from 'firebase/firestore';
+import {addDoc, collection, deleteDoc, doc, Firestore, getDoc, getDocs, query, updateDoc, where} from 'firebase/firestore';
 import {db} from '../../environments/environment';
 import {IBestellung} from '../models/interfaces/IBestellung';
 
@@ -14,6 +14,12 @@ export class BestellungService {
 
   async getBestellungen(): Promise<IBestellung[]> {
     const querySnapshot = await getDocs(this.ordersCollection);
+    return querySnapshot.docs.map(doc => ({...doc.data(), id: doc.id} as IBestellung));
+  }
+
+  async getBestellungenByUser(uid: string): Promise<IBestellung[]> {
+    const q = query(this.ordersCollection, where('userId', '==', uid));
+    const querySnapshot = await getDocs(q);
     return querySnapshot.docs.map(doc => ({...doc.data(), id: doc.id} as IBestellung));
   }
 

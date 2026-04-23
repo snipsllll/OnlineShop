@@ -435,7 +435,8 @@
 }
 
 .address-card,
-.payment-card {
+.payment-card,
+.user-card {
   padding: 20px 24px;
 }
 

@@ -205,6 +205,7 @@ export class Checkout implements OnInit {
       const paid = this.settings.devBannerEnabled() ? true : !!opts?.paid;
       const bestellung: IBestellung = {
         id: '',
+        userId: this.authService.currentUid()!,
         produkte: positionen,
         bestelldatum: new Date(),
         lieferadresse: this.adresse as IAdresse,

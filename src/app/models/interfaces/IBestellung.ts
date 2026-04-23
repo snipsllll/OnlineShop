@@ -5,6 +5,7 @@ import {ZahlungsZustand} from '../enums/ZahlungsZustand';
 
 export interface IBestellung {
   id: string;
+  userId: string;
   produkte: IBestellPosition[];
   bestelldatum: Date;
   lieferadresse: IAdresse;

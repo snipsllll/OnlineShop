@@ -7,6 +7,7 @@ import {DialogService} from '../../services/dialog.service';
 import {MyRoutes} from '../../models/enums/MyRoutes';
 import {BestellungsZustand} from '../../models/enums/BestellungsZustand';
 import {ZahlungsZustand} from '../../models/enums/ZahlungsZustand';
+import {AuthService} from '../../services/auth.service';
 
 @Component({
   selector: 'app-bestellungen-overview',
@@ -19,6 +20,7 @@ export class BestellungenOverview implements OnInit {
   private bestellungService = inject(BestellungService);
   private routingService = inject(RoutingService);
   private dialogService = inject(DialogService);
+  private authService = inject(AuthService);
 
   protected bestellungen = signal<IBestellung[]>([]);
   protected loading = signal(true);
@@ -26,9 +28,11 @@ export class BestellungenOverview implements OnInit {
   protected readonly ZahlungsZustand = ZahlungsZustand;
 
   async ngOnInit() {
+    const uid = this.authService.currentUid();
+    if (!uid) return;
     this.loading.set(true);
     try {
-      const all = await this.bestellungService.getBestellungen();
+      const all = await this.bestellungService.getBestellungenByUser(uid);
       this.bestellungen.set(all.sort((a, b) => this.toMs(b.bestelldatum) - this.toMs(a.bestelldatum)));
     } finally {
       this.loading.set(false);

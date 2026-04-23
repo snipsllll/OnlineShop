@@ -195,6 +195,34 @@
           </address>
         </div>
 
+        <!-- Besteller -->
+        <div class="card user-card">
+          <h2 class="section-title">
+            <span class="material-symbols-outlined">person</span>
+            Besteller
+          </h2>
+          @if (bestellungUser()) {
+            <div class="address-block">
+              <div class="address-line">
+                <span class="material-symbols-outlined">badge</span>
+                {{ bestellungUser()!.vorname }} {{ bestellungUser()!.nachname }}
+              </div>
+              <div class="address-line">
+                <span class="material-symbols-outlined">mail</span>
+                {{ bestellungUser()!.email }}
+              </div>
+              @if (bestellungUser()!.telefonnummer) {
+                <div class="address-line">
+                  <span class="material-symbols-outlined">phone</span>
+                  {{ bestellungUser()!.telefonnummer }}
+                </div>
+              }
+            </div>
+          } @else {
+            <p class="cancel-info">Keine Benutzerdaten verfügbar.</p>
+          }
+        </div>
+
         <!-- Payment Info -->
         <div class="card payment-card">
           <h2 class="section-title">

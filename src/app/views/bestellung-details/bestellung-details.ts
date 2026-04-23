@@ -2,7 +2,9 @@ import {Component, inject, OnInit, signal} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {ActivatedRoute} from '@angular/router';
 import {IBestellung} from '../../models/interfaces/IBestellung';
+import {IUser} from '../../models/interfaces/IUser';
 import {BestellungService} from '../../services/bestellung.service';
+import {UserService} from '../../services/user.service';
 import {RoutingService} from '../../services/routing.service';
 import {DialogService} from '../../services/dialog.service';
 import {MyRoutes} from '../../models/enums/MyRoutes';
@@ -20,10 +22,12 @@ import {ZahlungsZustand} from '../../models/enums/ZahlungsZustand';
 export class BestellungDetails implements OnInit {
   private route = inject(ActivatedRoute);
   private bestellungService = inject(BestellungService);
+  private userService = inject(UserService);
   private routingService = inject(RoutingService);
   protected dialogService = inject(DialogService);
 
   protected bestellung = signal<IBestellung | null>(null);
+  protected bestellungUser = signal<IUser | null>(null);
   protected loading = signal(true);
   protected readonly BestellungsZustand = BestellungsZustand;
   protected readonly ZahlungsZustand = ZahlungsZustand;
@@ -33,8 +37,12 @@ export class BestellungDetails implements OnInit {
     if (!id) return;
     this.loading.set(true);
     try {
-      const b = await this.bestellungService.getBestellung(id);
+      const [b, user] = await Promise.all([
+        this.bestellungService.getBestellung(id),
+        this.userService.getCurrentUser().catch(() => null),
+      ]);
       this.bestellung.set(b ?? null);
+      this.bestellungUser.set(user);
     } finally {
       this.loading.set(false);
     }
