@@ -182,7 +182,7 @@
 
             <div class="pay-btn-wrap">
 
-              @if (!settings.devBannerEnabled() && authService.isLoggedIn()) {
+              @if (authService.isLoggedIn()) {
                 <div class="pay-overlay" [class.pay-overlay--active]="selectedPaymentReady && !submitting()">
 
                   <div class="pay-overlay__slot" [class.pay-overlay__slot--active]="paymentMethod === 'paypal'">
@@ -191,6 +191,7 @@
                       fundingSource="paypal"
                       [amount]="gesamtpreis"
                       (onReady)="onPaymentReady('paypal', $event)"
+                      (onTransactionId)="onTransactionId($event)"
                       (onResult)="onPaymentResult('paypal', $event)">
                     </app-paypal-button>
                   </div>
