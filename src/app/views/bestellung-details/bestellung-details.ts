@@ -1,6 +1,7 @@
-import {Component, inject, OnInit, signal} from '@angular/core';
+import {Component, inject, OnDestroy, OnInit, signal} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {ActivatedRoute} from '@angular/router';
+import {Subscription} from 'rxjs';
 import {IBestellung} from '../../models/interfaces/IBestellung';
 import {IUser} from '../../models/interfaces/IUser';
 import {BestellungService} from '../../services/bestellung.service';
@@ -19,7 +20,7 @@ import {ZahlungsZustand} from '../../models/enums/ZahlungsZustand';
   templateUrl: './bestellung-details.html',
   styleUrl: './bestellung-details.css',
 })
-export class BestellungDetails implements OnInit {
+export class BestellungDetails implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private bestellungService = inject(BestellungService);
   private userService = inject(UserService);
@@ -32,20 +33,26 @@ export class BestellungDetails implements OnInit {
   protected readonly BestellungsZustand = BestellungsZustand;
   protected readonly ZahlungsZustand = ZahlungsZustand;
 
+  private sub?: Subscription;
+
   async ngOnInit() {
     const id = this.route.snapshot.paramMap.get(RouteParams.BESTELLUNGS_ID);
     if (!id) return;
     this.loading.set(true);
-    try {
-      const [b, user] = await Promise.all([
-        this.bestellungService.getBestellung(id),
-        this.userService.getCurrentUser().catch(() => null),
-      ]);
-      this.bestellung.set(b ?? null);
-      this.bestellungUser.set(user);
-    } finally {
-      this.loading.set(false);
-    }
+
+    this.userService.getCurrentUser().catch(() => null).then(u => this.bestellungUser.set(u));
+
+    this.sub = this.bestellungService.watchBestellung(id).subscribe({
+      next: b => {
+        this.bestellung.set(b ?? null);
+        this.loading.set(false);
+      },
+      error: () => this.loading.set(false),
+    });
+  }
+
+  ngOnDestroy() {
+    this.sub?.unsubscribe();
   }
 
   goBack() { this.routingService.route(MyRoutes.BESTELLUNGEN_OVERVIEW); }

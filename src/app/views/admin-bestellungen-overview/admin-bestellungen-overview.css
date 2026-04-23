@@ -1,6 +1,24 @@
 .page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
   margin-bottom: 20px;
 }
+
+.refresh-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 6px;
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: color 0.15s, border-color 0.15s;
+}
+.refresh-btn:hover:not(:disabled) { color: var(--primary); border-color: var(--primary); }
+.refresh-btn:disabled { opacity: 0.4; cursor: default; }
 
 .page-title {
   display: flex;

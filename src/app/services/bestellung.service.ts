@@ -1,5 +1,6 @@
 import {Injectable} from '@angular/core';
-import {addDoc, collection, deleteDoc, doc, Firestore, getDoc, getDocs, query, updateDoc, where} from 'firebase/firestore';
+import {addDoc, collection, deleteDoc, doc, Firestore, getDoc, getDocs, onSnapshot, query, updateDoc, where} from 'firebase/firestore';
+import {Observable} from 'rxjs';
 import {db} from '../../environments/environment';
 import {IBestellung} from '../models/interfaces/IBestellung';
 
@@ -52,6 +53,16 @@ export class BestellungService {
       console.error(`Fehler beim Aktualisieren der Bestellung mit ID ${id} in Firestore:`, error);
       throw error;
     }
+  }
+
+  watchBestellung(id: string): Observable<IBestellung | undefined> {
+    return new Observable(observer => {
+      const ref = doc(db as Firestore, 'orders', id);
+      const unsub = onSnapshot(ref, snap => {
+        observer.next(snap.exists() ? { ...snap.data(), id: snap.id } as IBestellung : undefined);
+      }, err => observer.error(err));
+      return () => unsub();
+    });
   }
 
   async markAsViewed(id: string): Promise<void> {
