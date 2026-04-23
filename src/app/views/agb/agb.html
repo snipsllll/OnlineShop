@@ -14,10 +14,12 @@
 
     <div class="legal-section">
       <h2>§ 1 Geltungsbereich</h2>
-      <p>Diese Allgemeinen Geschäftsbedingungen (AGB) gelten für alle Verträge zwischen <strong>[Ihr Name / Firmenname]</strong> (nachfolgend „Anbieter") und dem Kunden über die auf dieser Website angebotenen Waren. Abweichende Bedingungen des Kunden werden nicht anerkannt, es sei denn, der Anbieter stimmt ihrer Geltung ausdrücklich zu.</p>
-      <div class="legal-highlight">
-        <p>⚠ Bitte ersetze die Platzhalter durch deine tatsächlichen Angaben.</p>
-      </div>
+      <p>Diese Allgemeinen Geschäftsbedingungen (AGB) gelten für alle Verträge zwischen <strong>{{ settings.firmenDaten().firmenname || '[Firmenname]' }}</strong> (nachfolgend „Anbieter") und dem Kunden über die auf dieser Website angebotenen Waren. Abweichende Bedingungen des Kunden werden nicht anerkannt, es sei denn, der Anbieter stimmt ihrer Geltung ausdrücklich zu.</p>
+      @if (!settings.firmenDaten().firmenname) {
+        <div class="legal-highlight">
+          <p>⚠ Bitte trage die Firmendaten in den Owner-Einstellungen ein – sie erscheinen dann automatisch hier.</p>
+        </div>
+      }
     </div>
 
     <div class="legal-section">
@@ -67,7 +69,7 @@
     <div class="legal-section">
       <h2>§ 10 Streitbeilegung / Gerichtsstand</h2>
       <p>Die EU-Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit: <a href="https://ec.europa.eu/consumers/odr" target="_blank" rel="noopener">ec.europa.eu/consumers/odr</a>. Wir sind zur Teilnahme an einem Streitbeilegungsverfahren nicht verpflichtet und nehmen daran nicht teil.</p>
-      <p>Gerichtsstand ist [Ihr Ort], sofern der Kunde Kaufmann oder eine juristische Person des öffentlichen Rechts ist. Es gilt deutsches Recht unter Ausschluss des UN-Kaufrechts.</p>
+      <p>Gerichtsstand ist {{ settings.firmenDaten().ort || '[Ort]' }}, sofern der Kunde Kaufmann oder eine juristische Person des öffentlichen Rechts ist. Es gilt deutsches Recht unter Ausschluss des UN-Kaufrechts.</p>
     </div>
   </div>
 </div>

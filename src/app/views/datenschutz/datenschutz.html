@@ -16,14 +16,16 @@
       <h2>1. Verantwortlicher</h2>
       <p>
         Verantwortlicher im Sinne der DSGVO ist:<br>
-        <strong>[Ihr Name / Firmenname]</strong><br>
-        [Straße und Hausnummer]<br>
-        [PLZ und Ort]<br>
-        E-Mail: tuemmers.support&#64;gmail.com
+        <strong>{{ settings.firmenDaten().firmenname || '[Firmenname]' }}</strong><br>
+        {{ settings.firmenDaten().strasse || '[Straße und Hausnummer]' }}<br>
+        {{ (settings.firmenDaten().plz + ' ' + settings.firmenDaten().ort).trim() || '[PLZ und Ort]' }}<br>
+        E-Mail: {{ settings.firmenDaten().email || '[E-Mail]' }}
       </p>
-      <div class="legal-highlight">
-        <p>⚠ Bitte ersetze die Platzhalter in eckigen Klammern durch deine tatsächlichen Angaben.</p>
-      </div>
+      @if (!settings.firmenDaten().firmenname) {
+        <div class="legal-highlight">
+          <p>⚠ Bitte trage die Firmendaten in den Owner-Einstellungen ein – sie erscheinen dann automatisch hier.</p>
+        </div>
+      }
     </div>
 
     <div class="legal-section">
@@ -71,7 +73,7 @@
         <li>Widerspruch gegen die Verarbeitung (Art. 21 DSGVO)</li>
         <li>Beschwerde bei einer Aufsichtsbehörde (Art. 77 DSGVO)</li>
       </ul>
-      <p>Zur Ausübung Ihrer Rechte wenden Sie sich an: tuemmers.support&#64;gmail.com</p>
+      <p>Zur Ausübung Ihrer Rechte wenden Sie sich an: {{ settings.firmenDaten().email || '[E-Mail]' }}</p>
     </div>
 
     <div class="legal-section">

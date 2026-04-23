@@ -17,6 +17,19 @@ export interface IMitarbeiterPerms {
   canViewUsers: boolean;
 }
 
+export interface IFirmenDaten {
+  firmenname: string;
+  strasse: string;
+  plz: string;
+  ort: string;
+  email: string;
+  telefon: string;
+}
+
+const DEFAULT_FIRMEN_DATEN: IFirmenDaten = {
+  firmenname: '', strasse: '', plz: '', ort: '', email: '', telefon: '',
+};
+
 const DEFAULT_ADMIN_PERMS: IRolePerms = {
   canManageProducts: true,
   canManageOrders: true,
@@ -43,6 +56,7 @@ export class ShopSettingsService {
   readonly mitarbeiterPerms = signal<IMitarbeiterPerms>({...DEFAULT_MITARBEITER_PERMS});
   readonly mitarbeiterRoleEnabled = signal(true);
   readonly theme = signal<ShopTheme>('modern');
+  readonly firmenDaten = signal<IFirmenDaten>({...DEFAULT_FIRMEN_DATEN});
   readonly initialized = signal(false);
 
   constructor() {
@@ -67,6 +81,7 @@ export class ShopSettingsService {
         const t: ShopTheme = valid.includes(raw) ? raw as ShopTheme : 'modern';
         this.theme.set(t);
         this.applyTheme(t);
+        this.firmenDaten.set({...DEFAULT_FIRMEN_DATEN, ...(d['firmenDaten'] ?? {})});
       }
     } catch (e) {
       console.error('ShopSettingsService: failed to load settings', e);
@@ -90,6 +105,7 @@ export class ShopSettingsService {
       mitarbeiterPerms: this.mitarbeiterPerms(),
       mitarbeiterRoleEnabled: this.mitarbeiterRoleEnabled(),
       theme: this.theme(),
+      firmenDaten: this.firmenDaten(),
     };
   }
 
@@ -125,6 +141,12 @@ export class ShopSettingsService {
     await setDoc(doc(db as Firestore, 'settings', 'shop'), data);
     this.theme.set(theme);
     this.applyTheme(theme);
+  }
+
+  async saveFirmenDaten(data: IFirmenDaten): Promise<void> {
+    const d = {...this.fullDoc(), firmenDaten: data};
+    await setDoc(doc(db as Firestore, 'settings', 'shop'), d);
+    this.firmenDaten.set(data);
   }
 
   async saveMitarbeiterPerms(perms: IMitarbeiterPerms): Promise<void> {

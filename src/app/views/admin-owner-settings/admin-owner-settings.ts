@@ -6,7 +6,8 @@ import {AdminNav} from '../../components/admin-nav/admin-nav';
 import {AuthService} from '../../services/auth.service';
 import {UserService} from '../../services/user.service';
 import {RoutingService} from '../../services/routing.service';
-import {ShopSettingsService, ShopTheme} from '../../services/shop-settings.service';
+import {IFirmenDaten, ShopSettingsService, ShopTheme} from '../../services/shop-settings.service';
+import {DialogService} from '../../services/dialog.service';
 import {IUser} from '../../models/interfaces/IUser';
 import {Rolle} from '../../models/enums/Rolle';
 import {MyRoutes} from '../../models/enums/MyRoutes';
@@ -23,6 +24,7 @@ export class AdminOwnerSettings implements OnInit {
   private authService = inject(AuthService);
   private userService = inject(UserService);
   private routingService = inject(RoutingService);
+  private dialogService = inject(DialogService);
   protected settings = inject(ShopSettingsService);
 
   protected loading = signal(true);
@@ -48,6 +50,12 @@ export class AdminOwnerSettings implements OnInit {
   protected mitarbeiterRoleSaveSuccess = signal(false);
   protected mitarbeiterRoleSaveError = signal(false);
 
+  // Firmendaten / Rechtliche Angaben
+  protected firmaLocal: IFirmenDaten = { firmenname: '', strasse: '', plz: '', ort: '', email: '', telefon: '' };
+  protected firmaSaving = signal(false);
+  protected firmaSaveSuccess = signal(false);
+  protected firmaSaveError = signal(false);
+
   // Design / Theme
   protected themeLocal: ShopTheme = 'modern';
   protected themeSaving = signal(false);
@@ -72,13 +80,26 @@ export class AdminOwnerSettings implements OnInit {
     effect(() => {
       if (!this.settings.initialized()) return;
       this.devBannerEnabled = this.settings.devBannerEnabled();
+      this.firmaLocal = {...this.settings.firmenDaten()};
       this.adminPermsLocal = {...this.settings.adminPerms()};
       this.mitarbeiterRoleEnabledLocal = this.settings.mitarbeiterRoleEnabled();
       this.themeLocal = this.settings.theme();
     });
   }
 
-  async saveBanner() {
+  saveBanner() {
+    if (!this.devBannerEnabled) {
+      this.dialogService.openConfirm(
+        '⚠️ Shop geht live',
+        'Du bist dabei, den Entwicklungsbanner auszuschalten. Ab diesem Moment läuft der Shop live – mit echtem Geld und echten Kunden. Bestellungen und Zahlungen haben dann reale Wirkung. Bist du sicher?',
+        () => void this.doSaveBanner()
+      );
+      return;
+    }
+    void this.doSaveBanner();
+  }
+
+  private async doSaveBanner() {
     this.bannerSaving.set(true);
     this.bannerSaveError.set(false);
     try {
@@ -90,6 +111,21 @@ export class AdminOwnerSettings implements OnInit {
       setTimeout(() => this.bannerSaveError.set(false), 4000);
     } finally {
       this.bannerSaving.set(false);
+    }
+  }
+
+  async saveFirma() {
+    this.firmaSaving.set(true);
+    this.firmaSaveError.set(false);
+    try {
+      await this.settings.saveFirmenDaten({...this.firmaLocal});
+      this.firmaSaveSuccess.set(true);
+      setTimeout(() => this.firmaSaveSuccess.set(false), 3000);
+    } catch {
+      this.firmaSaveError.set(true);
+      setTimeout(() => this.firmaSaveError.set(false), 4000);
+    } finally {
+      this.firmaSaving.set(false);
     }
   }
 

@@ -460,7 +460,7 @@
 
 @media (max-width: 768px) {
   .page-title {
-    font-size: 1.4rem;
+    font-size: 1.35rem;
   }
 
   .order-meta {
@@ -495,22 +495,19 @@
   }
 }
 
-@media (max-width: 480px) {
+/* Phone: convert items table to a list layout */
+@media (max-width: 600px) {
   .page-title {
-    font-size: 1.2rem;
+    font-size: 1.15rem;
     gap: 6px;
   }
 
   .title-icon {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
   }
 
   .page-header {
-    margin-bottom: 20px;
-  }
-
-  .meta-sep {
-    display: none;
+    margin-bottom: 16px;
   }
 
   .order-meta {
@@ -519,14 +516,104 @@
     gap: 4px;
   }
 
-  .items-table th,
-  .items-table td {
-    padding: 10px 8px;
-    font-size: 0.8rem;
+  .meta-sep {
+    display: none;
   }
 
-  .total-label,
+  /* Table → flex list */
+  .table-scroll {
+    overflow-x: visible;
+  }
+
+  .items-table {
+    display: block;
+  }
+
+  .items-table thead {
+    display: none;
+  }
+
+  .items-table tbody {
+    display: block;
+  }
+
+  .items-table tbody tr {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    background: none !important;
+  }
+
+  .items-table td {
+    display: block;
+    padding: 0;
+  }
+
+  .col-name {
+    flex: 1;
+    min-width: 0;
+    padding: 0;
+  }
+
+  .col-qty {
+    flex-shrink: 0;
+    text-align: center;
+  }
+
+  .col-price {
+    display: none;
+  }
+
+  .col-total {
+    flex-shrink: 0;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-align: right;
+  }
+
+  /* Footer total row */
+  .items-table tfoot {
+    display: block;
+  }
+
+  .items-table tfoot tr {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0 0;
+    border-top: 2px solid var(--border);
+    background: none;
+  }
+
+  .items-table tfoot td {
+    display: block;
+    padding: 0;
+  }
+
+  .total-label {
+    text-align: left;
+    font-size: 0.875rem;
+  }
+
   .total-value {
-    padding: 10px 8px;
+    font-size: 1.05rem;
+  }
+
+  .item-name {
+    font-size: 0.875rem;
+    white-space: normal;
+  }
+
+  .item-id {
+    font-size: 0.7rem;
+  }
+
+  .items-card,
+  .address-card,
+  .status-card,
+  .summary-card {
+    padding: 14px;
   }
 }
