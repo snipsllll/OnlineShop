@@ -204,19 +204,7 @@
           </button>
         </div>
 
-        <div class="card sidebar-card">
-          <h3 class="card-title">
-            <span class="material-symbols-outlined">list_alt</span>
-            Bestellungen
-          </h3>
-          <p class="sidebar-text">Verwalte deine Bestellungen und verfolge den aktuellen Lieferstatus.</p>
-          <button class="btn-secondary sidebar-btn" (click)="goToOrders()">
-            <span class="material-symbols-outlined">shopping_bag</span>
-            Meine Bestellungen
-          </button>
-        </div>
-
-        @if (isKunde) {
+@if (isKunde) {
         <div class="card sidebar-card sidebar-card--danger">
           <h3 class="card-title card-title--danger">
             <span class="material-symbols-outlined">delete_forever</span>
