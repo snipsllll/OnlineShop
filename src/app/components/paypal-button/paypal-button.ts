@@ -4,6 +4,11 @@ declare const paypal: any;
 
 export type PaypalFundingSource = 'paypal' | 'card' | 'paylater';
 
+export interface PaypalResult {
+  success: boolean;
+  transactionId?: string;
+}
+
 @Component({
   selector: 'app-paypal-button',
   standalone: true,
@@ -13,7 +18,7 @@ export class PaypalButton implements AfterViewInit {
   @ViewChild('container', { static: true }) container!: ElementRef<HTMLDivElement>;
   @Input() amount = 0;
   @Input() fundingSource?: PaypalFundingSource;
-  @Output() onResult = new EventEmitter<boolean>();
+  @Output() onResult = new EventEmitter<PaypalResult>();
   @Output() onReady = new EventEmitter<boolean>();
 
   private buttons: any | null = null;
@@ -38,18 +43,18 @@ export class PaypalButton implements AfterViewInit {
 
       onApprove: (_data: any, actions: any) => {
         return actions.order.capture().then((details: any) => {
-          console.log('Sandbox Zahlung OK', details);
-          this.onResult.emit(true);
+          const transactionId = details?.purchase_units?.[0]?.payments?.captures?.[0]?.id;
+          this.onResult.emit({ success: true, transactionId });
         });
       },
 
       onCancel: () => {
-        this.onResult.emit(false);
+        this.onResult.emit({ success: false });
       },
 
       onError: (err: any) => {
-        console.error('PayPal Sandbox Fehler', err);
-        this.onResult.emit(false);
+        console.error('PayPal Fehler', err);
+        this.onResult.emit({ success: false });
       }
     });
 

@@ -1,11 +1,13 @@
 @if (settings.devBannerEnabled()) {
   <div class="dev-banner" role="alert">
     <span class="material-symbols-outlined dev-banner__icon">construction</span>
-    <p class="dev-banner__text">
+    <p class="dev-banner__text dev-banner__text--full">
       <strong>Entwicklungsversion</strong> &mdash;
       Diese Website befindet sich aktuell in der Entwicklung.
       Es handelt sich <strong>nicht</strong> um einen Live-Shop &mdash; Bestellungen und Käufe haben keine reale Wirkung.
-      test
+    </p>
+    <p class="dev-banner__text dev-banner__text--short">
+      <strong>Entwicklungsversion</strong> &mdash; kein Live-Shop
     </p>
   </div>
 }

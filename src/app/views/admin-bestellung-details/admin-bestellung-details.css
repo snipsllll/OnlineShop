@@ -420,6 +420,31 @@
   color: var(--primary);
 }
 
+.transaction-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--primary);
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-decoration: none;
+  word-break: break-all;
+  transition: opacity var(--transition);
+}
+
+.transaction-link:hover {
+  opacity: 0.75;
+}
+
+.transaction-link .material-symbols-outlined {
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.transaction-id {
+  font-family: 'Courier New', monospace;
+}
+
 /* Responsive */
 @media (max-width: 1024px) {
   .details-layout {

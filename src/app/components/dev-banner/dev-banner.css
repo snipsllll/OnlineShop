@@ -26,3 +26,27 @@
   margin: 0;
   line-height: 1.5;
 }
+
+.dev-banner__text--short {
+  display: none;
+}
+
+@media (max-width: 640px) {
+  .dev-banner {
+    padding: 6px 16px;
+    gap: 6px;
+  }
+
+  .dev-banner__icon {
+    font-size: 16px;
+  }
+
+  .dev-banner__text--full {
+    display: none;
+  }
+
+  .dev-banner__text--short {
+    display: block;
+    font-size: 0.8rem;
+  }
+}

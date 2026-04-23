@@ -16,7 +16,7 @@ import {ShopSettingsService} from '../../services/shop-settings.service';
 import {AuthService} from '../../services/auth.service';
 import {DialogService} from '../../services/dialog.service';
 import {MyRoutes} from '../../models/enums/MyRoutes';
-import {PaypalButton} from '../../components/paypal-button/paypal-button';
+import {PaypalButton, PaypalResult} from '../../components/paypal-button/paypal-button';
 
 type CheckoutStep = 'address' | 'payment';
 type PaymentMethod = 'paypal' | 'card' | 'paylater';
@@ -183,15 +183,15 @@ export class Checkout implements OnInit {
     if (method === 'paylater') this.paylaterReady.set(ready);
   }
 
-  onPaymentResult(method: PaymentMethod, ok: boolean) {
-    if (!ok) {
+  onPaymentResult(method: PaymentMethod, result: PaypalResult) {
+    if (!result.success) {
       this.dialogService.openMessage('Zahlung abgebrochen', 'Die Zahlung wurde abgebrochen oder ist fehlgeschlagen.');
       return;
     }
-    void this.submitOrder({ paid: true, paymentMethod: method });
+    void this.submitOrder({ paid: true, paymentMethod: method, transactionId: result.transactionId });
   }
 
-  async submitOrder(opts?: { paid?: boolean; paymentMethod?: PaymentMethod }) {
+  async submitOrder(opts?: { paid?: boolean; paymentMethod?: PaymentMethod; transactionId?: string }) {
     if (!this.authService.isLoggedIn()) {
       this.dialogService.openLogin();
       return;
@@ -214,6 +214,7 @@ export class Checkout implements OnInit {
         bestellungsZustand: BestellungsZustand.EINGEGANGEN,
         zahlungsZustand: paid ? ZahlungsZustand.BEZAHLT : ZahlungsZustand.NOCH_AUSSTEHEND,
         isNew: true,
+        ...(opts?.transactionId ? { paypalTransactionId: opts.transactionId } : {}),
       };
       await this.bestellungService.addBestellung(bestellung);
       await this.warenkorbService.clearWarenkorb();

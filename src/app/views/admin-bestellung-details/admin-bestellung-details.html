@@ -241,6 +241,21 @@
               <span class="summary-key">Gesamtbetrag:</span>
               <span class="summary-value total-amount">{{ formatPrice(total) }}</span>
             </div>
+            @if (bestellung()!.paypalTransactionId) {
+              <div class="summary-divider"></div>
+              <div class="summary-row">
+                <span class="summary-key">PayPal Transaktion:</span>
+              </div>
+              <a
+                class="transaction-link"
+                [href]="'https://www.paypal.com/activity/payment/' + bestellung()!.paypalTransactionId"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <span class="transaction-id">{{ bestellung()!.paypalTransactionId }}</span>
+                <span class="material-symbols-outlined">open_in_new</span>
+              </a>
+            }
           </div>
         </div>
       </div>

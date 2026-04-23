@@ -12,4 +12,5 @@ export interface IBestellung {
   bestellungsZustand: BestellungsZustand;
   zahlungsZustand: ZahlungsZustand;
   isNew?: boolean;
+  paypalTransactionId?: string;
 }
