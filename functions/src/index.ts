@@ -6,19 +6,22 @@ admin.initializeApp();
 /** Rolle.OWNER = 2 (stored as string in Firestore) */
 const OWNER_ROLLE = '2';
 
-export const deleteUserAccount = onCall({ cors: true }, async (request) => {
+/**
+ * Deletes a user from both Firebase Auth and Firestore.
+ * Only callable by an authenticated Owner.
+ * Refuses to delete other Owners or the caller themselves.
+ */
+export const deleteUserAccount = onCall(async (request) => {
   // 1. Must be authenticated
   if (!request.auth) {
     throw new HttpsError('unauthenticated', 'Nicht angemeldet.');
   }
 
   // 2. Verify caller is Owner
-  let callerSnap: admin.firestore.DocumentSnapshot;
-  try {
-    callerSnap = await admin.firestore().collection('users').doc(request.auth.uid).get();
-  } catch {
-    throw new HttpsError('internal', 'Fehler beim Prüfen der Berechtigungen.');
-  }
+  const callerSnap = await admin.firestore()
+    .collection('users')
+    .doc(request.auth.uid)
+    .get();
 
   if (!callerSnap.exists || String(callerSnap.data()?.['rolle']) !== OWNER_ROLLE) {
     throw new HttpsError('permission-denied', 'Nur Owner dürfen Benutzer löschen.');
@@ -36,32 +39,16 @@ export const deleteUserAccount = onCall({ cors: true }, async (request) => {
   }
 
   // 5. Prevent deleting another Owner
-  let targetSnap: admin.firestore.DocumentSnapshot;
-  try {
-    targetSnap = await admin.firestore().collection('users').doc(uid).get();
-  } catch {
-    throw new HttpsError('internal', 'Fehler beim Laden des Benutzers.');
-  }
-
+  const targetSnap = await admin.firestore().collection('users').doc(uid).get();
   if (targetSnap.exists && String(targetSnap.data()?.['rolle']) === OWNER_ROLLE) {
     throw new HttpsError('permission-denied', 'Owner-Konten können nicht gelöscht werden.');
   }
 
-  // 6. Delete from Firebase Auth — tolerate user-not-found (already deleted)
-  try {
-    await admin.auth().deleteUser(uid);
-  } catch (err: any) {
-    if (err?.code !== 'auth/user-not-found') {
-      throw new HttpsError('internal', 'Fehler beim Löschen des Auth-Kontos: ' + (err?.message ?? ''));
-    }
-  }
+  // 6. Delete from Firebase Auth (Admin SDK)
+  await admin.auth().deleteUser(uid);
 
   // 7. Delete from Firestore
-  try {
-    await admin.firestore().collection('users').doc(uid).delete();
-  } catch (err: any) {
-    throw new HttpsError('internal', 'Fehler beim Löschen des Firestore-Eintrags: ' + (err?.message ?? ''));
-  }
+  await admin.firestore().collection('users').doc(uid).delete();
 
   return { success: true };
 });
