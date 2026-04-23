@@ -216,7 +216,7 @@ export class Checkout implements OnInit {
         bestelldatum: new Date(),
         lieferadresse: this.adresse as IAdresse,
         bestellungsZustand: BestellungsZustand.EINGEGANGEN,
-        zahlungsZustand: paid ? ZahlungsZustand.BEZAHLT : ZahlungsZustand.NOCH_AUSSTEHEND,
+        zahlungsZustand: ZahlungsZustand.NOCH_AUSSTEHEND,
         isNew: true,
         ...(opts?.transactionId ? { paypalTransactionId: opts.transactionId } : {}),
       };
