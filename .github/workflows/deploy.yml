@@ -31,5 +31,5 @@ jobs:
           user: ${{ secrets.SFTP_USERNAME }}
           pass: ${{ secrets.SFTP_PASSWORD }}
           port: ${{ secrets.SFTP_PORT }}
-          localDir: ./dist
+          localDir: ./dist/OnlineShop/browser
           remoteDir: ${{ secrets.SFTP_TARGET_DIR }}
