@@ -460,6 +460,7 @@
 
   .item-quantity {
     grid-column: 2;
+    width: fit-content;
   }
 
   .item-total {

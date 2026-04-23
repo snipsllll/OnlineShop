@@ -13,4 +13,5 @@ export interface IBestellung {
   zahlungsZustand: ZahlungsZustand;
   isNew?: boolean;
   paypalTransactionId?: string;
+  lagerbestandAngepasst?: boolean;
 }

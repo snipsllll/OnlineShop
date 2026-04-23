@@ -33,6 +33,10 @@ export class AdminBestellungenOverview implements OnInit {
   protected readonly ZahlungsZustand = ZahlungsZustand;
 
   async ngOnInit() {
+    await this.loadBestellungen();
+  }
+
+  async loadBestellungen() {
     this.loading.set(true);
     try {
       const all = await this.bestellungService.getBestellungen();

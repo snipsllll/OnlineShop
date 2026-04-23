@@ -1,7 +1,8 @@
-import {Component, inject, OnInit, signal} from '@angular/core';
+import {Component, inject, OnDestroy, OnInit, signal} from '@angular/core';
 import {CommonModule, Location} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {ActivatedRoute} from '@angular/router';
+import {Subscription} from 'rxjs';
 import {IBestellung} from '../../models/interfaces/IBestellung';
 import {IUser} from '../../models/interfaces/IUser';
 import {BestellungService} from '../../services/bestellung.service';
@@ -22,7 +23,7 @@ import {AdminNav} from '../../components/admin-nav/admin-nav';
   templateUrl: './admin-bestellung-details.html',
   styleUrl: './admin-bestellung-details.css',
 })
-export class AdminBestellungDetails implements OnInit {
+export class AdminBestellungDetails implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private bestellungService = inject(BestellungService);
   private userService = inject(UserService);
@@ -41,6 +42,9 @@ export class AdminBestellungDetails implements OnInit {
   protected readonly BestellungsZustand = BestellungsZustand;
   protected readonly ZahlungsZustand = ZahlungsZustand;
 
+  private sub?: Subscription;
+  private initialized = false;
+
   readonly zustandOptions = [
     { value: BestellungsZustand.EINGEGANGEN, label: 'Eingegangen' },
     { value: BestellungsZustand.IN_BEARBEITUNG, label: 'In Bearbeitung' },
@@ -58,23 +62,29 @@ export class AdminBestellungDetails implements OnInit {
     const id = this.route.snapshot.paramMap.get(RouteParams.BESTELLUNGS_ID);
     if (!id) return;
     this.loading.set(true);
-    try {
-      const b = await this.bestellungService.getBestellung(id);
-      this.bestellung.set(b ?? null);
-      if (b) {
-        this.selectedZustand = b.bestellungsZustand;
-        this.selectedZahlungsZustand = b.zahlungsZustand;
-        if (b.isNew) {
-          await this.bestellungService.markAsViewed(id);
+
+    this.sub = this.bestellungService.watchBestellung(id).subscribe({
+      next: async (b) => {
+        this.bestellung.set(b ?? null);
+        this.loading.set(false);
+        if (b && !this.initialized) {
+          this.initialized = true;
+          // Dropdowns nur beim ersten Laden setzen, nicht bei späteren Live-Updates überschreiben
+          this.selectedZustand = b.bestellungsZustand;
+          this.selectedZahlungsZustand = b.zahlungsZustand;
+          if (b.isNew) await this.bestellungService.markAsViewed(id);
+          if (b.userId) {
+            const user = await this.userService.getUserById(b.userId).catch(() => null);
+            this.bestellungUser.set(user);
+          }
         }
-        if (b.userId) {
-          const user = await this.userService.getUserById(b.userId).catch(() => null);
-          this.bestellungUser.set(user);
-        }
-      }
-    } finally {
-      this.loading.set(false);
-    }
+      },
+      error: () => this.loading.set(false),
+    });
+  }
+
+  ngOnDestroy() {
+    this.sub?.unsubscribe();
   }
 
   async saveStatus() {

@@ -9,6 +9,11 @@
       </h1>
       <p class="page-subtitle">Übersicht und Verwaltung aller Bestellungen</p>
     </div>
+    <div class="header-right">
+      <button class="refresh-btn" (click)="loadBestellungen()" [disabled]="loading()" title="Aktualisieren">
+        <span class="material-symbols-outlined">refresh</span>
+      </button>
+    </div>
   </div>
 
   <!-- View mode toggle + status tabs -->

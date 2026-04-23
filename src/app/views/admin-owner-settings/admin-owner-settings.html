@@ -606,6 +606,75 @@
       </div><!-- /perm-table-scroll -->
     </div>
 
+    <!-- PayPal-Konfiguration -->
+    <div class="card settings-card">
+      <h2 class="card-title">
+        <span class="material-symbols-outlined">payments</span>
+        PayPal-Konfiguration
+      </h2>
+      <p class="card-desc">
+        Hinterlege deine PayPal API-Zugangsdaten. Der Shop verwendet automatisch die
+        <strong>{{ devBannerEnabled ? 'Sandbox-Zugangsdaten' : 'Live-Zugangsdaten' }}</strong>,
+        da der Entwicklungsbanner aktuell
+        <strong>{{ devBannerEnabled ? 'aktiv' : 'inaktiv' }}</strong> ist.
+      </p>
+
+      @if (!devBannerEnabled) {
+        <div class="mitarbeiter-warning">
+          <span class="material-symbols-outlined">warning</span>
+          <span>Der Shop läuft im <strong>Live-Modus</strong>. Es werden die Live-Zugangsdaten verwendet – echte Zahlungen werden verarbeitet.</span>
+        </div>
+      }
+
+      <div class="conn-fields">
+        <h3 class="conn-section-title">
+          <span class="badge" [class]="devBannerEnabled ? 'badge--active' : ''">Sandbox</span>
+          Testmodus (devBannerEnabled = an)
+        </h3>
+        <div class="conn-field-row">
+          <div class="form-group conn-field-group">
+            <label class="form-label" for="pp-sb-id">Client ID</label>
+            <input id="pp-sb-id" class="form-input conn-input" type="text" [(ngModel)]="paypalConfig.sandboxClientId" spellcheck="false" autocomplete="off" placeholder="AaBbCcDd…" />
+          </div>
+          <div class="form-group conn-field-group">
+            <label class="form-label" for="pp-sb-secret">Client Secret</label>
+            <input id="pp-sb-secret" class="form-input conn-input" type="password" [(ngModel)]="paypalConfig.sandboxClientSecret" spellcheck="false" autocomplete="off" placeholder="EeFfGgHh…" />
+          </div>
+        </div>
+
+        <h3 class="conn-section-title" style="margin-top: 1.25rem;">
+          <span class="badge badge--error" [class.badge--active]="!devBannerEnabled">Live</span>
+          Echtmodus (devBannerEnabled = aus)
+        </h3>
+        <div class="conn-field-row">
+          <div class="form-group conn-field-group">
+            <label class="form-label" for="pp-live-id">Client ID</label>
+            <input id="pp-live-id" class="form-input conn-input" type="text" [(ngModel)]="paypalConfig.liveClientId" spellcheck="false" autocomplete="off" placeholder="AaBbCcDd…" />
+          </div>
+          <div class="form-group conn-field-group">
+            <label class="form-label" for="pp-live-secret">Client Secret</label>
+            <input id="pp-live-secret" class="form-input conn-input" type="password" [(ngModel)]="paypalConfig.liveClientSecret" spellcheck="false" autocomplete="off" placeholder="EeFfGgHh…" />
+          </div>
+        </div>
+      </div>
+
+      <div class="banner-save-row">
+        @if (paypalSaveSuccess()) {
+          <div class="success-toast"><span class="material-symbols-outlined">check_circle</span>Gespeichert!</div>
+        }
+        @if (paypalSaveError()) {
+          <div class="error-toast"><span class="material-symbols-outlined">error</span>Speichern fehlgeschlagen.</div>
+        }
+        <button class="btn-primary save-btn" (click)="savePaypalConfig()" [disabled]="paypalSaving()">
+          @if (paypalSaving()) {
+            <div class="spinner spinner--sm"></div>Wird gespeichert...
+          } @else {
+            <span class="material-symbols-outlined">save</span>Speichern
+          }
+        </button>
+      </div>
+    </div>
+
     <!-- Firebase Konfiguration -->
     <div class="card settings-card">
       <h2 class="card-title">

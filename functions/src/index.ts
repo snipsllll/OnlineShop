@@ -1,6 +1,6 @@
 import * as admin from 'firebase-admin';
 import { onCall, HttpsError } from 'firebase-functions/v2/https';
-import { onDocumentCreated } from 'firebase-functions/v2/firestore';
+import { onDocumentCreated, onDocumentUpdated } from 'firebase-functions/v2/firestore';
 import { resolvePaypalPayment } from './paypal';
 import { deleteUserData } from './userDeletion';
 
@@ -15,16 +15,32 @@ export const verifyPaypalPayment = onDocumentCreated(
     const transactionId: string | undefined = data['paypalTransactionId'];
     if (!transactionId) return;
 
-    const clientId = process.env['PAYPAL_CLIENT_ID'];
-    const clientSecret = process.env['PAYPAL_CLIENT_SECRET'];
+    const [shopSnap, paypalSnap] = await Promise.all([
+      admin.firestore().doc('settings/shop').get(),
+      admin.firestore().doc('settings/paypalConfig').get(),
+    ]);
 
-    if (!clientId || !clientSecret) {
-      console.error('PayPal credentials not configured');
-      return;
+    const devBannerEnabled: boolean = shopSnap.data()?.['devBannerEnabled'] ?? true;
+    const pc = paypalSnap.data() ?? {};
+
+    let clientId: string;
+    let clientSecret: string;
+    let baseUrl: string;
+
+    if (devBannerEnabled) {
+      clientId = (pc['sandboxClientId'] as string | undefined) ?? process.env['PAYPAL_CLIENT_ID'] ?? '';
+      clientSecret = (pc['sandboxClientSecret'] as string | undefined) ?? process.env['PAYPAL_CLIENT_SECRET'] ?? '';
+      baseUrl = 'https://api-m.sandbox.paypal.com';
+    } else {
+      clientId = (pc['liveClientId'] as string | undefined) ?? '';
+      clientSecret = (pc['liveClientSecret'] as string | undefined) ?? '';
+      baseUrl = 'https://api-m.paypal.com';
     }
 
-    const sandbox = process.env['PAYPAL_SANDBOX'] !== 'false';
-    const baseUrl = sandbox ? 'https://api-m.sandbox.paypal.com' : 'https://api-m.paypal.com';
+    if (!clientId || !clientSecret) {
+      console.error('PayPal credentials not configured for', devBannerEnabled ? 'sandbox' : 'live', 'mode');
+      return;
+    }
 
     try {
       await resolvePaypalPayment(
@@ -39,6 +55,41 @@ export const verifyPaypalPayment = onDocumentCreated(
     } catch (err) {
       console.error('PayPal verification error:', err);
     }
+  }
+);
+
+const IN_BEARBEITUNG = 1;
+
+export const adjustLagerbestand = onDocumentUpdated(
+  { document: 'orders/{orderId}' },
+  async (event) => {
+    const before = event.data?.before.data();
+    const after  = event.data?.after.data();
+    if (!before || !after) return;
+
+    // Only react when status just flipped to IN_BEARBEITUNG
+    if (after['bestellungsZustand'] !== IN_BEARBEITUNG) return;
+    if (before['bestellungsZustand'] === IN_BEARBEITUNG) return;
+    // Idempotency guard – never deduct twice
+    if (after['lagerbestandAngepasst'] === true) return;
+
+    const produkte: Array<{ id: string; anzahl: number }> = after['produkte'] ?? [];
+    const db = admin.firestore();
+
+    await Promise.all(
+      produkte.map((pos) =>
+        db.runTransaction(async (tx) => {
+          const ref  = db.collection('products').doc(pos.id);
+          const snap = await tx.get(ref);
+          if (!snap.exists) return;
+          const current: number = snap.data()?.['lagerbestand'] ?? 0;
+          tx.update(ref, { lagerbestand: Math.max(0, current - (pos.anzahl ?? 0)) });
+        })
+      )
+    );
+
+    await db.collection('orders').doc(event.params['orderId']).update({ lagerbestandAngepasst: true });
+    console.log(`Order ${event.params['orderId']}: lagerbestand adjusted`);
   }
 );
 
