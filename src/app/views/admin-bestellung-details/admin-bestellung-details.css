@@ -433,28 +433,25 @@
   }
 }
 
-@media (max-width: 640px) {
-  .status-column {
-    grid-template-columns: 1fr;
-  }
-
+@media (max-width: 768px) {
   .page-title {
     font-size: 1.4rem;
   }
 
+  .order-meta {
+    gap: 6px;
+  }
+
   .order-id {
-    font-size: 0.7rem;
+    font-size: 0.72rem;
     word-break: break-all;
+    max-width: 100%;
   }
 
-  /* Touch-friendly save button */
-  .save-btn {
-    width: 100%;
-    justify-content: center;
-    min-height: 44px;
+  .status-column {
+    grid-template-columns: 1fr;
   }
 
-  /* Card padding reduction */
   .items-card,
   .address-card,
   .status-card,
@@ -462,8 +459,49 @@
     padding: 16px;
   }
 
-  /* Status dropdowns full-width */
-  .status-select {
+  .save-btn {
+    min-height: 44px;
+  }
+
+  .btn-contact {
     width: 100%;
+    justify-content: center;
+    margin-top: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-title {
+    font-size: 1.2rem;
+    gap: 6px;
+  }
+
+  .title-icon {
+    font-size: 1.5rem;
+  }
+
+  .page-header {
+    margin-bottom: 20px;
+  }
+
+  .meta-sep {
+    display: none;
+  }
+
+  .order-meta {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .items-table th,
+  .items-table td {
+    padding: 10px 8px;
+    font-size: 0.8rem;
+  }
+
+  .total-label,
+  .total-value {
+    padding: 10px 8px;
   }
 }
