@@ -34,4 +34,4 @@ jobs:
           localDir: ./dist/OnlineShop/browser
           remoteDir: ${{ secrets.SFTP_TARGET_DIR }}
           settings: |
-            mirror --reverse --delete --verbose
+            mirror --reverse --delete --verbose --only-newer .
