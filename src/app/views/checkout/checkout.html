@@ -50,6 +50,33 @@
             <form (ngSubmit)="continueToPayment()" #checkoutForm="ngForm">
               <div class="form-row">
                 <div class="form-group">
+                  <label class="form-label" for="vorname">Vorname *</label>
+                  <input
+                    id="vorname"
+                    class="form-input"
+                    type="text"
+                    [(ngModel)]="adresse.vorname"
+                    name="vorname"
+                    placeholder="Max"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="nachname">Nachname *</label>
+                  <input
+                    id="nachname"
+                    class="form-input"
+                    type="text"
+                    [(ngModel)]="adresse.nachname"
+                    name="nachname"
+                    placeholder="Mustermann"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
                   <label class="form-label" for="strasse">Straße *</label>
                   <input
                     id="strasse"
@@ -137,6 +164,7 @@
                 Lieferadresse
               </div>
               <div class="address-summary__lines">
+                <div>{{ adresse.vorname }} {{ adresse.nachname }}</div>
                 <div>{{ adresse.strasse }} {{ adresse.hausnummer }}</div>
                 <div>{{ adresse.plz }} {{ adresse.ort }}</div>
                 <div>{{ adresse.land }}</div>

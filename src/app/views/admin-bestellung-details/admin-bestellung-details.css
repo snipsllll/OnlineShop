@@ -279,6 +279,43 @@
   flex-shrink: 0;
 }
 
+.user-uid {
+  font-family: monospace;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  word-break: break-all;
+}
+
+.no-user-hint {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.btn-contact {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 14px;
+  padding: 8px 16px;
+  background: var(--primary-light);
+  color: var(--primary);
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background var(--transition), color var(--transition);
+}
+
+.btn-contact:hover {
+  background: var(--primary);
+  color: #fff;
+}
+
+.btn-contact .material-symbols-outlined {
+  font-size: 1.1rem;
+}
+
 /* Status card */
 .current-status {
   display: flex;

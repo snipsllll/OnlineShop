@@ -102,6 +102,12 @@ export class UserService {
     }
   }
 
+  async getUserById(uid: string): Promise<IUser | null> {
+    const userDocRef = doc(db as Firestore, 'users', uid);
+    const snap = await getDoc(userDocRef);
+    return snap.exists() ? this.getIUserFromFireUser({id: snap.id, ...snap.data() as IFIreUser}) : null;
+  }
+
   async getAllUsers(): Promise<IUser[]> {
     const snap = await getDocs(collection(db as Firestore, 'users'));
     return snap.docs.map(d => this.getIUserFromFireUser({id: d.id, ...d.data() as IFIreUser}));

@@ -28,6 +28,7 @@ export class Contact implements OnInit {
   protected success = false;
 
   async ngOnInit() {
+    this.betreff = this.dialogService.contactBetreff();
     if (this.authService.isLoggedIn()) {
       try {
         const user = await this.userService.getCurrentUser();

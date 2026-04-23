@@ -93,6 +93,10 @@
           </h2>
           <div class="address-block">
             <div class="address-line">
+              <span class="material-symbols-outlined address-icon">person</span>
+              <span>{{ bestellung()!.lieferadresse.vorname }} {{ bestellung()!.lieferadresse.nachname }}</span>
+            </div>
+            <div class="address-line">
               <span class="material-symbols-outlined address-icon">home</span>
               <span>{{ bestellung()!.lieferadresse.strasse }} {{ bestellung()!.lieferadresse.hausnummer }}</span>
             </div>
@@ -105,6 +109,45 @@
               <span>{{ bestellung()!.lieferadresse.land }}</span>
             </div>
           </div>
+        </div>
+
+        <!-- Customer info card -->
+        <div class="card address-card">
+          <h2 class="section-title">
+            <span class="material-symbols-outlined">person</span>
+            Kunde
+          </h2>
+          @if (bestellungUser()) {
+            <div class="address-block">
+              <div class="address-line">
+                <span class="material-symbols-outlined address-icon">badge</span>
+                <span>{{ bestellungUser()!.vorname }} {{ bestellungUser()!.nachname }}</span>
+              </div>
+              <div class="address-line">
+                <span class="material-symbols-outlined address-icon">mail</span>
+                <span>{{ bestellungUser()!.email }}</span>
+              </div>
+              @if (bestellungUser()!.telefonnummer) {
+                <div class="address-line">
+                  <span class="material-symbols-outlined address-icon">phone</span>
+                  <span>{{ bestellungUser()!.telefonnummer }}</span>
+                </div>
+              }
+              <div class="address-line">
+                <span class="material-symbols-outlined address-icon">key</span>
+                <span class="user-uid">{{ bestellungUser()!.uid }}</span>
+              </div>
+            </div>
+            <a
+              class="btn-contact"
+              [href]="getContactMailto()"
+            >
+              <span class="material-symbols-outlined">mail</span>
+              Kontaktieren
+            </a>
+          } @else {
+            <p class="no-user-hint">Kein Benutzer zugeordnet (ältere Bestellung).</p>
+          }
         </div>
       </div>
 

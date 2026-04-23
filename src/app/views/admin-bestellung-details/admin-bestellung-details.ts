@@ -3,7 +3,9 @@ import {CommonModule, Location} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {ActivatedRoute} from '@angular/router';
 import {IBestellung} from '../../models/interfaces/IBestellung';
+import {IUser} from '../../models/interfaces/IUser';
 import {BestellungService} from '../../services/bestellung.service';
+import {UserService} from '../../services/user.service';
 import {RoutingService} from '../../services/routing.service';
 import {DialogService} from '../../services/dialog.service';
 import {MyRoutes} from '../../models/enums/MyRoutes';
@@ -22,11 +24,13 @@ import {AdminNav} from '../../components/admin-nav/admin-nav';
 export class AdminBestellungDetails implements OnInit {
   private route = inject(ActivatedRoute);
   private bestellungService = inject(BestellungService);
+  private userService = inject(UserService);
   private routingService = inject(RoutingService);
   private dialogService = inject(DialogService);
   private location = inject(Location);
 
   protected bestellung = signal<IBestellung | null>(null);
+  protected bestellungUser = signal<IUser | null>(null);
   protected loading = signal(true);
   protected saving = signal(false);
   protected selectedZustand: BestellungsZustand = BestellungsZustand.EINGEGANGEN;
@@ -61,6 +65,10 @@ export class AdminBestellungDetails implements OnInit {
         if (b.isNew) {
           await this.bestellungService.markAsViewed(id);
         }
+        if (b.userId) {
+          const user = await this.userService.getUserById(b.userId).catch(() => null);
+          this.bestellungUser.set(user);
+        }
       }
     } finally {
       this.loading.set(false);
@@ -82,6 +90,12 @@ export class AdminBestellungDetails implements OnInit {
   }
 
   goBack() { this.location.back(); }
+
+  getContactMailto(): string {
+    const email = this.bestellungUser()?.email ?? '';
+    const subject = encodeURIComponent(`Ihre Bestellung #${this.bestellung()?.id ?? ''}`);
+    return `mailto:${email}?subject=${subject}`;
+  }
 
   get total(): number {
     return (this.bestellung()?.produkte ?? []).reduce((s, p) => s + (p.preis ?? 0) * (p.anzahl ?? 0), 0);

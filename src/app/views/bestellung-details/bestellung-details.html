@@ -6,7 +6,7 @@
       <span class="material-symbols-outlined">arrow_back</span>
       Zurück zu Bestellungen
     </button>
-    <button class="btn-secondary help-btn" (click)="dialogService.openContact()">
+    <button class="btn-secondary help-btn" (click)="dialogService.openContact('Hilfe zu Bestellung: #' + bestellung()?.id)">
       <span class="material-symbols-outlined">support_agent</span>
       Hilfe zu dieser Bestellung
     </button>
@@ -180,6 +180,10 @@
             Lieferadresse
           </h2>
           <address class="address-block">
+            <div class="address-line">
+              <span class="material-symbols-outlined">person</span>
+              {{ bestellung()!.lieferadresse.vorname }} {{ bestellung()!.lieferadresse.nachname }}
+            </div>
             <div class="address-line">
               <span class="material-symbols-outlined">home</span>
               {{ bestellung()!.lieferadresse.strasse }} {{ bestellung()!.lieferadresse.hausnummer }}

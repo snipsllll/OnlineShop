@@ -44,7 +44,7 @@ export class Checkout implements OnInit {
   protected cartProdukte = signal<Array<{produkt: IProdukt, anzahl: number}>>([]);
   protected step = signal<CheckoutStep>('address');
 
-  protected adresse: Partial<IAdresse> = { strasse: '', hausnummer: '', plz: '', ort: '', land: 'Deutschland' };
+  protected adresse: Partial<IAdresse> = { vorname: '', nachname: '', strasse: '', hausnummer: '', plz: '', ort: '', land: 'Deutschland' };
   protected paymentMethod: PaymentMethod = 'paypal';
   protected paypalReady = signal(false);
   protected cardReady = signal(false);
@@ -73,6 +73,8 @@ export class Checkout implements OnInit {
         const a = user.adresse;
         if (a?.strasse) {
           this.adresse = {
+            vorname: user.vorname ?? '',
+            nachname: user.nachname ?? '',
             strasse: a.strasse ?? '',
             hausnummer: a.hausnummer ?? '',
             plz: a.plz ?? '',
@@ -223,6 +225,6 @@ export class Checkout implements OnInit {
 
   get isFormValid(): boolean {
     const a = this.adresse;
-    return !!(a.strasse && a.hausnummer && a.plz && a.ort && a.land);
+    return !!(a.vorname && a.nachname && a.strasse && a.hausnummer && a.plz && a.ort && a.land);
   }
 }
