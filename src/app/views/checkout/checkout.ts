@@ -17,6 +17,7 @@ import {ShopSettingsService} from '../../services/shop-settings.service';
 import {AuthService} from '../../services/auth.service';
 import {DialogService} from '../../services/dialog.service';
 import {MyRoutes} from '../../models/enums/MyRoutes';
+import {EmailService} from '../../services/email.service';
 import {PaypalButton} from '../../components/paypal-button/paypal-button';
 
 function berechneEffektivenPreis(p: IProdukt): number {
@@ -61,6 +62,7 @@ export class Checkout implements OnInit {
   private warenkorbService = inject(WarenkorbService);
   private produktService = inject(ProduktService);
   private bestellungService = inject(BestellungService);
+  private emailService = inject(EmailService);
   private routingService = inject(RoutingService);
   private userService = inject(UserService);
   protected authService = inject(AuthService);
@@ -273,8 +275,13 @@ export class Checkout implements OnInit {
         isNew: true,
         ...(opts?.transactionId ? { paypalTransactionId: opts.transactionId } : {}),
       };
-      await this.bestellungService.addBestellung(bestellung);
+      const orderId = await this.bestellungService.addBestellung(bestellung);
       await this.warenkorbService.clearWarenkorb();
+      const name = `${this.adresse.vorname ?? ''} ${this.adresse.nachname ?? ''}`.trim();
+      const user = await this.userService.getCurrentUser().catch(() => null);
+      if (user?.email) {
+        this.emailService.sendBestellungsbestaetigung(name, user.email, orderId).catch(() => {});
+      }
       this.routingService.route(MyRoutes.PAYMENT_APPROVAL, String(opts?.paymentMethod ?? this.paymentMethod));
     } finally {
       this.submitting.set(false);
