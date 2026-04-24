@@ -25,7 +25,8 @@ export class ProduktService {
   }
 
   async addProdukt(produkt: IProdukt): Promise<string> {
-    const docRef = await addDoc(this.productsCollection, produkt);
+    const normalized = { ...produkt, verfuegbar: produkt.lagerbestand === 0 ? false : produkt.verfuegbar };
+    const docRef = await addDoc(this.productsCollection, normalized);
     return docRef.id;
   }
 
@@ -36,7 +37,7 @@ export class ProduktService {
       bezeichnung: produkt.bezeichnung ?? '',
       beschreibung: produkt.beschreibung ?? '',
       preis: produkt.preis ?? 0,
-      verfuegbar: produkt.verfuegbar ?? true,
+      verfuegbar: (produkt.lagerbestand ?? 0) === 0 ? false : (produkt.verfuegbar ?? true),
       lagerbestand: produkt.lagerbestand ?? 0,
       imgRefs: (produkt.imgRefs ?? []).map(img => ({
         path: img.path ?? '',
@@ -61,7 +62,7 @@ export class ProduktService {
       bezeichnung: produkt.bezeichnung ?? '',
       beschreibung: produkt.beschreibung ?? '',
       preis: produkt.preis ?? 0,
-      verfuegbar: produkt.verfuegbar ?? true,
+      verfuegbar: (produkt.lagerbestand ?? 0) === 0 ? false : (produkt.verfuegbar ?? true),
       lagerbestand: produkt.lagerbestand ?? 0,
       imgRefs: (produkt.imgRefs ?? []).map(img => ({
         path: img.path ?? '',

@@ -132,6 +132,10 @@ export class AdminProductDetails implements OnInit {
     }
   }
 
+  onLagerbestandChange() {
+    if (this.lagerbestand === 0) this.verfuegbar = false;
+  }
+
   onProzentChange() {
     const pct = parseFloat(this.rabattProzent);
     if (!isNaN(pct) && pct > 0 && pct < 100 && this.preis > 0) {

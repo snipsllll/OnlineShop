@@ -101,6 +101,7 @@
                 step="1"
                 placeholder="0"
                 [(ngModel)]="lagerbestand"
+                (ngModelChange)="onLagerbestandChange()"
               />
             </div>
           </div>
@@ -113,6 +114,7 @@
                 [class.toggle-on]="verfuegbar"
                 [class.toggle-off]="!verfuegbar"
                 (click)="verfuegbar = !verfuegbar"
+                [disabled]="lagerbestand === 0"
                 type="button"
               >
                 <span class="toggle-track">
@@ -123,6 +125,9 @@
                 </span>
               </button>
             </div>
+            @if (lagerbestand === 0) {
+              <span class="form-hint">Automatisch auf „Nicht verfügbar" gesetzt, da Lagerbestand 0.</span>
+            }
           </div>
 
           <!-- Rabatt -->
