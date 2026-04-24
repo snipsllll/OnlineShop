@@ -25,6 +25,7 @@ vi.mock('../../environments/environment', () => ({
 import { setDoc } from 'firebase/firestore';
 
 function buildService(): ShopSettingsService {
+  TestBed.resetTestingModule();
   TestBed.configureTestingModule({});
   return TestBed.inject(ShopSettingsService);
 }
