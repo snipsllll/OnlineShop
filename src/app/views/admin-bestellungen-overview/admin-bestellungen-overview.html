@@ -112,7 +112,7 @@
   } @else {
     <div class="orders-list">
       @for (b of filteredBestellungen; track b.id) {
-        <div class="order-card" [class.order-card--new]="isNewOrder(b)" [class.order-card--cancelled]="isCancelled(b)">
+        <div class="order-card" [class.order-card--new]="isNewOrder(b)" [class.order-card--cancelled]="isCancelled(b)" (click)="onDetails(b.id)">
 
           <!-- Left accent bar -->
           <div class="order-accent" [ngClass]="getAccentClass(b)"></div>
@@ -166,7 +166,7 @@
                   class="btn-advance"
                   [class.btn-advance--highlight]="isNewOrder(b) && canAdvance(b)"
                   [class.btn-advance--blocked]="!canAdvance(b)"
-                  (click)="advanceZustand(b)"
+                  (click)="advanceZustand(b); $event.stopPropagation()"
                   [disabled]="updatingId() === b.id || !canAdvance(b)"
                   [title]="canAdvance(b) ? getNextLabel(b) : advanceBlockedReason(b)"
                 >
@@ -186,10 +186,7 @@
               </div>
             }
             <div class="action-icon-row">
-              <button class="action-icon-btn" (click)="onDetails(b.id)" title="Details öffnen">
-                <span class="material-symbols-outlined">open_in_new</span>
-              </button>
-              <button class="action-icon-btn action-icon-btn--danger" (click)="onDelete(b)" title="Löschen">
+<button class="action-icon-btn action-icon-btn--danger" (click)="onDelete(b); $event.stopPropagation()" title="Löschen">
                 <span class="material-symbols-outlined">delete</span>
               </button>
             </div>

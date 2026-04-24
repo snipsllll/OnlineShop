@@ -241,6 +241,7 @@
   display: flex;
   align-items: stretch;
   background: var(--surface);
+  cursor: pointer;
   border: 1.5px solid var(--border);
   border-radius: var(--radius-md);
   overflow: hidden;
