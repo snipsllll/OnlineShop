@@ -5,27 +5,21 @@ export const AccountButton: ITopbarIconButton = {
   type: TopbarItemType.BUTTON_ICON,
   iconPath: "account_circle",
   altText: "Account",
-  action: () => {
-    console.log("account-circle was clicked")
-  }
+  action: () => {}
 }
 
 export const FavoritButton: ITopbarIconButton = {
   type: TopbarItemType.BUTTON_ICON,
   iconPath: "heart",
   altText: "fav",
-  action: () => {
-    console.log("favorit-button was clicked")
-  }
+  action: () => {}
 }
 
 export const WarenkorbButton: ITopbarIconButton = {
   type: TopbarItemType.BUTTON_ICON,
   iconPath: "warenkorb",
   altText: "warenkorb",
-  action: () => {
-    console.log("warenkorb-button was clicked")
-  }
+  action: () => {}
 }
 
 export const TestText: ITopbarText = {
@@ -36,7 +30,5 @@ export const TestText: ITopbarText = {
 export const TestTextButton: ITopbarTextButton = {
   type: TopbarItemType.BUTTON_TEXT,
   displayText: "Test Button",
-  action: () => {
-    console.log("Test-Text-Button was clicked")
-  }
+  action: () => {}
 }

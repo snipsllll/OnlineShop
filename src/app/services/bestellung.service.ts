@@ -46,13 +46,7 @@ export class BestellungService {
       lieferadresse: bestellung.lieferadresse,
     };
 
-    try {
-      await updateDoc(bestellungDocRef, firestoreCompatibleBestellung); // Das vorbereitete Objekt übergeben
-      console.log(`Bestellung mit ID ${id} erfolgreich in Firestore aktualisiert.`);
-    } catch (error: any) {
-      console.error(`Fehler beim Aktualisieren der Bestellung mit ID ${id} in Firestore:`, error);
-      throw error;
-    }
+    await updateDoc(bestellungDocRef, firestoreCompatibleBestellung);
   }
 
   watchBestellung(id: string): Observable<IBestellung | undefined> {

@@ -47,13 +47,7 @@ export class ProduktService {
       rabatt: produkt.rabatt || deleteField(),
     };
 
-    try {
-      await updateDoc(produktDocRef, firestoreCompatibleProdukt); // Das vorbereitete Objekt übergeben
-      console.log(`Produkt mit ID ${id} erfolgreich in Firestore aktualisiert.`);
-    } catch (error: any) {
-      console.error(`Fehler beim Aktualisieren des Produkts mit ID ${id} in Firestore:`, error);
-      throw error;
-    }
+    await updateDoc(produktDocRef, firestoreCompatibleProdukt);
   }
 
   async upsertProdukt(id: string, produkt: IProdukt): Promise<void> {
