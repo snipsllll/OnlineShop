@@ -22,7 +22,7 @@ function buildComponent(devBannerEnabled = false) {
       { provide: RoutingService,    useValue: { route: vi.fn() } },
       { provide: UserService,       useValue: { getCurrentUser: vi.fn().mockResolvedValue({}) } },
       { provide: ShopSettingsService, useValue: settingsMock },
-      { provide: AuthService,       useValue: { isLoggedIn: signal(true) } },
+      { provide: AuthService,       useValue: { isLoggedIn: signal(true), currentUid: signal('uid1') } },
       { provide: DialogService,     useValue: { openLogin: vi.fn() } },
     ],
   });
@@ -33,7 +33,7 @@ function buildComponent(devBannerEnabled = false) {
 describe('Checkout – isFormValid', () => {
   it('returns true when all fields are filled', () => {
     const { comp } = buildComponent();
-    (comp as any).adresse = { strasse: 'Musterstr', hausnummer: '1', plz: '12345', ort: 'Berlin', land: 'Deutschland' };
+    (comp as any).adresse = { vorname: 'Max', nachname: 'Muster', strasse: 'Musterstr', hausnummer: '1', plz: '12345', ort: 'Berlin', land: 'Deutschland' };
     expect(comp.isFormValid).toBe(true);
   });
 

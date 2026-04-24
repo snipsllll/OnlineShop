@@ -3,6 +3,7 @@ import { BestellungenOverview } from './bestellungen-overview';
 import { BestellungService } from '../../services/bestellung.service';
 import { RoutingService } from '../../services/routing.service';
 import { DialogService } from '../../services/dialog.service';
+import { AuthService } from '../../services/auth.service';
 import { BestellungsZustand } from '../../models/enums/BestellungsZustand';
 
 function build() {
@@ -12,6 +13,7 @@ function build() {
       { provide: BestellungService, useValue: { getBestellungen: vi.fn().mockResolvedValue([]), editBestellung: vi.fn() } },
       { provide: RoutingService,    useValue: { route: vi.fn() } },
       { provide: DialogService,     useValue: { openConfirm: vi.fn() } },
+      { provide: AuthService,       useValue: { currentUid: vi.fn().mockReturnValue(null) } },
     ],
   });
   return TestBed.inject(BestellungenOverview);
@@ -64,9 +66,8 @@ describe('BestellungenOverview – getOrderTotal', () => {
     expect(comp.getOrderTotal(b)).toBe(35);
   });
 
-  // BUG: no null-check on b.produkte – throws TypeError when produkte is undefined
-  it('BUG: throws when produkte is undefined (no null guard)', () => {
+  it('returns 0 when produkte is undefined', () => {
     const b: any = {};
-    expect(() => comp.getOrderTotal(b)).toThrow();
+    expect(comp.getOrderTotal(b)).toBe(0);
   });
 });
