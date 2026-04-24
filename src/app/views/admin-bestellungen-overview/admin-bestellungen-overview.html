@@ -131,7 +131,11 @@
                   <span class="badge badge--neue">Neu</span>
                 }
                 <span class="badge" [ngClass]="getZustandClass(b)">{{ getZustandLabel(b) }}</span>
-                @if (isPaid(b)) {
+                @if (isRefunded(b)) {
+                  <span class="badge badge--refunded pay-badge">
+                    <span class="material-symbols-outlined">currency_exchange</span>Erstattet
+                  </span>
+                } @else if (isPaid(b)) {
                   <span class="badge badge--success pay-badge">
                     <span class="material-symbols-outlined">check</span>Bezahlt
                   </span>

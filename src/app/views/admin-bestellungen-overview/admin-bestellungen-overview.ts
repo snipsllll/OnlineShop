@@ -163,6 +163,7 @@ export class AdminBestellungenOverview implements OnInit {
   isUnviewed(b: IBestellung): boolean { return b.isNew === true; }
   isCancelled(b: IBestellung): boolean { return this.zustand(b) === BestellungsZustand.STORNIERT; }
   isPaid(b: IBestellung): boolean { return Number(b.zahlungsZustand) === ZahlungsZustand.BEZAHLT; }
+  isRefunded(b: IBestellung): boolean { return Number(b.zahlungsZustand) === ZahlungsZustand.ERSTATTET; }
 
   /** Annehmen + Versenden require payment. Angekommen (delivery confirm) does not. */
   canAdvance(b: IBestellung): boolean {
