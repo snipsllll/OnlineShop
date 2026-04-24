@@ -9,28 +9,35 @@
 
     <!-- Step Indicator -->
     <div class="step-indicator">
-      <div class="step" [class.step--active]="step() === 'address'" [class.step--done]="step() === 'payment' || step() === 'summary'">
-        <div class="step-circle">
-          <span class="material-symbols-outlined">location_on</span>
-        </div>
+      <div class="step"
+           [class.step--active]="step() === 'address'"
+           [class.step--done]="step() === 'shipping' || step() === 'payment' || step() === 'summary'">
+        <div class="step-circle"><span class="material-symbols-outlined">location_on</span></div>
         <span class="step-label">Adresse</span>
+      </div>
+
+      <div class="step-connector" [class.step-connector--done]="step() === 'shipping' || step() === 'payment' || step() === 'summary'"></div>
+
+      <div class="step"
+           [class.step--active]="step() === 'shipping'"
+           [class.step--done]="step() === 'payment' || step() === 'summary'">
+        <div class="step-circle"><span class="material-symbols-outlined">local_shipping</span></div>
+        <span class="step-label">Versand</span>
       </div>
 
       <div class="step-connector" [class.step-connector--done]="step() === 'payment' || step() === 'summary'"></div>
 
-      <div class="step" [class.step--active]="step() === 'payment'" [class.step--done]="step() === 'summary'">
-        <div class="step-circle">
-          <span class="material-symbols-outlined">payments</span>
-        </div>
-        <span class="step-label">Zahlungsmethode</span>
+      <div class="step"
+           [class.step--active]="step() === 'payment'"
+           [class.step--done]="step() === 'summary'">
+        <div class="step-circle"><span class="material-symbols-outlined">payments</span></div>
+        <span class="step-label">Zahlung</span>
       </div>
 
       <div class="step-connector" [class.step-connector--done]="step() === 'summary'"></div>
 
       <div class="step" [class.step--active]="step() === 'summary'">
-        <div class="step-circle">
-          <span class="material-symbols-outlined">receipt_long</span>
-        </div>
+        <div class="step-circle"><span class="material-symbols-outlined">receipt_long</span></div>
         <span class="step-label">Übersicht</span>
       </div>
     </div>
@@ -39,7 +46,7 @@
       <div class="checkout-main">
         <div class="card form-card">
 
-          <!-- Step 1: Adresse -->
+          <!-- ─── Step 1: Adresse ─────────────────────────────────────────── -->
           @if (step() === 'address') {
 
             <h2 class="section-title">
@@ -54,54 +61,44 @@
               </div>
             }
 
-            <form (ngSubmit)="continueToPayment()" #checkoutForm="ngForm">
+            <form (ngSubmit)="continueToShipping()" #checkoutForm="ngForm">
 
               <div class="form-row">
                 <div class="form-group">
                   <label class="form-label" for="vorname">Vorname *</label>
-                  <input id="vorname" class="form-input" type="text"
-                         [(ngModel)]="adresse.vorname" name="vorname" required />
+                  <input id="vorname" class="form-input" type="text" [(ngModel)]="adresse.vorname" name="vorname" required />
                 </div>
-
                 <div class="form-group">
                   <label class="form-label" for="nachname">Nachname *</label>
-                  <input id="nachname" class="form-input" type="text"
-                         [(ngModel)]="adresse.nachname" name="nachname" required />
+                  <input id="nachname" class="form-input" type="text" [(ngModel)]="adresse.nachname" name="nachname" required />
                 </div>
               </div>
 
               <div class="form-row">
                 <div class="form-group">
                   <label class="form-label" for="strasse">Straße *</label>
-                  <input id="strasse" class="form-input" type="text"
-                         [(ngModel)]="adresse.strasse" name="strasse" required />
+                  <input id="strasse" class="form-input" type="text" [(ngModel)]="adresse.strasse" name="strasse" required />
                 </div>
-
                 <div class="form-group form-group--narrow">
                   <label class="form-label" for="hausnummer">Nr. *</label>
-                  <input id="hausnummer" class="form-input" type="text"
-                         [(ngModel)]="adresse.hausnummer" name="hausnummer" required />
+                  <input id="hausnummer" class="form-input" type="text" [(ngModel)]="adresse.hausnummer" name="hausnummer" required />
                 </div>
               </div>
 
               <div class="form-row">
                 <div class="form-group form-group--narrow">
                   <label class="form-label" for="plz">PLZ *</label>
-                  <input id="plz" class="form-input" type="text"
-                         [(ngModel)]="adresse.plz" name="plz" required />
+                  <input id="plz" class="form-input" type="text" [(ngModel)]="adresse.plz" name="plz" required />
                 </div>
-
                 <div class="form-group">
                   <label class="form-label" for="ort">Ort *</label>
-                  <input id="ort" class="form-input" type="text"
-                         [(ngModel)]="adresse.ort" name="ort" required />
+                  <input id="ort" class="form-input" type="text" [(ngModel)]="adresse.ort" name="ort" required />
                 </div>
               </div>
 
               <div class="form-group">
                 <label class="form-label" for="land">Land *</label>
-                <select id="land" class="form-input"
-                        [(ngModel)]="adresse.land" name="land" required>
+                <select id="land" class="form-input" [(ngModel)]="adresse.land" name="land" required>
                   <option>Deutschland</option>
                   <option>Österreich</option>
                   <option>Schweiz</option>
@@ -119,7 +116,85 @@
 
             </form>
 
-          <!-- Step 2: Zahlungsmethode -->
+          <!-- ─── Step 2: Versand ─────────────────────────────────────────── -->
+          } @else if (step() === 'shipping') {
+
+            <h2 class="section-title">
+              <span class="material-symbols-outlined">local_shipping</span>
+              Versandoptionen
+            </h2>
+
+            <!-- Lieferdienst -->
+            <p class="shipping-group-label">Lieferdienst</p>
+            <div class="carrier-grid">
+              @for (d of dienstleisterOptions; track d.id) {
+                <label class="carrier-card" [class.carrier-card--active]="selectedDienstleister === d.id">
+                  <input type="radio" name="dienstleister" [(ngModel)]="selectedDienstleister" [value]="d.id" hidden />
+                  <span class="carrier-icon material-symbols-outlined">local_shipping</span>
+                  <span class="carrier-name">{{ d.label }}</span>
+                </label>
+              }
+            </div>
+
+            <!-- Versandart -->
+            <p class="shipping-group-label">Versandart</p>
+            <div class="versandart-list">
+              @for (art of versandartOptions; track art.id) {
+                <label class="versandart-card" [class.versandart-card--active]="selectedVersandArt === art.id">
+                  <input type="radio" name="versandart" [(ngModel)]="selectedVersandArt" [value]="art.id" hidden />
+                  <div class="versandart-left">
+                    <span class="versandart-name">{{ art.label }}</span>
+                    <span class="versandart-lieferzeit">
+                      <span class="material-symbols-outlined">schedule</span>
+                      {{ art.lieferzeit }}
+                    </span>
+                    @if (art.trackingInkludiert) {
+                      <span class="tracking-inklusive">
+                        <span class="material-symbols-outlined">location_searching</span>
+                        Tracking inklusive
+                      </span>
+                    }
+                  </div>
+                  <span class="versandart-preis">
+                    @if (art.kosten === 0) {
+                      <span class="free-label">Kostenlos</span>
+                    } @else {
+                      {{ formatPrice(art.kosten) }}
+                    }
+                  </span>
+                </label>
+              }
+            </div>
+
+            <!-- Tracking-Option (nur wenn nicht inklusive) -->
+            @if (!aktuelleVersandart.trackingInkludiert) {
+              <label class="tracking-toggle">
+                <div class="tracking-toggle-left">
+                  <span class="material-symbols-outlined tracking-toggle-icon">location_searching</span>
+                  <div>
+                    <span class="tracking-toggle-name">Sendungsverfolgung hinzufügen</span>
+                    <span class="tracking-toggle-desc">Verfolge dein Paket jederzeit online</span>
+                  </div>
+                </div>
+                <div class="tracking-toggle-right">
+                  <span class="tracking-toggle-preis">+{{ formatPrice(0.99) }}</span>
+                  <input type="checkbox" class="tracking-checkbox" [(ngModel)]="trackingGewuenscht" />
+                </div>
+              </label>
+            }
+
+            <div class="step-nav">
+              <button type="button" class="btn-secondary" (click)="backToAddress()">
+                <span class="material-symbols-outlined">arrow_back</span>
+                Zurück
+              </button>
+              <button type="button" class="btn-primary submit-btn" (click)="continueToPayment()">
+                <span class="material-symbols-outlined">arrow_forward</span>
+                Weiter
+              </button>
+            </div>
+
+          <!-- ─── Step 3: Zahlungsmethode ────────────────────────────────── -->
           } @else if (step() === 'payment') {
 
             <h2 class="section-title">
@@ -132,12 +207,10 @@
                 <input type="radio" name="paymentMethod" [(ngModel)]="paymentMethod" value="paypal" />
                 <span>PayPal</span>
               </label>
-
               <label class="payment-method" [class.payment-method--active]="paymentMethod === 'card'">
                 <input type="radio" name="paymentMethod" [(ngModel)]="paymentMethod" value="card" />
                 <span>Kreditkarte</span>
               </label>
-
               <label class="payment-method" [class.payment-method--active]="paymentMethod === 'paylater'">
                 <input type="radio" name="paymentMethod" [(ngModel)]="paymentMethod" value="paylater" />
                 <span>Später bezahlen</span>
@@ -155,7 +228,7 @@
             }
 
             <div class="step-nav">
-              <button type="button" class="btn-secondary" (click)="backToAddress()">
+              <button type="button" class="btn-secondary" (click)="backToShipping()">
                 <span class="material-symbols-outlined">arrow_back</span>
                 Zurück
               </button>
@@ -165,7 +238,7 @@
               </button>
             </div>
 
-          <!-- Step 3: Übersicht -->
+          <!-- ─── Step 4: Übersicht ──────────────────────────────────────── -->
           } @else {
 
             <h2 class="section-title">
@@ -188,6 +261,34 @@
               <button type="button" class="btn-secondary btn-inline" (click)="backToAddress()">
                 <span class="material-symbols-outlined">edit</span>
                 Adresse bearbeiten
+              </button>
+            </div>
+
+            <!-- Versand -->
+            <div class="address-summary">
+              <div class="address-summary__title">
+                <span class="material-symbols-outlined">local_shipping</span>
+                Versand
+              </div>
+              <div class="address-summary__lines">
+                <div>{{ versandLabel }}</div>
+                @if (mitTracking) {
+                  <div>
+                    <span class="material-symbols-outlined" style="font-size:14px;vertical-align:middle">location_searching</span>
+                    Sendungsverfolgung
+                  </div>
+                }
+                <div>
+                  @if (versandKosten === 0) {
+                    Versandkosten: <strong>Kostenlos</strong>
+                  } @else {
+                    Versandkosten: <strong>{{ formatPrice(versandKosten) }}</strong>
+                  }
+                </div>
+              </div>
+              <button type="button" class="btn-secondary btn-inline" (click)="editShipping()">
+                <span class="material-symbols-outlined">edit</span>
+                Versand ändern
               </button>
             </div>
 
@@ -215,10 +316,29 @@
                   <div class="summary-item">
                     <div class="summary-item-info">
                       <span class="summary-item-name">{{ item.produkt.bezeichnung }}</span>
-                      <span class="summary-item-price">{{ item.anzahl }} × {{ formatPrice(item.produkt.preis) }}</span>
+                      @if (isRabattAktiv(item.produkt)) {
+                        <span class="summary-item-price">
+                          {{ item.anzahl }} × <span class="summary-item-price--original">{{ formatPrice(item.produkt.preis) }}</span> <span class="summary-item-price--rabatt">{{ formatPrice(effektiverPreis(item.produkt)) }}</span>
+                        </span>
+                      } @else {
+                        <span class="summary-item-price">{{ item.anzahl }} × {{ formatPrice(item.produkt.preis) }}</span>
+                      }
                     </div>
-                    <span class="summary-item-total">{{ formatPrice(item.produkt.preis * item.anzahl) }}</span>
+                    <span class="summary-item-total" [class.summary-item-total--rabatt]="isRabattAktiv(item.produkt)">{{ formatPrice(effektiverPreis(item.produkt) * item.anzahl) }}</span>
                   </div>
+                }
+              </div>
+              <div class="summary-divider"></div>
+              <div class="total-row">
+                <span>Zwischensumme</span>
+                <span>{{ formatPrice(produktpreisGesamt) }}</span>
+              </div>
+              <div class="total-row">
+                <span>Versand ({{ aktuelleVersandart.label }})</span>
+                @if (versandKosten === 0) {
+                  <span class="free-shipping-text">Kostenlos</span>
+                } @else {
+                  <span>{{ formatPrice(versandKosten) }}</span>
                 }
               </div>
               <div class="summary-divider"></div>
@@ -276,7 +396,6 @@
                 (click)="pay()"
                 [disabled]="submitting()"
                 [class.pay-btn--passthrough]="authService.isLoggedIn() && selectedPaymentReady && !submitting()">
-
                 @if (submitting()) {
                   <div class="spinner spinner--sm"></div>
                   Zahlung wird vorbereitet...
@@ -284,7 +403,6 @@
                   <span class="material-symbols-outlined">lock</span>
                   zahlungspflichtig bestellen
                 }
-
               </button>
 
             </div>

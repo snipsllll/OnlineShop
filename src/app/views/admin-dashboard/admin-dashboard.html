@@ -43,13 +43,24 @@
         <span class="material-symbols-outlined stat-card__arrow">arrow_forward</span>
       </div>
 
-      <div class="stat-card stat-card--orange" (click)="goOrders()">
+      <div class="stat-card stat-card--orange" (click)="goNewOrders()">
         <div class="stat-card__icon">
           <span class="material-symbols-outlined">mark_email_unread</span>
         </div>
         <div class="stat-card__body">
           <span class="stat-card__value">{{ countUnviewed }}</span>
           <span class="stat-card__label">Neue Bestellungen</span>
+        </div>
+        <span class="material-symbols-outlined stat-card__arrow">arrow_forward</span>
+      </div>
+
+      <div class="stat-card stat-card--red" [class.stat-card--muted]="unavailableCount() === 0" (click)="goUnavailableProducts()">
+        <div class="stat-card__icon">
+          <span class="material-symbols-outlined">visibility_off</span>
+        </div>
+        <div class="stat-card__body">
+          <span class="stat-card__value">{{ unavailableCount() }}</span>
+          <span class="stat-card__label">Nicht verfügbar</span>
         </div>
         <span class="material-symbols-outlined stat-card__arrow">arrow_forward</span>
       </div>

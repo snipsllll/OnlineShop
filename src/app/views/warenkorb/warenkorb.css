@@ -171,6 +171,16 @@
   margin: 0;
 }
 
+.item-unit-price--original {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+.item-unit-price--rabatt {
+  color: #dc2626;
+  font-weight: 600;
+}
+
 /* Quantity Controls */
 .item-quantity {
   display: flex;
@@ -238,6 +248,10 @@
   font-size: 1.1rem;
   font-weight: 700;
   color: var(--text);
+}
+
+.item-total-price--rabatt {
+  color: #dc2626;
 }
 
 /* Remove Button */
@@ -333,6 +347,10 @@
   color: var(--text);
   font-weight: 500;
   white-space: nowrap;
+}
+
+.summary-item-price--rabatt {
+  color: #dc2626;
 }
 
 .summary-divider {

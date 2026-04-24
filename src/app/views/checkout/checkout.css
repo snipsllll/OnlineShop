@@ -570,6 +570,20 @@ select.form-input {
   white-space: nowrap;
 }
 
+.summary-item-total--rabatt {
+  color: #dc2626;
+}
+
+.summary-item-price--original {
+  text-decoration: line-through;
+  color: var(--text-muted);
+}
+
+.summary-item-price--rabatt {
+  color: #dc2626;
+  font-weight: 600;
+}
+
 .summary-divider {
   height: 1px;
   background: var(--border);
@@ -602,9 +616,213 @@ select.form-input {
   font-size: 1.25rem;
 }
 
-.free-label {
+.free-label,
+.free-shipping-text {
   color: var(--success);
   font-weight: 600;
+}
+
+/* ── Shipping step ──────────────────────────────────────────────────────── */
+
+.shipping-group-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 20px 0 10px;
+}
+
+.shipping-group-label:first-of-type {
+  margin-top: 4px;
+}
+
+/* Carrier grid */
+.carrier-grid {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.carrier-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 14px 18px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  cursor: pointer;
+  transition: border-color var(--transition), background var(--transition), box-shadow var(--transition);
+  min-width: 80px;
+  user-select: none;
+}
+
+.carrier-card:hover {
+  border-color: var(--primary);
+  background: var(--bg);
+}
+
+.carrier-card--active {
+  border-color: var(--primary);
+  background: var(--primary-light, rgba(59,130,246,0.06));
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+}
+
+.carrier-icon {
+  font-size: 24px;
+  color: var(--text-secondary);
+}
+
+.carrier-card--active .carrier-icon {
+  color: var(--primary);
+}
+
+.carrier-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+/* Versandart list */
+.versandart-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.versandart-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  cursor: pointer;
+  transition: border-color var(--transition), background var(--transition), box-shadow var(--transition);
+  user-select: none;
+}
+
+.versandart-card:hover {
+  border-color: var(--primary);
+  background: var(--bg);
+}
+
+.versandart-card--active {
+  border-color: var(--primary);
+  background: var(--primary-light, rgba(59,130,246,0.06));
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+}
+
+.versandart-left {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.versandart-name {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.versandart-lieferzeit {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.versandart-lieferzeit .material-symbols-outlined {
+  font-size: 14px;
+}
+
+.tracking-inklusive {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--success, #16a34a);
+  margin-top: 2px;
+}
+
+.tracking-inklusive .material-symbols-outlined {
+  font-size: 13px;
+}
+
+.versandart-preis {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+/* Tracking toggle */
+.tracking-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  margin-top: 12px;
+  border: 1.5px dashed var(--border);
+  border-radius: var(--radius-md);
+  background: var(--bg);
+  cursor: pointer;
+  transition: border-color var(--transition), background var(--transition);
+  user-select: none;
+}
+
+.tracking-toggle:hover {
+  border-color: var(--primary);
+  background: var(--surface);
+}
+
+.tracking-toggle-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.tracking-toggle-icon {
+  font-size: 22px;
+  color: var(--text-secondary);
+}
+
+.tracking-toggle-name {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.tracking-toggle-desc {
+  display: block;
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.tracking-toggle-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.tracking-toggle-preis {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.tracking-checkbox {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--primary);
+  cursor: pointer;
 }
 
 .vat-note {

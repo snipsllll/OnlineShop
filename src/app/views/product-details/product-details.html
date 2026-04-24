@@ -86,7 +86,17 @@
             }
           </div>
 
-          <div class="details__price">{{ priceFormatted }}</div>
+          @if (isRabattAktiv) {
+            <div class="details__price-block">
+              <span class="details__price details__price--original">{{ priceFormatted }}</span>
+              <div class="details__price-row">
+                <span class="details__price details__price--rabatt">{{ effektivPreisFormatted }}</span>
+                <span class="details__rabatt-badge">{{ rabattBadge }}</span>
+              </div>
+            </div>
+          } @else {
+            <div class="details__price">{{ priceFormatted }}</div>
+          }
 
           <div class="details__divider"></div>
 

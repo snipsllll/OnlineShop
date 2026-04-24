@@ -157,11 +157,15 @@
         <div class="order-total-section">
           <div class="total-row">
             <span>Zwischensumme</span>
-            <span>{{ formatPrice(total) }}</span>
+            <span>{{ formatPrice(produktpreisGesamt) }}</span>
           </div>
           <div class="total-row">
             <span>Versand</span>
-            <span class="free-text">Kostenlos</span>
+            @if ((bestellung()!.versand?.kosten ?? 0) === 0) {
+              <span class="free-text">Kostenlos</span>
+            } @else {
+              <span>{{ formatPrice(bestellung()!.versand!.kosten) }}</span>
+            }
           </div>
           <div class="total-divider"></div>
           <div class="total-row total-row--final">
@@ -198,6 +202,38 @@
             </div>
           </address>
         </div>
+
+        <!-- Versandinformationen -->
+        @if (bestellung()!.versand) {
+          <div class="card versand-card">
+            <h2 class="section-title">
+              <span class="material-symbols-outlined">local_shipping</span>
+              Versandinformationen
+            </h2>
+            <div class="address-block">
+              <div class="address-line">
+                <span class="material-symbols-outlined">storefront</span>
+                {{ versandDienstleisterLabel }} · {{ versandArtLabel }}
+              </div>
+              <div class="address-line">
+                <span class="material-symbols-outlined">schedule</span>
+                {{ bestellung()!.versand!.lieferzeit }}
+              </div>
+              <div class="address-line">
+                <span class="material-symbols-outlined">location_searching</span>
+                Sendungsverfolgung: {{ bestellung()!.versand!.mitTracking ? 'Ja' : 'Nein' }}
+              </div>
+              <div class="address-line">
+                <span class="material-symbols-outlined">payments</span>
+                @if (bestellung()!.versand!.kosten === 0) {
+                  Versandkosten: <strong>Kostenlos</strong>
+                } @else {
+                  Versandkosten: <strong>{{ formatPrice(bestellung()!.versand!.kosten) }}</strong>
+                }
+              </div>
+            </div>
+          </div>
+        }
 
         <!-- Besteller -->
         <div class="card user-card">

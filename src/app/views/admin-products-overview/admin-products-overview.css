@@ -164,6 +164,29 @@
   flex-shrink: 0;
 }
 
+.page-size-selector {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.page-size-label {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.page-size-select {
+  height: 32px;
+  padding: 0 8px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
 .result-count {
   font-size: 0.875rem;
   color: var(--text-secondary);
@@ -263,6 +286,51 @@
   font-size: 0.8rem;
   color: var(--text-muted);
   margin-right: auto;
+}
+
+/* Rabatt panel */
+.rabatt-panel .export-panel__header .material-symbols-outlined {
+  color: #f59e0b;
+}
+
+.rabatt-panel__inputs {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.rabatt-panel__field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+  min-width: 120px;
+}
+
+.rabatt-panel__label {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.rabatt-panel__input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.rabatt-panel__input-wrap .filter-input {
+  padding-right: 28px;
+  width: 100%;
+}
+
+.rabatt-panel__unit {
+  position: absolute;
+  right: 10px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  pointer-events: none;
 }
 
 /* Bulk bar */
@@ -571,6 +639,22 @@
   color: var(--text);
 }
 
+.price-rabatt-chip {
+  display: inline-block;
+  margin-top: 3px;
+  padding: 1px 6px;
+  background: #fef2f2;
+  color: #dc2626;
+  border-radius: var(--radius-full);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.price-rabatt-chip--geplant {
+  background: #f1f5f9;
+  color: var(--text-secondary);
+}
+
 /* Stock detail (Gesamt / Reserviert / Frei) */
 .stock-detail {
   display: flex;
@@ -599,6 +683,24 @@
 .stock-free--low { color: var(--error); }
 
 /* Actions */
+.col-category {
+  width: 140px;
+}
+
+.category-chip {
+  display: inline-block;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  padding: 2px 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 130px;
+}
+
 .col-actions {
   text-align: right;
 }

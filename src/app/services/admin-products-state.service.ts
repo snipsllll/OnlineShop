@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 
 export interface AdminProductsState {
   page: number;
+  pageSize: number;
   searchText: string;
   filterBezeichnung: string;
   filterPreisMin: string;
@@ -10,6 +11,7 @@ export interface AdminProductsState {
   filterLagerMax: string;
   filterVerfuegbar: 'all' | 'true' | 'false';
   filterHasImage: 'all' | 'yes' | 'no';
+  filterKategorie: string;
   sortCol: string | null;
   sortDir: 'asc' | 'desc';
   scrollY: number;

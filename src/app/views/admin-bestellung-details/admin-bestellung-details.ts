@@ -117,8 +117,24 @@ export class AdminBestellungDetails implements OnInit, OnDestroy {
     return `mailto:${email}?subject=${subject}`;
   }
 
-  get total(): number {
+  get produktpreisGesamt(): number {
     return (this.bestellung()?.produkte ?? []).reduce((s, p) => s + (p.preis ?? 0) * (p.anzahl ?? 0), 0);
+  }
+
+  get total(): number {
+    return this.produktpreisGesamt + (this.bestellung()?.versand?.kosten ?? 0);
+  }
+
+  get versandDienstleisterLabel(): string {
+    const d = this.bestellung()?.versand?.dienstleister ?? '';
+    const map: Record<string, string> = { dhl: 'DHL', hermes: 'Hermes', dpd: 'DPD', ups: 'UPS', gls: 'GLS' };
+    return map[d] ?? d;
+  }
+
+  get versandArtLabel(): string {
+    const a = this.bestellung()?.versand?.art ?? '';
+    const map: Record<string, string> = { standard: 'Standard', express: 'Express', overnight: 'Overnight' };
+    return map[a] ?? a;
   }
 
   formatPrice(p: number): string {

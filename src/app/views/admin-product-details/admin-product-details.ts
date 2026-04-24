@@ -3,6 +3,7 @@ import {CommonModule, Location} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {ActivatedRoute} from '@angular/router';
 import {IProdukt} from '../../models/interfaces/IProdukt';
+import {IRabatt} from '../../models/interfaces/IProdukt';
 import {IImgRef} from '../../models/interfaces/IImgRef';
 import {ProduktService} from '../../services/produkt.service';
 import {KategorieService} from '../../services/kategorie.service';
@@ -45,6 +46,10 @@ export class AdminProductDetails implements OnInit {
   protected verfuegbar = true;
   protected imgRefs: IImgRef[] = [];
   protected kategorieId = '';
+  protected rabattProzent = '';
+  protected rabattNeuerPreis = '';
+  protected rabattAb = '';
+  protected rabattBis = '';
 
   async ngOnInit() {
     const id = this.route.snapshot.paramMap.get(RouteParams.PRODUCT_ID);
@@ -69,6 +74,12 @@ export class AdminProductDetails implements OnInit {
                 path: img.path ?? '',
                 position: img.position ?? i,
               }));
+              if (p.rabatt) {
+                this.rabattProzent = String(p.rabatt.prozent);
+                this.rabattNeuerPreis = (this.preis * (1 - p.rabatt.prozent / 100)).toFixed(2);
+                this.rabattAb = p.rabatt.gueltigAb ?? '';
+                this.rabattBis = p.rabatt.gueltigBis ?? '';
+              }
             }
           }
         })(),
@@ -121,6 +132,35 @@ export class AdminProductDetails implements OnInit {
     }
   }
 
+  onLagerbestandChange() {
+    if (this.lagerbestand === 0) this.verfuegbar = false;
+  }
+
+  onProzentChange() {
+    const pct = parseFloat(this.rabattProzent);
+    if (!isNaN(pct) && pct > 0 && pct < 100 && this.preis > 0) {
+      this.rabattNeuerPreis = (this.preis * (1 - pct / 100)).toFixed(2);
+    } else if (this.rabattProzent === '') {
+      this.rabattNeuerPreis = '';
+    }
+  }
+
+  onNeuerPreisChange() {
+    const neu = parseFloat(this.rabattNeuerPreis);
+    if (!isNaN(neu) && neu >= 0 && this.preis > 0 && neu < this.preis) {
+      this.rabattProzent = ((this.preis - neu) / this.preis * 100).toFixed(1);
+    } else if (this.rabattNeuerPreis === '') {
+      this.rabattProzent = '';
+    }
+  }
+
+  clearRabatt() {
+    this.rabattProzent = '';
+    this.rabattNeuerPreis = '';
+    this.rabattAb = '';
+    this.rabattBis = '';
+  }
+
   removeImage(index: number) {
     this.imgRefs = this.imgRefs.filter((_, i) => i !== index).map((img, i) => ({...img, position: i}));
   }
@@ -128,6 +168,10 @@ export class AdminProductDetails implements OnInit {
   async save() {
     this.saving.set(true);
     try {
+      const pct = parseFloat(this.rabattProzent);
+      const rabatt: IRabatt | undefined = (!isNaN(pct) && pct > 0 && pct < 100)
+        ? { prozent: pct, ...(this.rabattAb ? { gueltigAb: this.rabattAb } : {}), ...(this.rabattBis ? { gueltigBis: this.rabattBis } : {}) }
+        : undefined;
       const produkt: IProdukt = {
         id: this.productId,
         bezeichnung: this.bezeichnung,
@@ -137,6 +181,7 @@ export class AdminProductDetails implements OnInit {
         verfuegbar: this.verfuegbar,
         imgRefs: this.imgRefs,
         kategorieId: this.kategorieId || undefined,
+        rabatt,
       };
       if (this.isNew) {
         await this.produktService.addProdukt(produkt);

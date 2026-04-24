@@ -152,11 +152,44 @@
   border-top: 1px solid var(--border);
 }
 
+.kachel__price-block {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.kachel__price-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
 .kachel__price {
   font-size: 20px;
   font-weight: 700;
   color: var(--primary);
   letter-spacing: -0.5px;
+}
+
+.kachel__price--original {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-decoration: line-through;
+  letter-spacing: 0;
+}
+
+.kachel__price--rabatt {
+  color: #dc2626;
+}
+
+.kachel__rabatt-badge {
+  padding: 1px 6px;
+  background: #fef2f2;
+  color: #dc2626;
+  border-radius: var(--radius-full);
+  font-size: 0.72rem;
+  font-weight: 700;
 }
 
 .kachel__cart-btn {

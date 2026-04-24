@@ -88,6 +88,13 @@
         </button>
       }
     </div>
+    <button class="filter-neu-chip" [class.filter-neu-chip--active]="filterNeu" (click)="toggleFilterNeu()">
+      <span class="material-symbols-outlined">mark_email_unread</span>
+      Nur neue
+      @if (!loading() && countNeu > 0) {
+        <span class="filter-neu-count">{{ countNeu }}</span>
+      }
+    </button>
     @if (!loading()) {
       <span class="result-count">{{ filteredBestellungen.length }} Bestellung{{ filteredBestellungen.length !== 1 ? 'en' : '' }}</span>
     }
@@ -112,6 +119,10 @@
   } @else {
     <div class="orders-list">
       @for (b of filteredBestellungen; track b.id) {
+        <div class="order-card-wrapper">
+          @if (isUnviewed(b)) {
+            <span class="order-new-dot"></span>
+          }
         <div class="order-card" [class.order-card--new]="isNewOrder(b)" [class.order-card--cancelled]="isCancelled(b)" (click)="onDetails(b.id)">
 
           <!-- Left accent bar -->
@@ -127,9 +138,6 @@
                 <span class="order-id" [title]="b.id">#{{ b.id.slice(0, 8) }}</span>
               </div>
               <div class="order-badges">
-                @if (isUnviewed(b)) {
-                  <span class="badge badge--neue">Neu</span>
-                }
                 <span class="badge" [ngClass]="getZustandClass(b)">{{ getZustandLabel(b) }}</span>
                 @if (isRefunded(b)) {
                   <span class="badge badge--refunded pay-badge">
@@ -196,6 +204,7 @@
             </div>
           </div>
 
+        </div>
         </div>
       }
     </div>

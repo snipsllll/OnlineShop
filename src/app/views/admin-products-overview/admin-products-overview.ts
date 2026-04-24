@@ -2,7 +2,7 @@ import {Component, ElementRef, inject, OnInit, signal, ViewChild} from '@angular
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {QueryDocumentSnapshot} from 'firebase/firestore';
-import {IProdukt} from '../../models/interfaces/IProdukt';
+import {IProdukt, IRabatt} from '../../models/interfaces/IProdukt';
 import {IKategorie} from '../../models/interfaces/IKategorie';
 import {ProduktService} from '../../services/produkt.service';
 import {KategorieService} from '../../services/kategorie.service';
@@ -33,8 +33,14 @@ export class AdminProductsOverview implements OnInit {
   protected kategorien = signal<IKategorie[]>([]);
   protected bulkAssigning = signal(false);
   protected showExportPanel = signal(false);
+  protected showRabattPanel = signal(false);
+  protected bulkRabattProzent = '';
+  protected bulkRabattAb = '';
+  protected bulkRabattBis = '';
+  protected bulkRabattSaving = signal(false);
   protected exportKatFilter = signal<Set<string>>(new Set());
-  protected readonly PAGE_SIZE = 20;
+  protected pageSize = 20;
+  protected readonly pageSizeOptions = [10, 20, 50, 100];
   protected currentPage = signal(1);
   protected totalCount = signal(0);
   protected pageItems = signal<IProdukt[]>([]);
@@ -58,6 +64,7 @@ export class AdminProductsOverview implements OnInit {
   protected filterLagerMax = '';
   protected filterVerfuegbar: 'all' | 'true' | 'false' = 'all';
   protected filterHasImage: 'all' | 'yes' | 'no' = 'all';
+  protected filterKategorie = 'all';
 
   private _searchText = '';
   private _allProdukte: IProdukt[] | null = null;
@@ -80,6 +87,7 @@ export class AdminProductsOverview implements OnInit {
       this.filterLagerMin || this.filterLagerMax ||
       this.filterVerfuegbar !== 'all' ||
       this.filterHasImage !== 'all' ||
+      this.filterKategorie !== 'all' ||
       this.sortCol() !== null
     );
   }
@@ -89,13 +97,13 @@ export class AdminProductsOverview implements OnInit {
   }
 
   get totalPages(): number {
-    return Math.max(1, Math.ceil(this.displayedCount / this.PAGE_SIZE));
+    return Math.max(1, Math.ceil(this.displayedCount / this.pageSize));
   }
 
   get pagedProdukte(): IProdukt[] {
     if (this.searchActive()) {
-      const start = (this.currentPage() - 1) * this.PAGE_SIZE;
-      return this._filteredProdukte.slice(start, start + this.PAGE_SIZE);
+      const start = (this.currentPage() - 1) * this.pageSize;
+      return this._filteredProdukte.slice(start, start + this.pageSize);
     }
     return this.pageItems();
   }
@@ -211,6 +219,13 @@ export class AdminProductsOverview implements OnInit {
       const want = this.filterHasImage === 'yes';
       result = result.filter(p => want ? ((p.imgRefs?.length ?? 0) > 0) : !((p.imgRefs?.length ?? 0) > 0));
     }
+    if (this.filterKategorie !== 'all') {
+      if (this.filterKategorie === '__none__') {
+        result = result.filter(p => !p.kategorieId);
+      } else {
+        result = result.filter(p => p.kategorieId === this.filterKategorie);
+      }
+    }
 
     const col = this.sortCol();
     const dir = this.sortDir();
@@ -245,8 +260,18 @@ export class AdminProductsOverview implements OnInit {
     this.filterLagerMax = '';
     this.filterVerfuegbar = 'all';
     this.filterHasImage = 'all';
+    this.filterKategorie = 'all';
     this.sortCol.set(null);
     this.onFilterOrSortChange();
+  }
+
+  async onPageSizeChange() {
+    this._cursors.clear();
+    this.currentPage.set(1);
+    this.clearSelection();
+    if (!this.searchActive()) {
+      await this.loadPage(1);
+    }
   }
 
   // ── Bulk delete ───────────────────────────────────────────────────────────
@@ -295,11 +320,76 @@ export class AdminProductsOverview implements OnInit {
     }
   }
 
+  // ── Bulk rabatt ───────────────────────────────────────────────────────────
+  openRabattPanel() {
+    this.bulkRabattProzent = '';
+    this.bulkRabattAb = '';
+    this.bulkRabattBis = '';
+    this.showRabattPanel.set(true);
+  }
+
+  async applyBulkRabatt() {
+    const pct = parseFloat(this.bulkRabattProzent);
+    if (isNaN(pct) || pct <= 0 || pct >= 100) return;
+    const ids = [...this.selectedIds()];
+    const rabatt: IRabatt = {
+      prozent: pct,
+      ...(this.bulkRabattAb ? { gueltigAb: this.bulkRabattAb } : {}),
+      ...(this.bulkRabattBis ? { gueltigBis: this.bulkRabattBis } : {}),
+    };
+    this.bulkRabattSaving.set(true);
+    try {
+      await this.produktService.bulkSetRabatt(ids, rabatt);
+      const update = (p: IProdukt) => ids.includes(p.id) ? { ...p, rabatt } : p;
+      if (this._allProdukte) this._allProdukte = this._allProdukte.map(update);
+      this.pageItems.update(items => items.map(update));
+      if (this.searchActive()) this.applyAllFilters();
+      this.showRabattPanel.set(false);
+    } finally {
+      this.bulkRabattSaving.set(false);
+    }
+  }
+
+  async removeBulkRabatt() {
+    const ids = [...this.selectedIds()];
+    this.bulkRabattSaving.set(true);
+    try {
+      await this.produktService.bulkSetRabatt(ids, null);
+      const update = (p: IProdukt) => { const q = { ...p }; delete q.rabatt; return q; };
+      if (this._allProdukte) this._allProdukte = this._allProdukte.map(update);
+      this.pageItems.update(items => items.map(update));
+      if (this.searchActive()) this.applyAllFilters();
+      this.showRabattPanel.set(false);
+    } finally {
+      this.bulkRabattSaving.set(false);
+    }
+  }
+
+  // ── Rabatt display helpers ────────────────────────────────────────────────
+  isRabattAktiv(p: IProdukt): boolean {
+    const r = p.rabatt;
+    if (!r?.prozent) return false;
+    const today = new Date().toISOString().slice(0, 10);
+    if (r.gueltigAb && today < r.gueltigAb) return false;
+    if (r.gueltigBis && today < r.gueltigBis || !r.gueltigBis) return true;
+    return false;
+  }
+
+  getRabattLabel(p: IProdukt): string {
+    const r = p.rabatt;
+    if (!r?.prozent) return '';
+    const today = new Date().toISOString().slice(0, 10);
+    if (r.gueltigAb && today < r.gueltigAb) return `−${Math.round(r.prozent)}% (geplant)`;
+    if (r.gueltigBis && today > r.gueltigBis) return '';
+    return `−${Math.round(r.prozent)}%`;
+  }
+
   // ── Init ──────────────────────────────────────────────────────────────────
   async ngOnInit() {
     const saved = this.stateService.state;
     if (saved) {
       this.stateService.state = null;
+      this.pageSize = saved.pageSize ?? 20;
       this._searchText = saved.searchText;
       this.filterBezeichnung = saved.filterBezeichnung;
       this.filterPreisMin = saved.filterPreisMin;
@@ -308,6 +398,7 @@ export class AdminProductsOverview implements OnInit {
       this.filterLagerMax = saved.filterLagerMax;
       this.filterVerfuegbar = saved.filterVerfuegbar;
       this.filterHasImage = saved.filterHasImage;
+      this.filterKategorie = saved.filterKategorie ?? 'all';
       this.sortCol.set(saved.sortCol as SortCol | null);
       this.sortDir.set(saved.sortDir);
 
@@ -331,7 +422,7 @@ export class AdminProductsOverview implements OnInit {
     try {
       const [count, { items, lastDoc }, kategorien] = await Promise.all([
         this.produktService.getProduktCount(),
-        this.produktService.getProduktePage(this.PAGE_SIZE),
+        this.produktService.getProduktePage(this.pageSize),
         this.kategorieService.getKategorien(),
       ]);
       this.kategorien.set(kategorien);
@@ -360,7 +451,7 @@ export class AdminProductsOverview implements OnInit {
     this.loading.set(true);
     try {
       const cursor = page > 1 ? await this.ensureCursor(page - 1) : undefined;
-      const { items, lastDoc } = await this.produktService.getProduktePage(this.PAGE_SIZE, cursor);
+      const { items, lastDoc } = await this.produktService.getProduktePage(this.pageSize, cursor);
       this.pageItems.set(items);
       this.currentPage.set(page);
       if (lastDoc) this._cursors.set(page, lastDoc);
@@ -375,7 +466,7 @@ export class AdminProductsOverview implements OnInit {
       if (this._cursors.has(p)) {
         cursor = this._cursors.get(p);
       } else {
-        const { lastDoc } = await this.produktService.getProduktePage(this.PAGE_SIZE, cursor);
+        const { lastDoc } = await this.produktService.getProduktePage(this.pageSize, cursor);
         if (lastDoc) { this._cursors.set(p, lastDoc); cursor = lastDoc; }
       }
     }
@@ -396,6 +487,7 @@ export class AdminProductsOverview implements OnInit {
   private saveState() {
     this.stateService.state = {
       page: this.currentPage(),
+      pageSize: this.pageSize,
       searchText: this._searchText,
       filterBezeichnung: this.filterBezeichnung,
       filterPreisMin: this.filterPreisMin,
@@ -404,6 +496,7 @@ export class AdminProductsOverview implements OnInit {
       filterLagerMax: this.filterLagerMax,
       filterVerfuegbar: this.filterVerfuegbar,
       filterHasImage: this.filterHasImage,
+      filterKategorie: this.filterKategorie,
       sortCol: this.sortCol(),
       sortDir: this.sortDir(),
       scrollY: window.scrollY,
@@ -548,6 +641,11 @@ export class AdminProductsOverview implements OnInit {
     await this.initialLoad();
     this.importing.set(false);
     this.importResult.set({ success, failed });
+  }
+
+  getKategorieName(id: string | undefined): string {
+    if (!id) return '—';
+    return this.kategorien().find(k => k.id === id)?.name ?? '—';
   }
 
   formatPrice(p: number): string {
