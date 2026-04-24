@@ -47,7 +47,15 @@
                 <!-- Product Info -->
                 <div class="item-info">
                   <h3 class="item-name">{{ item.produkt.bezeichnung }}</h3>
-                  <p class="item-unit-price">{{ formatPrice(item.produkt.preis) }} / Stück</p>
+                  @if (isRabattAktiv(item.produkt)) {
+                    <p class="item-unit-price">
+                      <span class="item-unit-price--original">{{ formatPrice(item.produkt.preis) }}</span>
+                      <span class="item-unit-price--rabatt">{{ formatPrice(effektiverPreis(item.produkt)) }}</span>
+                      / Stück
+                    </p>
+                  } @else {
+                    <p class="item-unit-price">{{ formatPrice(item.produkt.preis) }} / Stück</p>
+                  }
                   @if (!item.produkt.verfuegbar) {
                     <span class="badge badge--error">Nicht verfügbar</span>
                   }
@@ -67,7 +75,7 @@
                 <!-- Line Total -->
                 <div class="item-total">
                   <span class="item-total-label">Gesamt</span>
-                  <span class="item-total-price">{{ formatPrice(item.produkt.preis * item.anzahl) }}</span>
+                  <span class="item-total-price" [class.item-total-price--rabatt]="isRabattAktiv(item.produkt)">{{ formatPrice(effektiverPreis(item.produkt) * item.anzahl) }}</span>
                 </div>
 
                 <!-- Remove Button -->
@@ -92,7 +100,7 @@
             @for (item of cartItems(); track item.produkt.id) {
               <div class="summary-line">
                 <span class="summary-item-name">{{ item.produkt.bezeichnung }} <span class="summary-qty">× {{ item.anzahl }}</span></span>
-                <span class="summary-item-price">{{ formatPrice(item.produkt.preis * item.anzahl) }}</span>
+                <span class="summary-item-price" [class.summary-item-price--rabatt]="isRabattAktiv(item.produkt)">{{ formatPrice(effektiverPreis(item.produkt) * item.anzahl) }}</span>
               </div>
             }
           </div>

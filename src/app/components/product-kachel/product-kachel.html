@@ -32,7 +32,17 @@
       </div>
     }
     <div class="kachel__footer">
-      <span class="kachel__price">{{ priceFormatted }}</span>
+      @if (isRabattAktiv) {
+        <div class="kachel__price-block">
+          <span class="kachel__price kachel__price--original">{{ priceFormatted }}</span>
+          <div class="kachel__price-row">
+            <span class="kachel__price kachel__price--rabatt">{{ effektivPreisFormatted }}</span>
+            <span class="kachel__rabatt-badge">{{ rabattBadge }}</span>
+          </div>
+        </div>
+      } @else {
+        <span class="kachel__price">{{ priceFormatted }}</span>
+      }
       <button class="kachel__cart-btn" (click)="addToCart($event)" [disabled]="!produkt.verfuegbar || addingToCart() || addedToCart()" [class.kachel__cart-btn--added]="addedToCart()">
         <span class="material-symbols-outlined" [class.spinning]="addingToCart()">{{ addingToCart() ? 'progress_activity' : addedToCart() ? 'check' : 'add_shopping_cart' }}</span>
       </button>

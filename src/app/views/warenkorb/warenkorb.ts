@@ -2,6 +2,15 @@ import {Component, effect, inject, signal} from '@angular/core';
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {IProdukt} from '../../models/interfaces/IProdukt';
+
+function berechneEffektivenPreis(p: IProdukt): number {
+  const r = p.rabatt;
+  if (!r?.prozent) return p.preis;
+  const today = new Date().toISOString().slice(0, 10);
+  if (r.gueltigAb && today < r.gueltigAb) return p.preis;
+  if (r.gueltigBis && today > r.gueltigBis) return p.preis;
+  return Math.round(p.preis * (1 - r.prozent / 100) * 100) / 100;
+}
 import {IWarenkorb} from '../../models/interfaces/IWarenkorb';
 import {WarenkorbService} from '../../services/warenkorb.service';
 import {ProduktService} from '../../services/produkt.service';
@@ -66,7 +75,15 @@ export class Warenkorb {
   }
 
   get gesamtpreis(): number {
-    return this.cartItems().reduce((sum, i) => sum + i.produkt.preis * i.anzahl, 0);
+    return this.cartItems().reduce((sum, i) => sum + berechneEffektivenPreis(i.produkt) * i.anzahl, 0);
+  }
+
+  effektiverPreis(p: IProdukt): number {
+    return berechneEffektivenPreis(p);
+  }
+
+  isRabattAktiv(p: IProdukt): boolean {
+    return berechneEffektivenPreis(p) < p.preis;
   }
 
   get gesamtpreisFormatted(): string {

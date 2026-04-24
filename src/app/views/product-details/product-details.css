@@ -141,11 +141,44 @@
   gap: 8px;
 }
 
+.details__price-block {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.details__price-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .details__price {
   font-size: 34px;
   font-weight: 800;
   color: var(--primary);
   letter-spacing: -1px;
+}
+
+.details__price--original {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-decoration: line-through;
+  letter-spacing: 0;
+}
+
+.details__price--rabatt {
+  color: #dc2626;
+}
+
+.details__rabatt-badge {
+  padding: 3px 10px;
+  background: #fef2f2;
+  color: #dc2626;
+  border-radius: var(--radius-full);
+  font-size: 0.85rem;
+  font-weight: 700;
 }
 
 .details__divider {

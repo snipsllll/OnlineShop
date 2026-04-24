@@ -76,6 +76,22 @@
                 }
               </tbody>
               <tfoot>
+                <tr>
+                  <td colspan="3" class="total-label">Zwischensumme</td>
+                  <td class="total-value total-value--sub">{{ formatPrice(produktpreisGesamt) }}</td>
+                </tr>
+                @if (bestellung()!.versand) {
+                  <tr>
+                    <td colspan="3" class="total-label">Versand</td>
+                    <td class="total-value total-value--sub">
+                      @if (bestellung()!.versand!.kosten === 0) {
+                        <span class="free-text">Kostenlos</span>
+                      } @else {
+                        {{ formatPrice(bestellung()!.versand!.kosten) }}
+                      }
+                    </td>
+                  </tr>
+                }
                 <tr class="total-row">
                   <td colspan="3" class="total-label">Gesamtbetrag</td>
                   <td class="total-value">{{ formatPrice(total) }}</td>
@@ -110,6 +126,38 @@
             </div>
           </div>
         </div>
+
+        <!-- Versand info card -->
+        @if (bestellung()!.versand) {
+          <div class="card address-card">
+            <h2 class="section-title">
+              <span class="material-symbols-outlined">local_shipping</span>
+              Versandinformationen
+            </h2>
+            <div class="address-block">
+              <div class="address-line">
+                <span class="material-symbols-outlined address-icon">storefront</span>
+                <span>{{ versandDienstleisterLabel }} · {{ versandArtLabel }}</span>
+              </div>
+              <div class="address-line">
+                <span class="material-symbols-outlined address-icon">schedule</span>
+                <span>{{ bestellung()!.versand!.lieferzeit }}</span>
+              </div>
+              <div class="address-line">
+                <span class="material-symbols-outlined address-icon">location_searching</span>
+                <span>Sendungsverfolgung: {{ bestellung()!.versand!.mitTracking ? 'Ja' : 'Nein' }}</span>
+              </div>
+              <div class="address-line">
+                <span class="material-symbols-outlined address-icon">payments</span>
+                @if (bestellung()!.versand!.kosten === 0) {
+                  <span>Versandkosten: <strong>Kostenlos</strong></span>
+                } @else {
+                  <span>Versandkosten: <strong>{{ formatPrice(bestellung()!.versand!.kosten) }}</strong></span>
+                }
+              </div>
+            </div>
+          </div>
+        }
 
         <!-- Customer info card -->
         <div class="card address-card">
@@ -236,6 +284,20 @@
               <span class="summary-key">Bestelldatum:</span>
               <span class="summary-value">{{ formatDate(bestellung()!.bestelldatum) }}</span>
             </div>
+            @if (bestellung()!.versand) {
+              <div class="summary-row">
+                <span class="summary-key">Versand:</span>
+                <span class="summary-value">{{ versandDienstleisterLabel }} · {{ versandArtLabel }}</span>
+              </div>
+              <div class="summary-row">
+                <span class="summary-key">Lieferzeit:</span>
+                <span class="summary-value">{{ bestellung()!.versand!.lieferzeit }}</span>
+              </div>
+              <div class="summary-row">
+                <span class="summary-key">Tracking:</span>
+                <span class="summary-value">{{ bestellung()!.versand!.mitTracking ? 'Ja' : 'Nein' }}</span>
+              </div>
+            }
             <div class="summary-divider"></div>
             <div class="summary-row summary-total">
               <span class="summary-key">Gesamtbetrag:</span>

@@ -213,7 +213,8 @@ export class AdminBestellungenOverview implements OnInit {
   }
 
   getOrderTotal(b: IBestellung): number {
-    return (b.produkte ?? []).reduce((s, p) => s + (p.preis ?? 0) * (p.anzahl ?? 0), 0);
+    const produkte = (b.produkte ?? []).reduce((s, p) => s + (p.preis ?? 0) * (p.anzahl ?? 0), 0);
+    return produkte + (b.versand?.kosten ?? 0);
   }
 
   onDetails(id: string) { this.routingService.route(MyRoutes.ADMIN_BESTELLUNG_DETAILS, id); }

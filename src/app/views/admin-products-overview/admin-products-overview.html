@@ -111,6 +111,57 @@
     </div>
   }
 
+  <!-- Bulk rabatt panel -->
+  @if (showRabattPanel()) {
+    <div class="export-panel rabatt-panel">
+      <div class="export-panel__header">
+        <span class="material-symbols-outlined">sell</span>
+        Rabatt für {{ selectedCount() }} Produkt{{ selectedCount() !== 1 ? 'e' : '' }} setzen
+      </div>
+      <div class="rabatt-panel__inputs">
+        <div class="rabatt-panel__field">
+          <label class="rabatt-panel__label">Rabatt %</label>
+          <div class="rabatt-panel__input-wrap">
+            <input
+              class="filter-input"
+              type="number"
+              min="0.1"
+              max="99.9"
+              step="0.1"
+              placeholder="z. B. 20"
+              [(ngModel)]="bulkRabattProzent"
+            />
+            <span class="rabatt-panel__unit">%</span>
+          </div>
+        </div>
+        <div class="rabatt-panel__field">
+          <label class="rabatt-panel__label">Gültig ab</label>
+          <input class="filter-input" type="date" [(ngModel)]="bulkRabattAb" />
+        </div>
+        <div class="rabatt-panel__field">
+          <label class="rabatt-panel__label">Gültig bis</label>
+          <input class="filter-input" type="date" [(ngModel)]="bulkRabattBis" />
+        </div>
+      </div>
+      <div class="export-panel__actions">
+        <button class="btn-secondary btn-sm" (click)="removeBulkRabatt()" [disabled]="bulkRabattSaving()">
+          <span class="material-symbols-outlined btn-icon">remove_circle</span>
+          Entfernen
+        </button>
+        <button class="btn-secondary btn-sm" (click)="showRabattPanel.set(false)">Abbrechen</button>
+        <button class="btn-primary btn-sm" (click)="applyBulkRabatt()"
+          [disabled]="bulkRabattSaving() || !bulkRabattProzent || +bulkRabattProzent <= 0 || +bulkRabattProzent >= 100">
+          @if (bulkRabattSaving()) {
+            <div class="spinner spinner-sm"></div>
+          } @else {
+            <span class="material-symbols-outlined btn-icon">sell</span>
+          }
+          Setzen
+        </button>
+      </div>
+    </div>
+  }
+
   <!-- Bulk action bar -->
   @if (selectedCount() > 0) {
     <div class="bulk-bar">
@@ -126,6 +177,10 @@
             <option [value]="k.id">{{ k.name }}</option>
           }
         </select>
+        <button class="btn-secondary btn-sm" (click)="openRabattPanel()" [disabled]="bulkRabattSaving()">
+          <span class="material-symbols-outlined btn-icon">sell</span>
+          Rabatt
+        </button>
         <button class="btn-secondary btn-sm" (click)="clearSelection()">
           <span class="material-symbols-outlined btn-icon">deselect</span>
           Aufheben
@@ -290,6 +345,11 @@
                   </td>
                   <td class="col-price">
                     <span class="price-value">{{ formatPrice(produkt.preis) }}</span>
+                    @if (getRabattLabel(produkt)) {
+                      <span class="price-rabatt-chip" [class.price-rabatt-chip--geplant]="!isRabattAktiv(produkt)">
+                        {{ getRabattLabel(produkt) }}
+                      </span>
+                    }
                   </td>
                   <td class="col-stock">
                     <div class="stock-detail">

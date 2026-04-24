@@ -258,6 +258,17 @@
   white-space: nowrap;
 }
 
+.total-value--sub {
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: var(--text-secondary);
+}
+
+.free-text {
+  color: var(--success, #16a34a);
+  font-weight: 600;
+}
+
 /* Address block */
 .address-block {
   display: flex;

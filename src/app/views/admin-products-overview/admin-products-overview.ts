@@ -2,7 +2,7 @@ import {Component, ElementRef, inject, OnInit, signal, ViewChild} from '@angular
 import {CommonModule} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {QueryDocumentSnapshot} from 'firebase/firestore';
-import {IProdukt} from '../../models/interfaces/IProdukt';
+import {IProdukt, IRabatt} from '../../models/interfaces/IProdukt';
 import {IKategorie} from '../../models/interfaces/IKategorie';
 import {ProduktService} from '../../services/produkt.service';
 import {KategorieService} from '../../services/kategorie.service';
@@ -33,6 +33,11 @@ export class AdminProductsOverview implements OnInit {
   protected kategorien = signal<IKategorie[]>([]);
   protected bulkAssigning = signal(false);
   protected showExportPanel = signal(false);
+  protected showRabattPanel = signal(false);
+  protected bulkRabattProzent = '';
+  protected bulkRabattAb = '';
+  protected bulkRabattBis = '';
+  protected bulkRabattSaving = signal(false);
   protected exportKatFilter = signal<Set<string>>(new Set());
   protected readonly PAGE_SIZE = 20;
   protected currentPage = signal(1);
@@ -293,6 +298,70 @@ export class AdminProductsOverview implements OnInit {
     } finally {
       this.bulkAssigning.set(false);
     }
+  }
+
+  // ── Bulk rabatt ───────────────────────────────────────────────────────────
+  openRabattPanel() {
+    this.bulkRabattProzent = '';
+    this.bulkRabattAb = '';
+    this.bulkRabattBis = '';
+    this.showRabattPanel.set(true);
+  }
+
+  async applyBulkRabatt() {
+    const pct = parseFloat(this.bulkRabattProzent);
+    if (isNaN(pct) || pct <= 0 || pct >= 100) return;
+    const ids = [...this.selectedIds()];
+    const rabatt: IRabatt = {
+      prozent: pct,
+      ...(this.bulkRabattAb ? { gueltigAb: this.bulkRabattAb } : {}),
+      ...(this.bulkRabattBis ? { gueltigBis: this.bulkRabattBis } : {}),
+    };
+    this.bulkRabattSaving.set(true);
+    try {
+      await this.produktService.bulkSetRabatt(ids, rabatt);
+      const update = (p: IProdukt) => ids.includes(p.id) ? { ...p, rabatt } : p;
+      if (this._allProdukte) this._allProdukte = this._allProdukte.map(update);
+      this.pageItems.update(items => items.map(update));
+      if (this.searchActive()) this.applyAllFilters();
+      this.showRabattPanel.set(false);
+    } finally {
+      this.bulkRabattSaving.set(false);
+    }
+  }
+
+  async removeBulkRabatt() {
+    const ids = [...this.selectedIds()];
+    this.bulkRabattSaving.set(true);
+    try {
+      await this.produktService.bulkSetRabatt(ids, null);
+      const update = (p: IProdukt) => { const q = { ...p }; delete q.rabatt; return q; };
+      if (this._allProdukte) this._allProdukte = this._allProdukte.map(update);
+      this.pageItems.update(items => items.map(update));
+      if (this.searchActive()) this.applyAllFilters();
+      this.showRabattPanel.set(false);
+    } finally {
+      this.bulkRabattSaving.set(false);
+    }
+  }
+
+  // ── Rabatt display helpers ────────────────────────────────────────────────
+  isRabattAktiv(p: IProdukt): boolean {
+    const r = p.rabatt;
+    if (!r?.prozent) return false;
+    const today = new Date().toISOString().slice(0, 10);
+    if (r.gueltigAb && today < r.gueltigAb) return false;
+    if (r.gueltigBis && today < r.gueltigBis || !r.gueltigBis) return true;
+    return false;
+  }
+
+  getRabattLabel(p: IProdukt): string {
+    const r = p.rabatt;
+    if (!r?.prozent) return '';
+    const today = new Date().toISOString().slice(0, 10);
+    if (r.gueltigAb && today < r.gueltigAb) return `−${Math.round(r.prozent)}% (geplant)`;
+    if (r.gueltigBis && today > r.gueltigBis) return '';
+    return `−${Math.round(r.prozent)}%`;
   }
 
   // ── Init ──────────────────────────────────────────────────────────────────

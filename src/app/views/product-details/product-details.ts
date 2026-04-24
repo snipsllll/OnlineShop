@@ -3,6 +3,15 @@ import {CommonModule, Location} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {ActivatedRoute} from '@angular/router';
 import {IProdukt} from '../../models/interfaces/IProdukt';
+
+function berechneEffektivenPreis(p: IProdukt): number {
+  const r = p.rabatt;
+  if (!r?.prozent) return p.preis;
+  const today = new Date().toISOString().slice(0, 10);
+  if (r.gueltigAb && today < r.gueltigAb) return p.preis;
+  if (r.gueltigBis && today > r.gueltigBis) return p.preis;
+  return Math.round(p.preis * (1 - r.prozent / 100) * 100) / 100;
+}
 import {ProduktService} from '../../services/produkt.service';
 import {WarenkorbService} from '../../services/warenkorb.service';
 import {FavoritService} from '../../services/favorit.service';
@@ -113,9 +122,27 @@ export class ProductDetails implements OnInit {
     return this.produkt()?.imgRefs?.slice().sort((a, b) => a.position - b.position) ?? [];
   }
 
+  private fmt(n: number): string {
+    return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(n);
+  }
+
   get priceFormatted(): string {
     const p = this.produkt();
-    if (!p) return '';
-    return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(p.preis);
+    return p ? this.fmt(p.preis) : '';
+  }
+
+  get isRabattAktiv(): boolean {
+    const p = this.produkt();
+    return !!p && berechneEffektivenPreis(p) < p.preis;
+  }
+
+  get effektivPreisFormatted(): string {
+    const p = this.produkt();
+    return p ? this.fmt(berechneEffektivenPreis(p)) : '';
+  }
+
+  get rabattBadge(): string {
+    const r = this.produkt()?.rabatt;
+    return r ? `−${Math.round(r.prozent)}%` : '';
   }
 }
