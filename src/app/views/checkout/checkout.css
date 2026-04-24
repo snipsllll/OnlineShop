@@ -91,10 +91,8 @@
 
 /* Checkout Layout */
 .checkout-layout {
-  display: grid;
-  grid-template-columns: 1fr 380px;
-  gap: 32px;
-  align-items: start;
+  max-width: 640px;
+  margin: 0 auto;
 }
 
 .checkout-main {
@@ -634,15 +632,7 @@ select.form-input {
 /* Responsive */
 @media (max-width: 900px) {
   .checkout-layout {
-    grid-template-columns: 1fr;
-  }
-
-  .summary-card {
-    position: static;
-  }
-
-  .checkout-summary {
-    order: -1;
+    max-width: 100%;
   }
 }
 
