@@ -18,7 +18,7 @@ import {DialogService} from '../../services/dialog.service';
 import {MyRoutes} from '../../models/enums/MyRoutes';
 import {PaypalButton} from '../../components/paypal-button/paypal-button';
 
-type CheckoutStep = 'address' | 'payment';
+type CheckoutStep = 'address' | 'payment' | 'summary';
 type PaymentMethod = 'paypal' | 'card' | 'paylater';
 
 @Component({
@@ -134,8 +134,16 @@ export class Checkout implements OnInit {
     this.step.set('payment');
   }
 
+  continueToSummary() {
+    this.step.set('summary');
+  }
+
   backToAddress() {
     this.step.set('address');
+  }
+
+  backToPayment() {
+    this.step.set('payment');
   }
 
   async pay() {
