@@ -203,7 +203,7 @@
                 </th>
                 <th class="col-stock sortable" (click)="toggleSort('lagerbestand')">
                   <div class="th-inner">
-                    Lagerbestand
+                    Lager
                     <span class="material-symbols-outlined sort-icon">{{ sortIcon('lagerbestand') }}</span>
                   </div>
                 </th>
@@ -292,9 +292,18 @@
                     <span class="price-value">{{ formatPrice(produkt.preis) }}</span>
                   </td>
                   <td class="col-stock">
-                    <span class="stock-badge" [class.stock-low]="produkt.lagerbestand <= 5" [class.stock-ok]="produkt.lagerbestand > 5">
-                      {{ produkt.lagerbestand }}
-                    </span>
+                    <div class="stock-detail">
+                      <span class="stock-total" title="Gesamt im Lager">{{ produkt.lagerbestand }}</span>
+                      @if ((produkt.reserviert ?? 0) > 0) {
+                        <span class="stock-reserved" title="Reserviert">{{ produkt.reserviert }} res.</span>
+                      }
+                      <span class="stock-free"
+                            [class.stock-free--low]="(produkt.lagerbestand - (produkt.reserviert ?? 0)) <= 5"
+                            [class.stock-free--ok]="(produkt.lagerbestand - (produkt.reserviert ?? 0)) > 5"
+                            title="Frei verfügbar">
+                        {{ produkt.lagerbestand - (produkt.reserviert ?? 0) }} frei
+                      </span>
+                    </div>
                   </td>
                   <td class="col-status">
                     @if (produkt.verfuegbar) {

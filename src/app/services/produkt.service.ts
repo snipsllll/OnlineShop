@@ -66,7 +66,18 @@ export class ProduktService {
         path: img.path ?? '',
         position: img.position ?? 0,
       })),
-    });
+    }, { merge: true });
+  }
+
+  async adjustStock(id: string, lagerDelta: number, reserviertDelta: number): Promise<void> {
+    const produktDocRef = doc(db as Firestore, 'products', id);
+    const snap = await getDoc(produktDocRef);
+    if (!snap.exists()) return;
+    const data = snap.data();
+    const newLager = Math.max(0, (data['lagerbestand'] ?? 0) + lagerDelta);
+    const newReserviert = Math.max(0, (data['reserviert'] ?? 0) + reserviertDelta);
+    const verfuegbar = (newLager - newReserviert) > 0;
+    await updateDoc(produktDocRef, { lagerbestand: newLager, reserviert: newReserviert, verfuegbar });
   }
 
   async getProduktCount(): Promise<number> {

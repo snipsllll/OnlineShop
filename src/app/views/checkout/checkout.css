@@ -91,10 +91,8 @@
 
 /* Checkout Layout */
 .checkout-layout {
-  display: grid;
-  grid-template-columns: 1fr 380px;
-  gap: 32px;
-  align-items: start;
+  max-width: 640px;
+  margin: 0 auto;
 }
 
 .checkout-main {
@@ -240,6 +238,38 @@ select.form-input {
   align-items: center;
   gap: 8px;
   padding: 10px 12px;
+}
+
+/* Step nav (back + forward row) */
+.step-nav {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.step-nav .submit-btn {
+  flex: 1;
+}
+
+/* Summary items section (step 3) */
+.summary-items-section {
+  border-top: 1px solid var(--border);
+  padding-top: 20px;
+  margin-bottom: 24px;
+}
+
+.summary-items {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.btn-back-summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
 }
 
 /* Payment Section */
@@ -602,15 +632,7 @@ select.form-input {
 /* Responsive */
 @media (max-width: 900px) {
   .checkout-layout {
-    grid-template-columns: 1fr;
-  }
-
-  .summary-card {
-    position: static;
-  }
-
-  .checkout-summary {
-    order: -1;
+    max-width: 100%;
   }
 }
 

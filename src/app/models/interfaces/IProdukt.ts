@@ -8,5 +8,6 @@ export interface IProdukt {
   imgRefs: IImgRef[];
   verfuegbar: boolean;
   lagerbestand: number;
+  reserviert?: number;
   kategorieId?: string;
 }

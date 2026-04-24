@@ -14,4 +14,6 @@ export interface IBestellung {
   isNew?: boolean;
   paypalTransactionId?: string;
   lagerbestandAngepasst?: boolean;
+  erstattungsId?: string;
+  erstattungsDatum?: any;
 }

@@ -9,29 +9,29 @@
 
     <!-- Step Indicator -->
     <div class="step-indicator">
-      <div class="step" [class.step--active]="step() === 'address'" [class.step--done]="step() !== 'address'">
+      <div class="step" [class.step--active]="step() === 'address'" [class.step--done]="step() === 'payment' || step() === 'summary'">
         <div class="step-circle">
           <span class="material-symbols-outlined">location_on</span>
         </div>
         <span class="step-label">Adresse</span>
       </div>
 
-      <div class="step-connector" [class.step-connector--done]="step() === 'payment'"></div>
+      <div class="step-connector" [class.step-connector--done]="step() === 'payment' || step() === 'summary'"></div>
 
-      <div class="step" [class.step--active]="step() === 'payment'">
+      <div class="step" [class.step--active]="step() === 'payment'" [class.step--done]="step() === 'summary'">
         <div class="step-circle">
           <span class="material-symbols-outlined">payments</span>
         </div>
-        <span class="step-label">Zahlung</span>
+        <span class="step-label">Zahlungsmethode</span>
       </div>
 
-      <div class="step-connector"></div>
+      <div class="step-connector" [class.step-connector--done]="step() === 'summary'"></div>
 
-      <div class="step">
+      <div class="step" [class.step--active]="step() === 'summary'">
         <div class="step-circle">
-          <span class="material-symbols-outlined">check</span>
+          <span class="material-symbols-outlined">receipt_long</span>
         </div>
-        <span class="step-label">Bestätigung</span>
+        <span class="step-label">Übersicht</span>
       </div>
     </div>
 
@@ -39,6 +39,7 @@
       <div class="checkout-main">
         <div class="card form-card">
 
+          <!-- Step 1: Adresse -->
           @if (step() === 'address') {
 
             <h2 class="section-title">
@@ -113,73 +114,121 @@
 
               <button type="submit" class="btn-primary submit-btn" [disabled]="!isFormValid">
                 <span class="material-symbols-outlined">arrow_forward</span>
-                Weiter zur Zahlung
+                Weiter
               </button>
 
             </form>
 
-          } @else {
+          <!-- Step 2: Zahlungsmethode -->
+          } @else if (step() === 'payment') {
 
             <h2 class="section-title">
               <span class="material-symbols-outlined">payments</span>
-              Zahlung
+              Zahlungsmethode
             </h2>
 
+            <div class="payment-methods">
+              <label class="payment-method" [class.payment-method--active]="paymentMethod === 'paypal'">
+                <input type="radio" name="paymentMethod" [(ngModel)]="paymentMethod" value="paypal" />
+                <span>PayPal</span>
+              </label>
+
+              <label class="payment-method" [class.payment-method--active]="paymentMethod === 'card'">
+                <input type="radio" name="paymentMethod" [(ngModel)]="paymentMethod" value="card" />
+                <span>Kreditkarte</span>
+              </label>
+
+              <label class="payment-method" [class.payment-method--active]="paymentMethod === 'paylater'">
+                <input type="radio" name="paymentMethod" [(ngModel)]="paymentMethod" value="paylater" />
+                <span>Später bezahlen</span>
+              </label>
+            </div>
+
+            @if (settings.devBannerEnabled()) {
+              <div class="dev-payment-notice">
+                <span class="material-symbols-outlined">science</span>
+                <div>
+                  <strong>Sandbox-Modus</strong>
+                  <p>Zahlungen laufen über die PayPal Sandbox.</p>
+                </div>
+              </div>
+            }
+
+            <div class="step-nav">
+              <button type="button" class="btn-secondary" (click)="backToAddress()">
+                <span class="material-symbols-outlined">arrow_back</span>
+                Zurück
+              </button>
+              <button type="button" class="btn-primary submit-btn" (click)="continueToSummary()">
+                <span class="material-symbols-outlined">arrow_forward</span>
+                Weiter
+              </button>
+            </div>
+
+          <!-- Step 3: Übersicht -->
+          } @else {
+
+            <h2 class="section-title">
+              <span class="material-symbols-outlined">receipt_long</span>
+              Übersicht
+            </h2>
+
+            <!-- Adresse -->
             <div class="address-summary">
               <div class="address-summary__title">
                 <span class="material-symbols-outlined">location_on</span>
                 Lieferadresse
               </div>
-
               <div class="address-summary__lines">
                 <div>{{ adresse.vorname }} {{ adresse.nachname }}</div>
                 <div>{{ adresse.strasse }} {{ adresse.hausnummer }}</div>
                 <div>{{ adresse.plz }} {{ adresse.ort }}</div>
                 <div>{{ adresse.land }}</div>
               </div>
-
               <button type="button" class="btn-secondary btn-inline" (click)="backToAddress()">
                 <span class="material-symbols-outlined">edit</span>
                 Adresse bearbeiten
               </button>
             </div>
 
-            <div class="payment-section">
-
-              <h3 class="subsection-title">
+            <!-- Zahlungsmethode -->
+            <div class="address-summary">
+              <div class="address-summary__title">
                 <span class="material-symbols-outlined">payments</span>
-                Zahlungsmethode auswählen
-              </h3>
-
-              <div class="payment-methods">
-                <label class="payment-method" [class.payment-method--active]="paymentMethod === 'paypal'">
-                  <input type="radio" name="paymentMethod" [(ngModel)]="paymentMethod" value="paypal" />
-                  <span>PayPal</span>
-                </label>
-
-                <label class="payment-method" [class.payment-method--active]="paymentMethod === 'card'">
-                  <input type="radio" name="paymentMethod" [(ngModel)]="paymentMethod" value="card" />
-                  <span>Kreditkarte</span>
-                </label>
-
-                <label class="payment-method" [class.payment-method--active]="paymentMethod === 'paylater'">
-                  <input type="radio" name="paymentMethod" [(ngModel)]="paymentMethod" value="paylater" />
-                  <span>Später bezahlen</span>
-                </label>
+                Zahlungsmethode
               </div>
-
-              @if (settings.devBannerEnabled()) {
-                <div class="dev-payment-notice">
-                  <span class="material-symbols-outlined">science</span>
-                  <div>
-                    <strong>Sandbox-Modus</strong>
-                    <p>Zahlungen laufen über die PayPal Sandbox.</p>
-                  </div>
-                </div>
-              }
-
+              <div class="address-summary__lines">{{ paymentMethodLabel }}</div>
+              <button type="button" class="btn-secondary btn-inline" (click)="backToPayment()">
+                <span class="material-symbols-outlined">edit</span>
+                Methode ändern
+              </button>
             </div>
 
+            <!-- Artikel -->
+            <div class="summary-items-section">
+              <div class="subsection-title">
+                <span class="material-symbols-outlined">shopping_bag</span>
+                Artikel
+              </div>
+              <div class="summary-items">
+                @for (item of cartProdukte(); track item.produkt.id) {
+                  <div class="summary-item">
+                    <div class="summary-item-info">
+                      <span class="summary-item-name">{{ item.produkt.bezeichnung }}</span>
+                      <span class="summary-item-price">{{ item.anzahl }} × {{ formatPrice(item.produkt.preis) }}</span>
+                    </div>
+                    <span class="summary-item-total">{{ formatPrice(item.produkt.preis * item.anzahl) }}</span>
+                  </div>
+                }
+              </div>
+              <div class="summary-divider"></div>
+              <div class="total-row total-row--final">
+                <span>Gesamt</span>
+                <span class="final-price">{{ gesamtpreisFormatted }}</span>
+              </div>
+            </div>
+
+            <!-- Jetzt bezahlen -->
             <div class="pay-btn-wrap">
 
               @if (authService.isLoggedIn()) {
@@ -233,12 +282,17 @@
                   Zahlung wird vorbereitet...
                 } @else {
                   <span class="material-symbols-outlined">lock</span>
-                  Zahlen
+                  zahlungspflichtig bestellen
                 }
 
               </button>
 
             </div>
+
+            <button type="button" class="btn-secondary btn-back-summary" (click)="backToPayment()">
+              <span class="material-symbols-outlined">arrow_back</span>
+              Zurück
+            </button>
 
           }
 
