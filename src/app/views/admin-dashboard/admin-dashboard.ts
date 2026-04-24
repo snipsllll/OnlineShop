@@ -6,6 +6,7 @@ import {ProduktService} from '../../services/produkt.service';
 import {BestellungService} from '../../services/bestellung.service';
 import {RoutingService} from '../../services/routing.service';
 import {AdminProductsStateService} from '../../services/admin-products-state.service';
+import {AdminBestellungenStateService} from '../../services/admin-bestellungen-state.service';
 import {MyRoutes} from '../../models/enums/MyRoutes';
 import {BestellungsZustand} from '../../models/enums/BestellungsZustand';
 import {AdminNav} from '../../components/admin-nav/admin-nav';
@@ -22,6 +23,7 @@ export class AdminDashboard implements OnInit {
   private bestellungService = inject(BestellungService);
   private routingService = inject(RoutingService);
   private stateService = inject(AdminProductsStateService);
+  private bestellungenStateService = inject(AdminBestellungenStateService);
 
   protected loading = signal(true);
   protected produktCount = signal(0);
@@ -103,6 +105,10 @@ export class AdminDashboard implements OnInit {
     this.routingService.route(MyRoutes.ADMIN_PRODUCTS_OVERVIEW);
   }
   goOrders()        { this.routingService.route(MyRoutes.ADMIN_BESTELLUNGEN_OVERVIEW); }
+  goNewOrders() {
+    this.bestellungenStateService.state = { viewMode: 'alle', filterZustand: 'all', filterNeu: true, searchText: '' };
+    this.routingService.route(MyRoutes.ADMIN_BESTELLUNGEN_OVERVIEW);
+  }
   goNewProduct()    { this.routingService.route(MyRoutes.ADMIN_PRODUCT_DETAILS, 'new'); }
   goOrderDetails(id: string) { this.routingService.route(MyRoutes.ADMIN_BESTELLUNG_DETAILS, id); }
   goProductDetails(id: string) { this.routingService.route(MyRoutes.ADMIN_PRODUCT_DETAILS, id); }

@@ -10,6 +10,7 @@ import {BestellungsZustand} from '../../models/enums/BestellungsZustand';
 import {ZahlungsZustand} from '../../models/enums/ZahlungsZustand';
 import {AdminNav} from '../../components/admin-nav/admin-nav';
 import {ProduktService} from '../../services/produkt.service';
+import {AdminBestellungenStateService} from '../../services/admin-bestellungen-state.service';
 
 @Component({
   selector: 'app-admin-bestellungen-overview',
@@ -23,6 +24,7 @@ export class AdminBestellungenOverview implements OnInit {
   private routingService = inject(RoutingService);
   private dialogService = inject(DialogService);
   private produktService = inject(ProduktService);
+  private stateService = inject(AdminBestellungenStateService);
 
   protected bestellungen = signal<IBestellung[]>([]);
   protected loading = signal(true);
@@ -30,11 +32,20 @@ export class AdminBestellungenOverview implements OnInit {
   protected filterZustand: BestellungsZustand | 'all' = 'all';
   protected viewMode: 'aktuelle' | 'alle' = 'aktuelle';
   protected searchText = '';
+  protected filterNeu = false;
 
   protected readonly BestellungsZustand = BestellungsZustand;
   protected readonly ZahlungsZustand = ZahlungsZustand;
 
   async ngOnInit() {
+    const s = this.stateService.state;
+    if (s) {
+      this.viewMode = s.viewMode;
+      this.filterZustand = s.filterZustand;
+      this.filterNeu = s.filterNeu;
+      this.searchText = s.searchText;
+      this.stateService.state = null;
+    }
     await this.loadBestellungen();
   }
 
@@ -65,10 +76,15 @@ export class AdminBestellungenOverview implements OnInit {
       const f = this.filterZustand as number;
       list = list.filter(b => Number(b.bestellungsZustand) === f);
     }
+    if (this.filterNeu) list = list.filter(b => b.isNew === true);
     const q = this.searchText.trim().toLowerCase();
     if (q) list = list.filter(b => b.id.toLowerCase().includes(q));
     return list;
   }
+
+  get countNeu(): number { return this.bestellungen().filter(b => b.isNew === true).length; }
+
+  toggleFilterNeu() { this.filterNeu = !this.filterNeu; }
 
   setViewMode(m: 'aktuelle' | 'alle') {
     this.viewMode = m;
@@ -183,11 +199,13 @@ export class AdminBestellungenOverview implements OnInit {
     if (next === null) return;
     this.updatingId.set(b.id);
     try {
-      const updated: IBestellung = {...b, bestellungsZustand: next};
+      const isAccepting = this.zustand(b) === BestellungsZustand.EINGEGANGEN;
+      const updated: IBestellung = {...b, bestellungsZustand: next, ...(isAccepting ? {isNew: false} : {})};
       await this.bestellungService.editBestellung(b.id, updated);
+      if (isAccepting && b.isNew) await this.bestellungService.markAsViewed(b.id);
 
       const positionen = b.produkte ?? [];
-      if (this.zustand(b) === BestellungsZustand.EINGEGANGEN) {
+      if (isAccepting) {
         // Annehmen: Mengen reservieren
         await Promise.all(positionen.map(p => this.produktService.adjustStock(p.id, 0, p.anzahl)));
       } else if (this.zustand(b) === BestellungsZustand.IN_BEARBEITUNG) {
