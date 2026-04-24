@@ -76,20 +76,18 @@ describe('AdminProductsOverview – applyAllFilters price filter', () => {
     expect(ids).not.toContain('p2'); // preis=25 > 10
   });
 
-  // BUG: parseFloat of non-numeric string yields NaN → filter matches nothing silently
-  it('BUG: NaN from invalid filterPreisMin causes all products to be filtered out', () => {
+  it('invalid filterPreisMin is ignored and all products are shown', () => {
     seedFiltered(comp);
     comp['filterPreisMin'] = 'abc';
     (comp as any).applyAllFilters();
-    // NaN comparison: p.preis >= NaN is always false → empty result
-    expect((comp as any)._filteredProdukte.length).toBe(0);
+    expect((comp as any)._filteredProdukte.length).toBe(3);
   });
 
-  it('BUG: NaN from invalid filterPreisMax causes all products to be filtered out', () => {
+  it('invalid filterPreisMax is ignored and all products are shown', () => {
     seedFiltered(comp);
     comp['filterPreisMax'] = 'abc';
     (comp as any).applyAllFilters();
-    expect((comp as any)._filteredProdukte.length).toBe(0);
+    expect((comp as any)._filteredProdukte.length).toBe(3);
   });
 });
 
@@ -107,12 +105,11 @@ describe('AdminProductsOverview – applyAllFilters stock filter', () => {
     expect(ids).not.toContain('p2'); // lager=0
   });
 
-  // BUG: parseInt of non-numeric string yields NaN → same NaN comparison bug
-  it('BUG: NaN from invalid filterLagerMin causes all products to be filtered out', () => {
+  it('invalid filterLagerMin is ignored and all products are shown', () => {
     seedFiltered(comp);
     comp['filterLagerMin'] = 'xyz';
     (comp as any).applyAllFilters();
-    expect((comp as any)._filteredProdukte.length).toBe(0);
+    expect((comp as any)._filteredProdukte.length).toBe(3);
   });
 });
 

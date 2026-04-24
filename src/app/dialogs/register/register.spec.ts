@@ -69,13 +69,12 @@ describe('Register – validation', () => {
     expect((comp as any).error).toBe('Das Passwort muss mindestens 6 Zeichen lang sein.');
   });
 
-  // BUG: No email format validation — any string passes
-  it('BUG: invalid email format is accepted without error (no format check)', async () => {
+  it('shows error when email format is invalid', async () => {
     const { comp, authMock } = buildComponent();
     fill(comp, { email: 'not-an-email' });
     await comp.submit();
-    expect(authMock.register).toHaveBeenCalled();
-    expect((comp as any).error).toBe('');
+    expect((comp as any).error).toBe('Bitte eine gültige E-Mail-Adresse eingeben.');
+    expect(authMock.register).not.toHaveBeenCalled();
   });
 });
 

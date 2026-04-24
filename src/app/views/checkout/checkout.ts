@@ -139,7 +139,6 @@ export class Checkout implements OnInit {
   }
 
   async pay() {
-    console.log(1)
     if (this.submitting()) return;
     if (!this.authService.isLoggedIn()) {
       this.dialogService.openLogin();
@@ -216,7 +215,7 @@ export class Checkout implements OnInit {
         bestelldatum: new Date(),
         lieferadresse: this.adresse as IAdresse,
         bestellungsZustand: BestellungsZustand.EINGEGANGEN,
-        zahlungsZustand: ZahlungsZustand.NOCH_AUSSTEHEND,
+        zahlungsZustand: this.settings.devBannerEnabled() ? ZahlungsZustand.BEZAHLT : ZahlungsZustand.NOCH_AUSSTEHEND,
         isNew: true,
         ...(opts?.transactionId ? { paypalTransactionId: opts.transactionId } : {}),
       };

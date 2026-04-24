@@ -99,15 +99,12 @@ describe('WarenkorbService – logged-in cart', () => {
     expect(updatedUser.warenkorb.produkteMitAnzahl).toContainEqual({ produktId: 'p1', anzahl: 3 });
   });
 
-  // BUG REPRODUCTION: logged-in addToWarenkorb does NOT increment existing items
-  it('BUG: addToWarenkorb does NOT increment quantity for existing item (logged-in)', async () => {
+  it('addToWarenkorb increments quantity for existing item (logged-in)', async () => {
     const { service, userServiceMock } = buildService(true, [{ produktId: 'p1', anzahl: 2 }]);
     await service.addToWarenkorb('p1', 3);
-    // The bug: updateUser is never called because the item already exists
-    expect(userServiceMock.updateUser).not.toHaveBeenCalled();
-    // Quantity is still 2, not 5
-    const user = await userServiceMock.getCurrentUser();
-    expect(user.warenkorb.produkteMitAnzahl[0].anzahl).toBe(2);
+    expect(userServiceMock.updateUser).toHaveBeenCalled();
+    const updatedUser = userServiceMock.updateUser.mock.calls[0][0];
+    expect(updatedUser.warenkorb.produkteMitAnzahl[0].anzahl).toBe(5);
   });
 
   it('removeFromWarenkorb removes item from logged-in cart', async () => {
