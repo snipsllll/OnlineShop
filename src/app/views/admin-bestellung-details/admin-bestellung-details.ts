@@ -7,6 +7,7 @@ import {IBestellung} from '../../models/interfaces/IBestellung';
 import {IUser} from '../../models/interfaces/IUser';
 import {BestellungService} from '../../services/bestellung.service';
 import {UserService} from '../../services/user.service';
+import {ProduktService} from '../../services/produkt.service';
 import {RoutingService} from '../../services/routing.service';
 import {DialogService} from '../../services/dialog.service';
 import {ShopSettingsService} from '../../services/shop-settings.service';
@@ -27,6 +28,7 @@ export class AdminBestellungDetails implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private bestellungService = inject(BestellungService);
   private userService = inject(UserService);
+  private produktService = inject(ProduktService);
   private routingService = inject(RoutingService);
   private dialogService = inject(DialogService);
   private settings = inject(ShopSettingsService);
@@ -51,6 +53,7 @@ export class AdminBestellungDetails implements OnInit, OnDestroy {
     { value: BestellungsZustand.VERSANDT, label: 'Versandt' },
     { value: BestellungsZustand.ANGEKOMMEN, label: 'Angekommen' },
     { value: BestellungsZustand.STORNIERT, label: 'Storniert' },
+    { value: BestellungsZustand.ABGELEHNT, label: 'Abgelehnt' },
   ];
 
   readonly zahlungsOptions = [
@@ -99,6 +102,29 @@ export class AdminBestellungDetails implements OnInit, OnDestroy {
     } finally {
       this.saving.set(false);
     }
+  }
+
+  get canAblehnen(): boolean {
+    const z = this.bestellung()?.bestellungsZustand;
+    return z === BestellungsZustand.EINGEGANGEN || z === BestellungsZustand.IN_BEARBEITUNG;
+  }
+
+  onAblehnen() {
+    const b = this.bestellung();
+    if (!b || !this.canAblehnen) return;
+    this.dialogService.openConfirm(
+      'Bestellung ablehnen',
+      'Soll diese Bestellung wirklich abgelehnt werden? Sie wird archiviert und kann nicht mehr weiterbearbeitet werden.',
+      async () => {
+        const warInBearbeitung = b.bestellungsZustand === BestellungsZustand.IN_BEARBEITUNG;
+        const updated: IBestellung = { ...b, bestellungsZustand: BestellungsZustand.ABGELEHNT };
+        await this.bestellungService.editBestellung(b.id, updated);
+        if (warInBearbeitung) {
+          await Promise.all((b.produkte ?? []).map(p => this.produktService.adjustStock(p.id, 0, -p.anzahl)));
+        }
+        this.selectedZustand = BestellungsZustand.ABGELEHNT;
+      }
+    );
   }
 
   goBack() { this.location.back(); }

@@ -73,6 +73,13 @@
             <span class="tab-badge tab-badge--muted">{{ countByZustand(BestellungsZustand.STORNIERT) }}</span>
           }
         </button>
+        <button class="status-tab" [class.status-tab--active]="isActiveFilter(BestellungsZustand.ABGELEHNT)" (click)="setFilter(BestellungsZustand.ABGELEHNT)">
+          <span class="material-symbols-outlined">block</span>
+          Abgelehnt
+          @if (!loading() && countByZustand(BestellungsZustand.ABGELEHNT) > 0) {
+            <span class="tab-badge tab-badge--muted">{{ countByZustand(BestellungsZustand.ABGELEHNT) }}</span>
+          }
+        </button>
       }
     </div>
   </div>
@@ -198,9 +205,11 @@
               </div>
             }
             <div class="action-icon-row">
-<button class="action-icon-btn action-icon-btn--danger" (click)="onDelete(b); $event.stopPropagation()" title="Löschen">
-                <span class="material-symbols-outlined">delete</span>
-              </button>
+              @if (canAblehnen(b)) {
+                <button class="action-icon-btn action-icon-btn--danger" (click)="onAblehnen(b); $event.stopPropagation()" title="Ablehnen">
+                  <span class="material-symbols-outlined">block</span>
+                </button>
+              }
             </div>
           </div>
 
