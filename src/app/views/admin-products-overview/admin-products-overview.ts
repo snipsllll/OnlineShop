@@ -64,6 +64,7 @@ export class AdminProductsOverview implements OnInit {
   protected filterLagerMax = '';
   protected filterVerfuegbar: 'all' | 'true' | 'false' = 'all';
   protected filterHasImage: 'all' | 'yes' | 'no' = 'all';
+  protected filterKategorie = 'all';
 
   private _searchText = '';
   private _allProdukte: IProdukt[] | null = null;
@@ -86,6 +87,7 @@ export class AdminProductsOverview implements OnInit {
       this.filterLagerMin || this.filterLagerMax ||
       this.filterVerfuegbar !== 'all' ||
       this.filterHasImage !== 'all' ||
+      this.filterKategorie !== 'all' ||
       this.sortCol() !== null
     );
   }
@@ -217,6 +219,13 @@ export class AdminProductsOverview implements OnInit {
       const want = this.filterHasImage === 'yes';
       result = result.filter(p => want ? ((p.imgRefs?.length ?? 0) > 0) : !((p.imgRefs?.length ?? 0) > 0));
     }
+    if (this.filterKategorie !== 'all') {
+      if (this.filterKategorie === '__none__') {
+        result = result.filter(p => !p.kategorieId);
+      } else {
+        result = result.filter(p => p.kategorieId === this.filterKategorie);
+      }
+    }
 
     const col = this.sortCol();
     const dir = this.sortDir();
@@ -251,6 +260,7 @@ export class AdminProductsOverview implements OnInit {
     this.filterLagerMax = '';
     this.filterVerfuegbar = 'all';
     this.filterHasImage = 'all';
+    this.filterKategorie = 'all';
     this.sortCol.set(null);
     this.onFilterOrSortChange();
   }
@@ -388,6 +398,7 @@ export class AdminProductsOverview implements OnInit {
       this.filterLagerMax = saved.filterLagerMax;
       this.filterVerfuegbar = saved.filterVerfuegbar;
       this.filterHasImage = saved.filterHasImage;
+      this.filterKategorie = saved.filterKategorie ?? 'all';
       this.sortCol.set(saved.sortCol as SortCol | null);
       this.sortDir.set(saved.sortDir);
 
@@ -485,6 +496,7 @@ export class AdminProductsOverview implements OnInit {
       filterLagerMax: this.filterLagerMax,
       filterVerfuegbar: this.filterVerfuegbar,
       filterHasImage: this.filterHasImage,
+      filterKategorie: this.filterKategorie,
       sortCol: this.sortCol(),
       sortDir: this.sortDir(),
       scrollY: window.scrollY,
@@ -629,6 +641,11 @@ export class AdminProductsOverview implements OnInit {
     await this.initialLoad();
     this.importing.set(false);
     this.importResult.set({ success, failed });
+  }
+
+  getKategorieName(id: string | undefined): string {
+    if (!id) return '—';
+    return this.kategorien().find(k => k.id === id)?.name ?? '—';
   }
 
   formatPrice(p: number): string {

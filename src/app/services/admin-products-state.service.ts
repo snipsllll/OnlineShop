@@ -11,6 +11,7 @@ export interface AdminProductsState {
   filterLagerMax: string;
   filterVerfuegbar: 'all' | 'true' | 'false';
   filterHasImage: 'all' | 'yes' | 'no';
+  filterKategorie: string;
   sortCol: string | null;
   sortDir: 'asc' | 'desc';
   scrollY: number;
