@@ -55,7 +55,7 @@ export class AdminDashboard implements OnInit {
   get countAktuelle(): number {
     return this.bestellungen().filter(b => {
       const z = Number(b.bestellungsZustand);
-      return z !== BestellungsZustand.ANGEKOMMEN && z !== BestellungsZustand.STORNIERT;
+      return z !== BestellungsZustand.ANGEKOMMEN && z !== BestellungsZustand.STORNIERT && z !== BestellungsZustand.ABGELEHNT;
     }).length;
   }
   get countUnviewed(): number { return this.bestellungen().filter(b => b.isNew === true).length; }
@@ -73,6 +73,7 @@ export class AdminDashboard implements OnInit {
       case BestellungsZustand.VERSANDT:       return 'Versandt';
       case BestellungsZustand.ANGEKOMMEN:     return 'Angekommen';
       case BestellungsZustand.STORNIERT:      return 'Storniert';
+      case BestellungsZustand.ABGELEHNT:      return 'Abgelehnt';
       default: return '—';
     }
   }
@@ -84,6 +85,7 @@ export class AdminDashboard implements OnInit {
       case BestellungsZustand.VERSANDT:       return 'badge--purple';
       case BestellungsZustand.ANGEKOMMEN:     return 'badge--success';
       case BestellungsZustand.STORNIERT:      return 'badge--error';
+      case BestellungsZustand.ABGELEHNT:      return 'badge--error';
       default: return 'badge--neutral';
     }
   }

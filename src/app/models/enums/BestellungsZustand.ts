@@ -3,5 +3,6 @@ export enum BestellungsZustand {
   "IN_BEARBEITUNG",
   "VERSANDT",
   "ANGEKOMMEN",
-  "STORNIERT"
+  "STORNIERT",
+  "ABGELEHNT"
 }

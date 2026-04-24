@@ -64,7 +64,7 @@ export class AdminBestellungenOverview implements OnInit {
     if (this.viewMode === 'aktuelle') {
       return this.bestellungen().filter(b => {
         const z = Number(b.bestellungsZustand);
-        return z !== BestellungsZustand.ANGEKOMMEN && z !== BestellungsZustand.STORNIERT;
+        return z !== BestellungsZustand.ANGEKOMMEN && z !== BestellungsZustand.STORNIERT && z !== BestellungsZustand.ABGELEHNT;
       });
     }
     return this.bestellungen();
@@ -88,10 +88,9 @@ export class AdminBestellungenOverview implements OnInit {
 
   setViewMode(m: 'aktuelle' | 'alle') {
     this.viewMode = m;
-    // Reset filter if it targets states hidden in aktuelle mode
     if (m === 'aktuelle' && this.filterZustand !== 'all') {
       const f = this.filterZustand as number;
-      if (f === BestellungsZustand.ANGEKOMMEN || f === BestellungsZustand.STORNIERT) {
+      if (f === BestellungsZustand.ANGEKOMMEN || f === BestellungsZustand.STORNIERT || f === BestellungsZustand.ABGELEHNT) {
         this.filterZustand = 'all';
       }
     }
@@ -106,7 +105,7 @@ export class AdminBestellungenOverview implements OnInit {
 
   get aktuelleCount(): number { return this.bestellungen().filter(b => {
     const z = Number(b.bestellungsZustand);
-    return z !== BestellungsZustand.ANGEKOMMEN && z !== BestellungsZustand.STORNIERT;
+    return z !== BestellungsZustand.ANGEKOMMEN && z !== BestellungsZustand.STORNIERT && z !== BestellungsZustand.ABGELEHNT;
   }).length; }
 
   // ── Status helpers ──────────────────────────────────────────
@@ -115,11 +114,12 @@ export class AdminBestellungenOverview implements OnInit {
 
   getZustandLabel(b: IBestellung): string {
     switch (this.zustand(b)) {
-      case BestellungsZustand.EINGEGANGEN:   return 'Eingegangen';
+      case BestellungsZustand.EINGEGANGEN:    return 'Eingegangen';
       case BestellungsZustand.IN_BEARBEITUNG: return 'In Bearbeitung';
-      case BestellungsZustand.VERSANDT:      return 'Versandt';
-      case BestellungsZustand.ANGEKOMMEN:    return 'Angekommen';
-      case BestellungsZustand.STORNIERT:     return 'Storniert';
+      case BestellungsZustand.VERSANDT:       return 'Versandt';
+      case BestellungsZustand.ANGEKOMMEN:     return 'Angekommen';
+      case BestellungsZustand.STORNIERT:      return 'Storniert';
+      case BestellungsZustand.ABGELEHNT:      return 'Abgelehnt';
       default: return 'Unbekannt';
     }
   }
@@ -131,6 +131,7 @@ export class AdminBestellungenOverview implements OnInit {
       case BestellungsZustand.VERSANDT:       return 'badge--info';
       case BestellungsZustand.ANGEKOMMEN:     return 'badge--success';
       case BestellungsZustand.STORNIERT:      return 'badge--neutral';
+      case BestellungsZustand.ABGELEHNT:      return 'badge--rejected';
       default: return 'badge--neutral';
     }
   }
@@ -142,6 +143,7 @@ export class AdminBestellungenOverview implements OnInit {
       case BestellungsZustand.VERSANDT:       return 'accent--shipped';
       case BestellungsZustand.ANGEKOMMEN:     return 'accent--done';
       case BestellungsZustand.STORNIERT:      return 'accent--cancelled';
+      case BestellungsZustand.ABGELEHNT:      return 'accent--rejected';
       default: return '';
     }
   }
@@ -178,8 +180,13 @@ export class AdminBestellungenOverview implements OnInit {
   isNewOrder(b: IBestellung): boolean { return this.zustand(b) === BestellungsZustand.EINGEGANGEN; }
   isUnviewed(b: IBestellung): boolean { return b.isNew === true; }
   isCancelled(b: IBestellung): boolean { return this.zustand(b) === BestellungsZustand.STORNIERT; }
+  isRejected(b: IBestellung): boolean { return this.zustand(b) === BestellungsZustand.ABGELEHNT; }
   isPaid(b: IBestellung): boolean { return Number(b.zahlungsZustand) === ZahlungsZustand.BEZAHLT; }
   isRefunded(b: IBestellung): boolean { return Number(b.zahlungsZustand) === ZahlungsZustand.ERSTATTET; }
+  canAblehnen(b: IBestellung): boolean {
+    const z = this.zustand(b);
+    return z === BestellungsZustand.EINGEGANGEN || z === BestellungsZustand.IN_BEARBEITUNG;
+  }
 
   /** Annehmen + Versenden require payment. Angekommen (delivery confirm) does not. */
   canAdvance(b: IBestellung): boolean {
@@ -237,13 +244,19 @@ export class AdminBestellungenOverview implements OnInit {
 
   onDetails(id: string) { this.routingService.route(MyRoutes.ADMIN_BESTELLUNG_DETAILS, id); }
 
-  onDelete(b: IBestellung) {
+  onAblehnen(b: IBestellung) {
+    if (!this.canAblehnen(b)) return;
     this.dialogService.openConfirm(
-      'Bestellung löschen',
-      'Soll diese Bestellung wirklich gelöscht werden? Diese Aktion kann nicht rückgängig gemacht werden.',
+      'Bestellung ablehnen',
+      'Soll diese Bestellung wirklich abgelehnt werden? Sie wird archiviert und kann nicht mehr weiterbearbeitet werden.',
       async () => {
-        await this.bestellungService.deleteBestellung(b.id);
-        this.bestellungen.update(list => list.filter(x => x.id !== b.id));
+        const warInBearbeitung = this.zustand(b) === BestellungsZustand.IN_BEARBEITUNG;
+        const updated: IBestellung = { ...b, bestellungsZustand: BestellungsZustand.ABGELEHNT };
+        await this.bestellungService.editBestellung(b.id, updated);
+        if (warInBearbeitung) {
+          await Promise.all((b.produkte ?? []).map(p => this.produktService.adjustStock(p.id, 0, -p.anzahl)));
+        }
+        this.bestellungen.update(list => list.map(x => x.id === b.id ? updated : x));
       }
     );
   }

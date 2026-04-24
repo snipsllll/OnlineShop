@@ -219,6 +219,8 @@
                 <span class="badge badge--warning">In Bearbeitung</span>
               } @else if (bestellung()!.bestellungsZustand === BestellungsZustand.STORNIERT) {
                 <span class="badge badge--error">Storniert</span>
+              } @else if (bestellung()!.bestellungsZustand === BestellungsZustand.ABGELEHNT) {
+                <span class="badge badge--rejected">Abgelehnt</span>
               } @else {
                 <span class="badge badge--neutral">Eingegangen</span>
               }
@@ -267,6 +269,13 @@
               Status speichern
             }
           </button>
+
+          @if (canAblehnen) {
+            <button class="btn-ablehnen" (click)="onAblehnen()" [disabled]="saving()">
+              <span class="material-symbols-outlined btn-icon">block</span>
+              Bestellung ablehnen
+            </button>
+          }
         </div>
 
         <!-- Order summary card -->

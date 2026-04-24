@@ -320,6 +320,7 @@
 .accent--shipped    { background: #0ea5e9; }
 .accent--done       { background: var(--success); }
 .accent--cancelled  { background: var(--border); }
+.accent--rejected   { background: #991b1b; }
 
 /* Body */
 .order-body {
@@ -498,10 +499,11 @@
 .action-icon-btn .material-symbols-outlined { font-size: 18px; }
 
 /* Badge variants for new/info */
-.badge--primary  { background: #dbeafe; color: #1d4ed8; }
-.badge--info     { background: #e0f2fe; color: #0369a1; }
-.badge--neue     { background: #fef3c7; color: #92400e; font-weight: 700; }
-.badge--refunded { background: #ede9fe; color: #6d28d9; }
+.badge--primary   { background: #dbeafe; color: #1d4ed8; }
+.badge--info      { background: #e0f2fe; color: #0369a1; }
+.badge--neue      { background: #fef3c7; color: #92400e; font-weight: 700; }
+.badge--refunded  { background: #ede9fe; color: #6d28d9; }
+.badge--rejected  { background: #fee2e2; color: #991b1b; }
 
 /* ── Mobile ───────────────────────────────────────────────── */
 @media (max-width: 640px) {

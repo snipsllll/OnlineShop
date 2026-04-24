@@ -112,6 +112,7 @@ export class BestellungDetails implements OnInit, OnDestroy {
       case BestellungsZustand.VERSANDT:       return 'Versandt';
       case BestellungsZustand.ANGEKOMMEN:     return 'Angekommen';
       case BestellungsZustand.STORNIERT:      return 'Storniert';
+      case BestellungsZustand.ABGELEHNT:      return 'Abgelehnt';
       default: return 'Unbekannt';
     }
   }
@@ -121,6 +122,7 @@ export class BestellungDetails implements OnInit, OnDestroy {
       case BestellungsZustand.ANGEKOMMEN:     return 'badge--success';
       case BestellungsZustand.VERSANDT:       return 'badge--neutral';
       case BestellungsZustand.STORNIERT:      return 'badge--error';
+      case BestellungsZustand.ABGELEHNT:      return 'badge--error';
       default: return 'badge--warning';
     }
   }
