@@ -60,6 +60,14 @@
       }
     </div>
     <div class="toolbar-right">
+      <div class="page-size-selector">
+        <label class="page-size-label">Pro Seite</label>
+        <select class="page-size-select" [(ngModel)]="pageSize" (ngModelChange)="onPageSizeChange()">
+          @for (opt of pageSizeOptions; track opt) {
+            <option [value]="opt">{{ opt }}</option>
+          }
+        </select>
+      </div>
       @if (!loading()) {
         <span class="result-count">{{ displayedCount }} Produkt{{ displayedCount !== 1 ? 'e' : '' }}</span>
       }

@@ -39,7 +39,8 @@ export class AdminProductsOverview implements OnInit {
   protected bulkRabattBis = '';
   protected bulkRabattSaving = signal(false);
   protected exportKatFilter = signal<Set<string>>(new Set());
-  protected readonly PAGE_SIZE = 20;
+  protected pageSize = 20;
+  protected readonly pageSizeOptions = [10, 20, 50, 100];
   protected currentPage = signal(1);
   protected totalCount = signal(0);
   protected pageItems = signal<IProdukt[]>([]);
@@ -94,13 +95,13 @@ export class AdminProductsOverview implements OnInit {
   }
 
   get totalPages(): number {
-    return Math.max(1, Math.ceil(this.displayedCount / this.PAGE_SIZE));
+    return Math.max(1, Math.ceil(this.displayedCount / this.pageSize));
   }
 
   get pagedProdukte(): IProdukt[] {
     if (this.searchActive()) {
-      const start = (this.currentPage() - 1) * this.PAGE_SIZE;
-      return this._filteredProdukte.slice(start, start + this.PAGE_SIZE);
+      const start = (this.currentPage() - 1) * this.pageSize;
+      return this._filteredProdukte.slice(start, start + this.pageSize);
     }
     return this.pageItems();
   }
@@ -254,6 +255,15 @@ export class AdminProductsOverview implements OnInit {
     this.onFilterOrSortChange();
   }
 
+  async onPageSizeChange() {
+    this._cursors.clear();
+    this.currentPage.set(1);
+    this.clearSelection();
+    if (!this.searchActive()) {
+      await this.loadPage(1);
+    }
+  }
+
   // ── Bulk delete ───────────────────────────────────────────────────────────
   bulkDelete() {
     const count = this.selectedCount();
@@ -369,6 +379,7 @@ export class AdminProductsOverview implements OnInit {
     const saved = this.stateService.state;
     if (saved) {
       this.stateService.state = null;
+      this.pageSize = saved.pageSize ?? 20;
       this._searchText = saved.searchText;
       this.filterBezeichnung = saved.filterBezeichnung;
       this.filterPreisMin = saved.filterPreisMin;
@@ -400,7 +411,7 @@ export class AdminProductsOverview implements OnInit {
     try {
       const [count, { items, lastDoc }, kategorien] = await Promise.all([
         this.produktService.getProduktCount(),
-        this.produktService.getProduktePage(this.PAGE_SIZE),
+        this.produktService.getProduktePage(this.pageSize),
         this.kategorieService.getKategorien(),
       ]);
       this.kategorien.set(kategorien);
@@ -429,7 +440,7 @@ export class AdminProductsOverview implements OnInit {
     this.loading.set(true);
     try {
       const cursor = page > 1 ? await this.ensureCursor(page - 1) : undefined;
-      const { items, lastDoc } = await this.produktService.getProduktePage(this.PAGE_SIZE, cursor);
+      const { items, lastDoc } = await this.produktService.getProduktePage(this.pageSize, cursor);
       this.pageItems.set(items);
       this.currentPage.set(page);
       if (lastDoc) this._cursors.set(page, lastDoc);
@@ -444,7 +455,7 @@ export class AdminProductsOverview implements OnInit {
       if (this._cursors.has(p)) {
         cursor = this._cursors.get(p);
       } else {
-        const { lastDoc } = await this.produktService.getProduktePage(this.PAGE_SIZE, cursor);
+        const { lastDoc } = await this.produktService.getProduktePage(this.pageSize, cursor);
         if (lastDoc) { this._cursors.set(p, lastDoc); cursor = lastDoc; }
       }
     }
@@ -465,6 +476,7 @@ export class AdminProductsOverview implements OnInit {
   private saveState() {
     this.stateService.state = {
       page: this.currentPage(),
+      pageSize: this.pageSize,
       searchText: this._searchText,
       filterBezeichnung: this.filterBezeichnung,
       filterPreisMin: this.filterPreisMin,

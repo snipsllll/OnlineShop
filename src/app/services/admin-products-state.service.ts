@@ -2,6 +2,7 @@ import {Injectable} from '@angular/core';
 
 export interface AdminProductsState {
   page: number;
+  pageSize: number;
   searchText: string;
   filterBezeichnung: string;
   filterPreisMin: string;
