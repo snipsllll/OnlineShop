@@ -1,0 +1,46 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // Rolle stored as string: "0"=ADMIN, "1"=KUNDE, "2"=OWNER, "3"=MITARBEITER
+    function isAdmin() {
+      let rolle = get(/databases/$(database)/documents/users/$(request.auth.uid)).data.rolle;
+      return isSignedIn() && (rolle == "0" || rolle == "2" || rolle == "3");
+    }
+
+    match /orders/{orderId} {
+      allow read: if isAdmin() ||
+        (isSignedIn() && resource.data.userId == request.auth.uid);
+
+      // Users may create their own orders only when zahlungsZustand = 1 (NOCH_AUSSTEHEND).
+      // The Cloud Function (Admin SDK) will verify with PayPal and set it to 0 (BEZAHLT).
+      allow create: if isSignedIn()
+        && request.resource.data.userId == request.auth.uid
+        && request.resource.data.zahlungsZustand == 1;
+
+      // Only admins may update orders (e.g. change bestellungsZustand via admin panel).
+      // The Cloud Function uses the Admin SDK which bypasses these rules entirely.
+      allow update: if isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    match /products/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /kategorien/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    match /users/{userId} {
+      allow read: if isSignedIn() && (request.auth.uid == userId || isAdmin());
+      allow write: if isSignedIn() && (request.auth.uid == userId || isAdmin());
+    }
+  }
+}
