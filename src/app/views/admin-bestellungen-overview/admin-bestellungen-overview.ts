@@ -9,6 +9,7 @@ import {MyRoutes} from '../../models/enums/MyRoutes';
 import {BestellungsZustand} from '../../models/enums/BestellungsZustand';
 import {ZahlungsZustand} from '../../models/enums/ZahlungsZustand';
 import {AdminNav} from '../../components/admin-nav/admin-nav';
+import {ProduktService} from '../../services/produkt.service';
 
 @Component({
   selector: 'app-admin-bestellungen-overview',
@@ -21,6 +22,7 @@ export class AdminBestellungenOverview implements OnInit {
   private bestellungService = inject(BestellungService);
   private routingService = inject(RoutingService);
   private dialogService = inject(DialogService);
+  private produktService = inject(ProduktService);
 
   protected bestellungen = signal<IBestellung[]>([]);
   protected loading = signal(true);
@@ -182,6 +184,16 @@ export class AdminBestellungenOverview implements OnInit {
     try {
       const updated: IBestellung = {...b, bestellungsZustand: next};
       await this.bestellungService.editBestellung(b.id, updated);
+
+      const positionen = b.produkte ?? [];
+      if (this.zustand(b) === BestellungsZustand.EINGEGANGEN) {
+        // Annehmen: Mengen reservieren
+        await Promise.all(positionen.map(p => this.produktService.adjustStock(p.id, 0, p.anzahl)));
+      } else if (this.zustand(b) === BestellungsZustand.IN_BEARBEITUNG) {
+        // Versenden: Lager abbuchen + Reservierung aufheben
+        await Promise.all(positionen.map(p => this.produktService.adjustStock(p.id, -p.anzahl, -p.anzahl)));
+      }
+
       this.bestellungen.update(list => list.map(x => x.id === b.id ? updated : x));
     } finally {
       this.updatingId.set(null);

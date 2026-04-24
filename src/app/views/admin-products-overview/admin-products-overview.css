@@ -571,27 +571,32 @@
   color: var(--text);
 }
 
-/* Stock badge */
-.stock-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 36px;
-  padding: 4px 10px;
-  border-radius: var(--radius-full);
+/* Stock detail (Gesamt / Reserviert / Frei) */
+.stock-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
   font-size: 0.8rem;
+  line-height: 1.3;
+}
+
+.stock-total {
+  font-weight: 600;
+  color: var(--text);
+}
+
+.stock-reserved {
+  color: #d97706;
+  font-size: 0.75rem;
+}
+
+.stock-free {
+  font-size: 0.75rem;
   font-weight: 600;
 }
 
-.stock-badge.stock-ok {
-  background: rgba(34, 197, 94, 0.1);
-  color: var(--success);
-}
-
-.stock-badge.stock-low {
-  background: rgba(239, 68, 68, 0.1);
-  color: var(--error);
-}
+.stock-free--ok  { color: var(--success); }
+.stock-free--low { color: var(--error); }
 
 /* Actions */
 .col-actions {
