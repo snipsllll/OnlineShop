@@ -9,66 +9,33 @@ import {Rolle} from '../models/enums/Rolle';
   providedIn: 'root'
 })
 export class UserService {
-  constructor() {
-  }
-
   async createNewUser(documentId: string, email: string, vorname: string, nachname: string): Promise<string> {
     const userDocRef = doc(db as Firestore, 'users', documentId);
 
-    const userData: any = {
+    await setDoc(userDocRef, {
       uid: documentId,
-      email: email,
-      vorname: vorname,
-      nachname: nachname,
+      email,
+      vorname,
+      nachname,
       displayName: `${vorname} ${nachname}`.trim(),
       rolle: Rolle.KUNDE.toString(),
-    };
-
-    try {
-      await setDoc(userDocRef, userData); // setDoc erstellt das Dokument oder überschreibt es
-      console.log(`Firestore user profile for UID ${documentId} (Email: ${email}, Name: ${vorname} ${nachname}) created/updated.`);
-      return documentId; // Gibt die verwendete Dokument-ID zurück
-    } catch (error: any) {
-      console.error(`Error creating/updating Firestore user profile for UID ${documentId}:`, error);
-      throw new Error(`Failed to create/update user profile: ${error.message}`);
-    }
+    });
+    return documentId;
   }
 
   async getCurrentUser(): Promise<IUser> {
     const currentUserAuth = auth.currentUser;
 
-    if (!currentUserAuth) {
-      console.log("No user currently logged in.");
-      throw new Error("No user currently logged in.");
-    }
-
-    const uid = currentUserAuth.uid;
-    const userDocRef = doc(db as Firestore, 'users', uid);
-
-    try {
-      const userDocSnap = await getDoc(userDocRef);
-      if (userDocSnap.exists()) {
-        console.log(`Firestore profile found for logged-in user: ${uid}`);
-        return this.getIUserFromFireUser({id: userDocSnap.id, ...userDocSnap.data() as IFIreUser});
-      } else {
-        console.log(`No Firestore profile found for logged-in user with UID: ${uid}`);
-        throw new Error("No user currently logged in.")
-      }
-    } catch (error: any) {
-      console.error(`Error fetching Firestore profile for logged-in user ${uid}:`, error);
-      throw error;
-    }
+    if (!currentUserAuth) throw new Error('No user currently logged in.');
+    const userDocRef = doc(db as Firestore, 'users', currentUserAuth.uid);
+    const userDocSnap = await getDoc(userDocRef);
+    if (!userDocSnap.exists()) throw new Error('No user currently logged in.');
+    return this.getIUserFromFireUser({id: userDocSnap.id, ...userDocSnap.data() as IFIreUser});
   }
 
   async updateUser(user: IUser): Promise<void> {
-    if (!user.uid) {
-      console.error('Error updating user: User object must have a uid property.');
-      throw new Error('User object must have a uid property to update.');
-    }
-
+    if (!user.uid) throw new Error('User object must have a uid property to update.');
     const userDocRef = doc(db as Firestore, 'users', user.uid);
-
-    // NEU: Nur die Firestore-kompatiblen Felder extrahieren und eventuell konvertieren
     const firestoreCompatibleData: { [key: string]: any } = {
       email: user.email ?? '',
       displayName: user.displayName ?? `${user.vorname ?? ''} ${user.nachname ?? ''}`.trim(),
@@ -93,13 +60,7 @@ export class UserService {
       },
     };
 
-    try {
-      await updateDoc(userDocRef, firestoreCompatibleData); // Hier das vorbereitete Objekt übergeben
-      console.log(`User with UID ${user.uid} updated successfully in Firestore.`);
-    } catch (error: any) {
-      console.error(`Error updating user with UID ${user.uid} in Firestore:`, error);
-      throw error;
-    }
+    await updateDoc(userDocRef, firestoreCompatibleData);
   }
 
   async getUserById(uid: string): Promise<IUser | null> {
@@ -113,10 +74,6 @@ export class UserService {
     return snap.docs.map(d => this.getIUserFromFireUser({id: d.id, ...d.data() as IFIreUser}));
   }
 
-  /**
-   * Deletes a user from both Firebase Auth and Firestore.
-   * Requires the caller to be an Owner — enforced server-side by the Cloud Function.
-   */
   async deleteUser(uid: string): Promise<void> {
     const fn = httpsCallable<{ uid: string }, { success: boolean }>(functions, 'deleteUserAccount');
     await fn({ uid });

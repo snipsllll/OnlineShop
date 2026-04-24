@@ -9,6 +9,7 @@ import { UserService } from '../../services/user.service';
 import { ShopSettingsService } from '../../services/shop-settings.service';
 import { AuthService } from '../../services/auth.service';
 import { DialogService } from '../../services/dialog.service';
+import { BestellungsEmailService } from '../../services/bestellungs-email.service';
 
 function buildComponent(devBannerEnabled = false) {
   const settingsMock = { devBannerEnabled: signal(devBannerEnabled) };
@@ -23,7 +24,8 @@ function buildComponent(devBannerEnabled = false) {
       { provide: UserService,       useValue: { getCurrentUser: vi.fn().mockResolvedValue({}) } },
       { provide: ShopSettingsService, useValue: settingsMock },
       { provide: AuthService,       useValue: { isLoggedIn: signal(true), currentUid: signal('uid1') } },
-      { provide: DialogService,     useValue: { openLogin: vi.fn() } },
+      { provide: DialogService,            useValue: { openLogin: vi.fn() } },
+      { provide: BestellungsEmailService, useValue: { sendBestellungsbestaetigung: vi.fn() } },
     ],
   });
 

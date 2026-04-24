@@ -10,8 +10,7 @@ import {BestellungsZustand} from '../../models/enums/BestellungsZustand';
 import {ZahlungsZustand} from '../../models/enums/ZahlungsZustand';
 import {AdminNav} from '../../components/admin-nav/admin-nav';
 import {ProduktService} from '../../services/produkt.service';
-import {UserService} from '../../services/user.service';
-import {EmailService} from '../../services/email.service';
+import {BestellungsEmailService} from '../../services/bestellungs-email.service';
 import {AdminBestellungenStateService} from '../../services/admin-bestellungen-state.service';
 
 @Component({
@@ -26,8 +25,7 @@ export class AdminBestellungenOverview implements OnInit {
   private routingService = inject(RoutingService);
   private dialogService = inject(DialogService);
   private produktService = inject(ProduktService);
-  private userService = inject(UserService);
-  private emailService = inject(EmailService);
+  private bestellungsEmailService = inject(BestellungsEmailService);
   private stateService = inject(AdminBestellungenStateService);
 
   protected bestellungen = signal<IBestellung[]>([]);
@@ -222,14 +220,7 @@ export class AdminBestellungenOverview implements OnInit {
       } else if (this.zustand(b) === BestellungsZustand.IN_BEARBEITUNG) {
         // Versenden: Lager abbuchen + Reservierung aufheben
         await Promise.all(positionen.map(p => this.produktService.adjustStock(p.id, -p.anzahl, -p.anzahl)));
-        // Versandbestätigung senden
-        if (b.userId) {
-          this.userService.getUserById(b.userId).then(user => {
-            if (!user?.email) return;
-            const name = `${b.lieferadresse?.vorname ?? ''} ${b.lieferadresse?.nachname ?? ''}`.trim();
-            this.emailService.sendVersandbestaetigung(name, user.email, b.id).catch(() => {});
-          }).catch(() => {});
-        }
+        this.bestellungsEmailService.sendVersandbestaetigung(b);
       }
 
       this.bestellungen.update(list => list.map(x => x.id === b.id ? updated : x));
